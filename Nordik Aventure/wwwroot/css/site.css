@@ -1,0 +1,12 @@
+@import url(colors.css);
+
+.big-button{
+  width: 400px;
+  height: 400px;
+  background-color: var(--background-button);
+  border: 2px solid var(--text-black);
+  border-radius: 5px;
+  color: white;
+  text-align: center;
+  font-size: 35px;
+}
