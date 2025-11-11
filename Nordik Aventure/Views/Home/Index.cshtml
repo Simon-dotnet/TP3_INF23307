@@ -1,4 +1,6 @@
-﻿@{
+﻿@model Nordik_Aventure.Objects.Models.User.Employee
+@{
+    var id = ViewBag.Id;
 }
 <link rel="stylesheet" href="css/colors.css"/>
 <link rel="stylesheet" href="css/site.css"/>
@@ -9,22 +11,50 @@
     <h1 class="text-center mt-4">Accès aux modules</h1>
 </div>
 <div class="card p-4 shadow" style="width: 90%; height: 85%; border-radius: 10px; background-color: var(--background-main);">
-    
+
     <div class="mb-4">
-        <h2>Bonjour M. Arsenault</h2>
-        <p>Vous êtes employé(e)</p>
+        <h2>Bonjour @Model.Name @Model.Surname</h2>
+        <p>Vous êtes @Model.Role</p>
     </div>
     <div class="container px-4">
         <div class="row text-center g-3">
-            <div class="col">
-                <button class="big-button">Gestion des stocks et des produits</button>
-            </div>
-            <div class="col">
-                <button class="big-button">Gestion des finances et de la facturation</button>
-            </div>
-            <div class="col">
-                <button class="big-button">Gestion de la relation client</button>
-            </div>
+            @switch (Model.Role)
+            {
+                case "Manager":
+                    <div class="col">
+                        <button class="big-button">Gestion des stocks et des produits</button>
+                    </div>
+                    <div class="col">
+                        <button class="big-button">Gestion des finances et de la facturation</button>
+                    </div>
+                    <div class="col">
+                        <button class="big-button">Gestion de la relation client</button>
+                    </div>
+                    break;
+                case "Accountant":
+                    <div class="col">
+                        <button class="big-button no-access">Gestion des stocks et des produits</button>
+                    </div>
+                    <div class="col">
+                        <button class="big-button">Gestion des finances et de la facturation</button>
+                    </div>
+                    <div class="col">
+                        <button class="big-button no-access">Gestion de la relation client</button>
+                    </div>
+                    break;
+                case "Employee":
+                    <div class="col">
+                        <button class="big-button">Gestion des stocks et des produits</button>
+                    </div>
+                    <div class="col">
+                        <button class="big-button no-access">Gestion des finances et de la facturation</button>
+                    </div>
+                    <div class="col">
+                        <button class="big-button">Gestion de la relation client</button>
+                    </div>
+                    break;
+            }
+
         </div>
         <div class="row text-center mt-5">
             <a href="/" style="color: var(--text-black)" class="link">Déconnexion</a>
