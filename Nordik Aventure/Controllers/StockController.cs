@@ -2,16 +2,16 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Nordik_Aventure.Controllers;
 
-public class UserController : Controller
+[Route("stock")]
+public class StockController : Controller
 {
-    public UserController()
+    public StockController()
     {
         
     }
 
-    [HttpGet]
     public IActionResult Index()
     {
-        return View();
+        return View("../ModuleStock/HomepageStock");
     }
 }

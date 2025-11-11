@@ -12,8 +12,6 @@
       <Folder Include="Objects\ViewModels\" />
       <Folder Include="Views\Module Client\" />
       <Folder Include="Views\Module Finance\" />
-      <Folder Include="Views\Module Stock\" />
-      <Folder Include="Views\Shared\" />
     </ItemGroup>
 
     <ItemGroup>

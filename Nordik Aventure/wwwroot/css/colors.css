@@ -4,7 +4,11 @@
     
     --background-button: #156082;
     
+    --footer-color: #0E3E57;
+    
     --text-white: #ffffff;
+    --text-white-hover: rgba(255,255,255,0.7);
+    
     --text-black: #0f0e0e;
     --accent: #1e3d2f;
 }
