@@ -22,4 +22,15 @@ public class UserRepository
         
         return new GenericResponse<Employee>(result);
     }
+
+    public GenericResponse<Employee> GetEmployeeById(int id)
+    {
+        var result = _context.Employees.FirstOrDefault(e => e.Id == id);
+        if (result == null)
+        {
+            return new GenericResponse<Employee>("Id n'existe pas, vous êtes illégal", 404);
+        }
+        
+        return new GenericResponse<Employee>(result);
+    }
 }

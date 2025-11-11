@@ -17,4 +17,9 @@ public class UserService
     {
         return _userRepository.GetUserByEmailAndPassword(email, password);
     }
+
+    public GenericResponse<Employee> GetEmployeeById(int id)
+    {
+        return _userRepository.GetEmployeeById(id);
+    }
 }

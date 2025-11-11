@@ -32,6 +32,7 @@ public class HomeController : Controller
         return View("Index", result.Data);
     }
 
+    [Route("/login")]
     public IActionResult Logout()
     {
         HttpContext.Session.Remove("userId");
@@ -42,6 +43,15 @@ public class HomeController : Controller
     [Route("homepage")]
     public IActionResult Index()
     {
-        return View("Index");
+        var id = HttpContext.Session.GetString("userId");
+        var currentEmployee = _userService.GetEmployeeById(Convert.ToInt32(id));
+        if (currentEmployee.Code == 404)
+        {
+            ViewData["ErrorMessage"] = currentEmployee.Message;
+            ViewData["ErrorType"] = "error";
+            return View("Login");
+        }
+        
+        return View("Index", currentEmployee.Data);
     }
 }
