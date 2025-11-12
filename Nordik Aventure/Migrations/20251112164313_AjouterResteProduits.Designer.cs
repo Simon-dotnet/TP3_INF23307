@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Nordik_Aventure;
 
@@ -11,9 +12,11 @@ using Nordik_Aventure;
 namespace Nordik_Aventure.Migrations
 {
     [DbContext(typeof(NordikAventureContext))]
-    partial class NordikAventureContextModelSnapshot : ModelSnapshot
+    [Migration("20251112164313_AjouterResteProduits")]
+    partial class AjouterResteProduits
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,9 +32,6 @@ namespace Nordik_Aventure.Migrations
                         .HasColumnType("int");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -62,8 +62,6 @@ namespace Nordik_Aventure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
-
                     b.HasIndex("SupplierId");
 
                     b.ToTable("Products");
@@ -72,7 +70,6 @@ namespace Nordik_Aventure.Migrations
                         new
                         {
                             Id = 1,
-                            CategoryId = 1,
                             Name = "Tente légère 2 places",
                             PaybackToSupplier = 0.050000000000000003,
                             PriceToBuy = 145.0,
@@ -85,7 +82,6 @@ namespace Nordik_Aventure.Migrations
                         new
                         {
                             Id = 2,
-                            CategoryId = 1,
                             Name = "Tente familiale 6 places",
                             PaybackToSupplier = 0.050000000000000003,
                             PriceToBuy = 260.0,
@@ -98,7 +94,6 @@ namespace Nordik_Aventure.Migrations
                         new
                         {
                             Id = 3,
-                            CategoryId = 1,
                             Name = "Toile imperméable 3x3 m",
                             PaybackToSupplier = 0.040000000000000001,
                             PriceToBuy = 25.0,
@@ -111,7 +106,6 @@ namespace Nordik_Aventure.Migrations
                         new
                         {
                             Id = 4,
-                            CategoryId = 1,
                             Name = "Tapis de sol isolant",
                             PaybackToSupplier = 0.029999999999999999,
                             PriceToBuy = 18.0,
@@ -124,7 +118,6 @@ namespace Nordik_Aventure.Migrations
                         new
                         {
                             Id = 5,
-                            CategoryId = 1,
                             Name = "Abri cuisine pliable",
                             PaybackToSupplier = 0.050000000000000003,
                             PriceToBuy = 75.0,
@@ -137,7 +130,6 @@ namespace Nordik_Aventure.Migrations
                         new
                         {
                             Id = 6,
-                            CategoryId = 1,
                             Name = "Mat telescopique alu",
                             PaybackToSupplier = 0.040000000000000001,
                             PriceToBuy = 12.0,
@@ -150,7 +142,6 @@ namespace Nordik_Aventure.Migrations
                         new
                         {
                             Id = 7,
-                            CategoryId = 2,
                             Name = "Sac à dos 50 L etanche",
                             PaybackToSupplier = 0.059999999999999998,
                             PriceToBuy = 65.0,
@@ -163,7 +154,6 @@ namespace Nordik_Aventure.Migrations
                         new
                         {
                             Id = 8,
-                            CategoryId = 2,
                             Name = "Sac de jour 25 L",
                             PaybackToSupplier = 0.059999999999999998,
                             PriceToBuy = 32.0,
@@ -176,7 +166,6 @@ namespace Nordik_Aventure.Migrations
                         new
                         {
                             Id = 9,
-                            CategoryId = 2,
                             Name = "Sac de couchage -10 degree",
                             PaybackToSupplier = 0.029999999999999999,
                             PriceToBuy = 80.0,
@@ -189,7 +178,6 @@ namespace Nordik_Aventure.Migrations
                         new
                         {
                             Id = 10,
-                            CategoryId = 2,
                             Name = "Tapis autogonflant",
                             PaybackToSupplier = 0.029999999999999999,
                             PriceToBuy = 25.0,
@@ -202,7 +190,6 @@ namespace Nordik_Aventure.Migrations
                         new
                         {
                             Id = 11,
-                            CategoryId = 2,
                             Name = "Housse impermeable sac a dos",
                             PaybackToSupplier = 0.040000000000000001,
                             PriceToBuy = 9.0,
@@ -215,7 +202,6 @@ namespace Nordik_Aventure.Migrations
                         new
                         {
                             Id = 12,
-                            CategoryId = 2,
                             Name = "Batons de marche carbone",
                             PaybackToSupplier = 0.040000000000000001,
                             PriceToBuy = 35.0,
@@ -228,7 +214,6 @@ namespace Nordik_Aventure.Migrations
                         new
                         {
                             Id = 13,
-                            CategoryId = 3,
                             Name = "Chandail thermique homme",
                             PaybackToSupplier = 0.050000000000000003,
                             PriceToBuy = 22.0,
@@ -241,7 +226,6 @@ namespace Nordik_Aventure.Migrations
                         new
                         {
                             Id = 14,
-                            CategoryId = 3,
                             Name = "Chandail thermique femme",
                             PaybackToSupplier = 0.050000000000000003,
                             PriceToBuy = 22.0,
@@ -254,7 +238,6 @@ namespace Nordik_Aventure.Migrations
                         new
                         {
                             Id = 15,
-                            CategoryId = 3,
                             Name = "Pantalon de randonnee homme",
                             PaybackToSupplier = 0.050000000000000003,
                             PriceToBuy = 38.0,
@@ -267,7 +250,6 @@ namespace Nordik_Aventure.Migrations
                         new
                         {
                             Id = 16,
-                            CategoryId = 3,
                             Name = "Pantalon de randonnee femme",
                             PaybackToSupplier = 0.050000000000000003,
                             PriceToBuy = 38.0,
@@ -280,7 +262,6 @@ namespace Nordik_Aventure.Migrations
                         new
                         {
                             Id = 17,
-                            CategoryId = 3,
                             Name = "Manteau coupe-vent",
                             PaybackToSupplier = 0.040000000000000001,
                             PriceToBuy = 55.0,
@@ -293,7 +274,6 @@ namespace Nordik_Aventure.Migrations
                         new
                         {
                             Id = 18,
-                            CategoryId = 3,
                             Name = "Tuque en laine merinos",
                             PaybackToSupplier = 0.040000000000000001,
                             PriceToBuy = 10.0,
@@ -306,7 +286,6 @@ namespace Nordik_Aventure.Migrations
                         new
                         {
                             Id = 19,
-                            CategoryId = 3,
                             Name = "Gants isolants Hiver+",
                             PaybackToSupplier = 0.040000000000000001,
                             PriceToBuy = 18.0,
@@ -319,7 +298,6 @@ namespace Nordik_Aventure.Migrations
                         new
                         {
                             Id = 20,
-                            CategoryId = 4,
                             Name = "Rechaud portatif",
                             PaybackToSupplier = 0.040000000000000001,
                             PriceToBuy = 25.0,
@@ -332,7 +310,6 @@ namespace Nordik_Aventure.Migrations
                         new
                         {
                             Id = 21,
-                            CategoryId = 4,
                             Name = "Bouteille isotherme 1L",
                             PaybackToSupplier = 0.029999999999999999,
                             PriceToBuy = 12.0,
@@ -345,7 +322,6 @@ namespace Nordik_Aventure.Migrations
                         new
                         {
                             Id = 22,
-                            CategoryId = 4,
                             Name = "Lampe frontale 300 lumens",
                             PaybackToSupplier = 0.050000000000000003,
                             PriceToBuy = 14.0,
@@ -358,7 +334,6 @@ namespace Nordik_Aventure.Migrations
                         new
                         {
                             Id = 23,
-                            CategoryId = 4,
                             Name = "Ensemble vaisselle 4 pers.",
                             PaybackToSupplier = 0.040000000000000001,
                             PriceToBuy = 20.0,
@@ -371,7 +346,6 @@ namespace Nordik_Aventure.Migrations
                         new
                         {
                             Id = 24,
-                            CategoryId = 4,
                             Name = "Filtre a eau compact",
                             PaybackToSupplier = 0.050000000000000003,
                             PriceToBuy = 28.0,
@@ -384,7 +358,6 @@ namespace Nordik_Aventure.Migrations
                         new
                         {
                             Id = 25,
-                            CategoryId = 4,
                             Name = "Couteau multifonction",
                             PaybackToSupplier = 0.040000000000000001,
                             PriceToBuy = 15.0,
@@ -397,7 +370,6 @@ namespace Nordik_Aventure.Migrations
                         new
                         {
                             Id = 26,
-                            CategoryId = 5,
                             Name = "Montre GPS plein air",
                             PaybackToSupplier = 0.040000000000000001,
                             PriceToBuy = 120.0,
@@ -410,7 +382,6 @@ namespace Nordik_Aventure.Migrations
                         new
                         {
                             Id = 27,
-                            CategoryId = 5,
                             Name = "Chargeur solaire 20W",
                             PaybackToSupplier = 0.040000000000000001,
                             PriceToBuy = 35.0,
@@ -423,7 +394,6 @@ namespace Nordik_Aventure.Migrations
                         new
                         {
                             Id = 28,
-                            CategoryId = 5,
                             Name = "Boussole de précision",
                             PaybackToSupplier = 0.040000000000000001,
                             PriceToBuy = 9.0,
@@ -436,7 +406,6 @@ namespace Nordik_Aventure.Migrations
                         new
                         {
                             Id = 29,
-                            CategoryId = 5,
                             Name = "Radio météo portable",
                             PaybackToSupplier = 0.040000000000000001,
                             PriceToBuy = 22.0,
@@ -449,7 +418,6 @@ namespace Nordik_Aventure.Migrations
                         new
                         {
                             Id = 30,
-                            CategoryId = 5,
                             Name = "Lampe USB rechargeable",
                             PaybackToSupplier = 0.040000000000000001,
                             PriceToBuy = 11.0,
@@ -729,23 +697,197 @@ namespace Nordik_Aventure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("ProductCategories", b =>
+                {
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ProductId", "CategoryId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("ProductCategories", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            ProductId = 1,
+                            CategoryId = 1
+                        },
+                        new
+                        {
+                            ProductId = 2,
+                            CategoryId = 1
+                        },
+                        new
+                        {
+                            ProductId = 3,
+                            CategoryId = 1
+                        },
+                        new
+                        {
+                            ProductId = 4,
+                            CategoryId = 1
+                        },
+                        new
+                        {
+                            ProductId = 5,
+                            CategoryId = 1
+                        },
+                        new
+                        {
+                            ProductId = 6,
+                            CategoryId = 1
+                        },
+                        new
+                        {
+                            ProductId = 7,
+                            CategoryId = 2
+                        },
+                        new
+                        {
+                            ProductId = 8,
+                            CategoryId = 2
+                        },
+                        new
+                        {
+                            ProductId = 9,
+                            CategoryId = 2
+                        },
+                        new
+                        {
+                            ProductId = 10,
+                            CategoryId = 2
+                        },
+                        new
+                        {
+                            ProductId = 11,
+                            CategoryId = 2
+                        },
+                        new
+                        {
+                            ProductId = 12,
+                            CategoryId = 2
+                        },
+                        new
+                        {
+                            ProductId = 13,
+                            CategoryId = 3
+                        },
+                        new
+                        {
+                            ProductId = 14,
+                            CategoryId = 3
+                        },
+                        new
+                        {
+                            ProductId = 15,
+                            CategoryId = 3
+                        },
+                        new
+                        {
+                            ProductId = 16,
+                            CategoryId = 3
+                        },
+                        new
+                        {
+                            ProductId = 17,
+                            CategoryId = 3
+                        },
+                        new
+                        {
+                            ProductId = 18,
+                            CategoryId = 3
+                        },
+                        new
+                        {
+                            ProductId = 19,
+                            CategoryId = 3
+                        },
+                        new
+                        {
+                            ProductId = 20,
+                            CategoryId = 4
+                        },
+                        new
+                        {
+                            ProductId = 21,
+                            CategoryId = 4
+                        },
+                        new
+                        {
+                            ProductId = 22,
+                            CategoryId = 4
+                        },
+                        new
+                        {
+                            ProductId = 23,
+                            CategoryId = 4
+                        },
+                        new
+                        {
+                            ProductId = 24,
+                            CategoryId = 4
+                        },
+                        new
+                        {
+                            ProductId = 25,
+                            CategoryId = 4
+                        },
+                        new
+                        {
+                            ProductId = 26,
+                            CategoryId = 5
+                        },
+                        new
+                        {
+                            ProductId = 27,
+                            CategoryId = 5
+                        },
+                        new
+                        {
+                            ProductId = 28,
+                            CategoryId = 5
+                        },
+                        new
+                        {
+                            ProductId = 29,
+                            CategoryId = 5
+                        },
+                        new
+                        {
+                            ProductId = 30,
+                            CategoryId = 5
+                        });
+                });
+
             modelBuilder.Entity("Nordik_Aventure.Objects.Models.Product", b =>
                 {
-                    b.HasOne("Nordik_Aventure.Objects.Models.User.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Nordik_Aventure.Objects.Models.Supplier", "Supplier")
                         .WithMany("Products")
                         .HasForeignKey("SupplierId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Category");
-
                     b.Navigation("Supplier");
+                });
+
+            modelBuilder.Entity("ProductCategories", b =>
+                {
+                    b.HasOne("Nordik_Aventure.Objects.Models.User.Category", null)
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Nordik_Aventure.Objects.Models.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Nordik_Aventure.Objects.Models.Supplier", b =>

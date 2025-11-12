@@ -1,26 +1,41 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Nordik_Aventure.Objects.Models.User;
 
 namespace Nordik_Aventure.Objects.Models;
 
 public class Product
 {
-    int Id { get; init; }
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id { get; init; }
     
-    string Sku { get; init; }
+    [Required]
+    public string Sku { get; init; }
     
-    string Name { get; init; }
+    [Required]
+    public string Name { get; init; }
     
-    double PriceToBuy { get; init; }
+    [Required]
+    public double PriceToBuy { get; init; }
     
-    double PriceToSell { get; init; }
+    [Required]
+    public double PriceToSell { get; init; }
     
-    int PaybackToSupplier { get; init; }
+    public double PaybackToSupplier { get; init; }
     
-    double Weight { get; init; }
+    public double Weight { get; init; }
     
-    string Status { get; init; }
+    [Required]
+    public string Status { get; init; }
     
-    IList<Category> Categories { get; init; }
+    public int CategoryId { get; init; }
     
-    // Supplier Supplier
+    [ForeignKey(nameof(CategoryId))]
+    public Category Category { get; init; }
+    
+    public int SupplierId { get; init; }
+    
+    [ForeignKey(nameof(SupplierId))]
+    public Supplier Supplier { get; init; }
 }

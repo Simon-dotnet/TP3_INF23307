@@ -1,0 +1,64 @@
+@model List<Nordik_Aventure.Objects.Models.Product>
+@{
+    Layout = "_StockLayout";
+}
+
+<div class="container-fluid">
+    <div class="row align-items-center mb-4">
+        <div class="col">
+            <h3 class="h3 mb-0 ms-2">Liste des fiches de produit</h3>
+        </div>
+        <div class="col text-end">
+            <input type="text" class="form-control w-50 d-inline-block" placeholder="Rechercher un produit..."/>
+        </div>
+    </div>
+    <hr/>
+    <div class="row mb-4 cards-container py-4 px-2">
+        @foreach (var p in Model)
+        {
+            <div class="col-md-6 mb-4">
+                <div class="product-card">
+                    <div class="header">
+                        <div class="info">
+                            <p class="name">(@p.Sku) @p.Name</p>
+                        </div>
+                        <div class="status">
+                            @if (p.Status == "Actif")
+                            {
+                                <span class="status-actif">● Actif</span>
+                            }
+                            else
+                            {
+                                <span class="status-inactif">● Inactif</span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="card-content">
+                        <p><strong>Prix Achat:</strong> @p.PriceToBuy.ToString("F2") $</p>
+                        <p><strong>Prix Vente:</strong> @p.PriceToSell.ToString("F2") $</p>
+                        <p><strong>Catégories:</strong> @p.Category.Name</p>
+                        <p><strong>Poids:</strong> @p.Weight kg</p>
+                        <p>
+                            <strong>Fournisseur:</strong> @p.Supplier.Name
+                        </p>
+                    </div>
+
+                    <div class="text-center mt-2">
+                        <button class="btn w-50" style="background-color: var(--background-button); color: var(--text-white);">
+                            Modifier
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <hr/>
+    <div class="row">
+        <div class="col text-center">
+            <button class="btn w-25" style="background-color: var(--background-button); color: var(--text-white);">
+                Ajouter une fiche
+            </button>
+        </div>
+    </div>
+</div>

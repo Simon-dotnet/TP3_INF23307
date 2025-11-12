@@ -8,6 +8,12 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<UserService>();
 
+builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<ProductRepository>();
+
+builder.Services.AddScoped<SupplierService>();
+builder.Services.AddScoped<SupplierRepository>();
+
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
