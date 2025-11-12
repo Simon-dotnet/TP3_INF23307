@@ -1,0 +1,19 @@
+@model List<Nordik_Aventure.Objects.Models.Supplier>
+@{
+    Layout = "_StockLayout";
+}
+
+<div>
+    @foreach(var s in Model)
+    {
+        <h1>Supplier</h1>
+        <p>Nom: @s.Name</p>
+        <p>Code: @s.Code</p>
+        <h2>Possède produit:</h2>
+        @foreach (var p in s.Products)
+        {
+            <h3>Nom: @p.Name</h3>
+            <p>SKU: @p.Sku</p>
+        }
+    }
+</div>

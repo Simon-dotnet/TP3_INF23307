@@ -1,16 +1,23 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Nordik_Aventure.Objects.Models;
 
 public class Supplier
 {
-    int Id { get; init; }
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id { get; init; }
     
-    string Name { get; init; }
+    [Required]
+    public string Name { get; init; }
     
-    string Code { get; init; }
+    [Required]
+    public string Code { get; init; }
     
-    int Discount { get; init; }
+    public int Discount { get; init; }
     
-    string AverageDeliveryTime { get; init; }
+    public string AverageDeliveryTime { get; init; }
     
-    IList<Product> Products { get; init; } = new List<Product>();
+    public IList<Product> Products { get; init; } = new List<Product>();
 }
