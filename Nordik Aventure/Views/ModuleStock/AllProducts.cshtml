@@ -1,6 +1,8 @@
 @model List<Nordik_Aventure.Objects.Models.Product>
 @{
     Layout = "_StockLayout";
+
+    var list = Model;
 }
 
 <div class="container-fluid">
@@ -9,14 +11,14 @@
             <h3 class="h3 mb-0 ms-2">Liste des fiches de produit</h3>
         </div>
         <div class="col text-end">
-            <input type="text" class="form-control w-50 d-inline-block" placeholder="Rechercher un produit..."/>
+            <input id="searchInput" oninput="FilterList()" type="text" class="form-control w-50 d-inline-block" placeholder="Rechercher un produit..."/>
         </div>
     </div>
     <hr/>
     <div class="row mb-4 cards-container py-4 px-2">
-        @foreach (var p in Model)
+        @foreach (var p in list)
         {
-            <div class="col-md-6 mb-4">
+            <div class="col-md-6 mb-4" id="product-card-zone" data-name="@p.Name.ToLower()">
                 <div class="product-card">
                     <div class="header">
                         <div class="info">
@@ -37,7 +39,9 @@
                     <div class="card-content">
                         <p><strong>Prix Achat:</strong> @p.PriceToBuy.ToString("F2") $</p>
                         <p><strong>Prix Vente:</strong> @p.PriceToSell.ToString("F2") $</p>
-                        <p><strong>Catégories:</strong> @p.Category.Name</p>
+                        <p>
+                            <strong>Catégories:</strong> @p.Category.Name
+                        </p>
                         <p><strong>Poids:</strong> @p.Weight kg</p>
                         <p>
                             <strong>Fournisseur:</strong> @p.Supplier.Name
@@ -62,3 +66,20 @@
         </div>
     </div>
 </div>
+
+<script>
+    function FilterList() {
+        let word = document.getElementById("searchInput").value.toLowerCase();
+        let cards = document.querySelectorAll("#product-card-zone");
+
+        if (word.length === 0){
+        cards.forEach(card => {
+            card.style.display = "block"
+        })
+        }
+        cards.forEach(card => {
+            let name = card.getAttribute("data-name");
+            card.style.display = name.startsWith(word) ? "block" : "none";
+        });
+    }
+</script>
