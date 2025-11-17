@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.CompilerServices;
+using Microsoft.EntityFrameworkCore;
 using Nordik_Aventure.Objects.Models.User;
 
 namespace Nordik_Aventure.Objects.Models;
@@ -28,6 +30,8 @@ public class Product
     
     [Required]
     public string Status { get; init; }
+    
+    public double GrossMargin { get; init; }
     
     public int CategoryId { get; init; }
     

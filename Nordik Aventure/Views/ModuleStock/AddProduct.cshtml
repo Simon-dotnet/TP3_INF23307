@@ -1,0 +1,93 @@
+@model GestBibli.Objects.ViewModels.AddProductViewModel
+@{
+    Layout = "_StockLayout";
+}
+
+<div class="container-fluid">
+    <form id="form-add" method="post" asp-action="AddProduct" asp-controller="Product">
+        <div class="row align-items-center mb-4">
+            <div class="col">
+                <h3 class="h3 mb-0 ms-2">Ajouter une fiche produit</h3>
+            </div>
+        </div>
+        <hr/>
+        <div class="cards-container">
+            <div class="mb-3">
+                <label asp-for="Sku" class="form-label"></label>
+                <input asp-for="Sku" class="form-control" required="required"/>
+                <span asp-validation-for="Sku" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" required="required"/>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="PriceToBuy" class="form-label"></label>
+                <input id="buy-price" type="number" step="0.01" min="0" max="99999" asp-for="PriceToBuy" class="form-control"/>
+                <span asp-validation-for="PriceToBuy" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="PriceToSell" class="form-label"></label>
+                <input id="sell-price" type="number" step="0.01" min="0" max="99999" asp-for="PriceToSell" class="form-control"/>
+                <span asp-validation-for="PriceToSell" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="PaybackToSupplier" class="form-label"></label>
+                <input type="number" step="0.01" min="0" max="99999" asp-for="PaybackToSupplier" class="form-control"/>
+                <span asp-validation-for="PaybackToSupplier" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Weight" class="form-label"></label>
+                <input type="number" step="0.01" min="0" max="99999" asp-for="Weight" class="form-control"/>
+                <span asp-validation-for="Weight" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="SelectedCategoryId" class="form-label">Catégorie</label>
+                <select asp-for="SelectedCategoryId" class="form-select" aria-label="category">
+                    @foreach (var c in @Model.Categories)
+                    {
+                        <option value="@c.Id">@c.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="mb-3">
+                <label asp-for="SelectedSupplierId" class="form-label">Fournisseur</label>
+                <select asp-for="SelectedSupplierId" class="form-select" aria-label="supplier">
+                    @foreach (var s in @Model.Suppliers)
+                    {
+                        <option value="@s.Id">@s.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Status" class="form-label">Statut</label>
+                <select asp-for="Status" class="form-select" aria-label="status">
+                    <option selected="selected" value="Actif">Disponible</option>
+                    <option value="Non-Actif">Non-Disponible</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="text-center mt-3">
+            <button type="submit" style="background-color: var(--background-button); color: var(--text-white)" class="btn w-25">Confirmer</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    let form = document.getElementById("form-add");
+    let buyPrice = document.getElementById("buy-price");
+    let sellPrice = document.getElementById("sell-price");
+    
+    form.addEventListener("submit", (e) => {
+
+        const buy = parseFloat(buyPrice.value);
+        const sell = parseFloat(sellPrice.value);
+
+        if (sell <= buy) {
+            e.preventDefault();
+            alert(`Le prix de vente doit être supérieur au prix d'achat`);
+        }
+    });
+</script>

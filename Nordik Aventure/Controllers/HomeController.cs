@@ -23,8 +23,8 @@ public class HomeController : Controller
         var result = _userService.GetEmployeeByEmailAndPassword(email, password);
         if (result.Code == 404)
         {
-            ViewData["ErrorMessage"] = result.Message;
-            ViewData["ErrorType"] = "error";
+            TempData["ErrorMessage"] = result.Message;
+            TempData["ErrorType"] = "error";
             return View("Login");
         }
         
@@ -47,8 +47,8 @@ public class HomeController : Controller
         var currentEmployee = _userService.GetEmployeeById(Convert.ToInt32(id));
         if (currentEmployee.Code == 404)
         {
-            ViewData["ErrorMessage"] = currentEmployee.Message;
-            ViewData["ErrorType"] = "error";
+            TempData["ErrorMessage"] = currentEmployee.Message;
+            TempData["ErrorType"] = "error";
             return View("Login");
         }
         
