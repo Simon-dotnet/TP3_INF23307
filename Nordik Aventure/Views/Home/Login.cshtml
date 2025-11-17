@@ -1,6 +1,6 @@
 @{
-    var errorType = (ViewBag.ErrorType == "error" ? "danger" : "success");
-    var errorText = @ViewBag.ErrorMessage as string;
+    var errorType = (TempData["ErrorType"] == "error" ? "danger" : "success");
+    var errorText = @TempData["ErrorMessage"] as string;
 }
 
 <link rel="stylesheet" href="css/colors.css"/>

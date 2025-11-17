@@ -17,15 +17,15 @@
 }
 
 .cards-container {
-  max-height: 70vh; /* zone scrollable */
+  max-height: 70vh;
   overflow-y: auto;
   background-color: var(--background-main);
   border-radius: 6px;
   padding: 1rem;
 }
 
-.product-card {
-  background-color: var(--background-card, #fff);
+.product-card{ 
+  background-color: #fff;
   border-radius: 6px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   padding: 1rem;

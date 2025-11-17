@@ -1,5 +1,6 @@
 using GestBibli.Objects;
 using Nordik_Aventure.Objects.Models;
+using Nordik_Aventure.Objects.Models.User;
 using Nordik_Aventure.Repositories;
 
 namespace Nordik_Aventure.Services;
@@ -24,4 +25,14 @@ public class ProductService
         return result;
     }
 
+    public GenericResponse<Product> CreateProduct(Product product)
+    {
+        var result = _productRepository.AddProduct(product);
+        return result;
+    }
+
+    public GenericResponse<List<Category>> GetAllCategories()
+    {
+        return _productRepository.GetAllCategories();
+    }
 }
