@@ -1,9 +1,12 @@
+using Nordik_Aventure;
 using Nordik_Aventure.Repositories;
 using Nordik_Aventure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddDbContext<NordikAventureContext>();
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<UserService>();
@@ -24,6 +27,12 @@ builder.Services.AddSession(options =>
 
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<NordikAventureContext>();
+    DbInitializer.Seed(db);
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -46,6 +55,5 @@ app.MapControllerRoute(
         name: "default",
         pattern: "/Login")
     .WithStaticAssets();
-
 
 app.Run();
