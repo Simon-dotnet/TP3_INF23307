@@ -1,8 +1,13 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Nordik_Aventure.Objects.Models;
 
 public class Order
 {
-    int Id { get; init; }
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int OrderId { get; init; }
     
     DateTime DateOfOrdering { get; init; }
     

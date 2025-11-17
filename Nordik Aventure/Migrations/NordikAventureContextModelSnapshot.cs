@@ -22,6 +22,261 @@ namespace Nordik_Aventure.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
+            modelBuilder.Entity("Nordik_Aventure.Objects.Models.Finance.Payment", b =>
+                {
+                    b.Property<int>("PaymentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("PaymentId"));
+
+                    b.Property<double>("Amount")
+                        .HasColumnType("double");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("TransactionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("PaymentId");
+
+                    b.HasIndex("TransactionId");
+
+                    b.ToTable("Payments");
+                });
+
+            modelBuilder.Entity("Nordik_Aventure.Objects.Models.Finance.Purchase", b =>
+                {
+                    b.Property<int>("PurchaseId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("PurchaseId"));
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TransactionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PurchaseId");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("TransactionId");
+
+                    b.ToTable("Purchases");
+                });
+
+            modelBuilder.Entity("Nordik_Aventure.Objects.Models.Finance.PurchaseDetails", b =>
+                {
+                    b.Property<int>("PurchaseDetailsId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("PurchaseDetailsId"));
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PurchaseId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("PurchaseDetailsId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("PurchaseId");
+
+                    b.ToTable("PurchaseDetails");
+                });
+
+            modelBuilder.Entity("Nordik_Aventure.Objects.Models.Finance.Sale", b =>
+                {
+                    b.Property<int>("SaleId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("SaleId"));
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TransactionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("SaleId");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("TransactionId");
+
+                    b.ToTable("Sale");
+                });
+
+            modelBuilder.Entity("Nordik_Aventure.Objects.Models.Finance.SaleDetails", b =>
+                {
+                    b.Property<int>("SaleDetailsId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("SaleDetailsId"));
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SaleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("SaleDetailsId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("SaleId");
+
+                    b.ToTable("SaleDetails");
+                });
+
+            modelBuilder.Entity("Nordik_Aventure.Objects.Models.Finance.SaleReceipt", b =>
+                {
+                    b.Property<int>("SaleReceiptId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("SaleReceiptId"));
+
+                    b.Property<int>("PaymentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SaleId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("SaleReceiptId");
+
+                    b.HasIndex("PaymentId");
+
+                    b.HasIndex("SaleId");
+
+                    b.ToTable("SaleReceipt");
+                });
+
+            modelBuilder.Entity("Nordik_Aventure.Objects.Models.Finance.SupplierReceipt", b =>
+                {
+                    b.Property<int>("SupplierReceiptId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("SupplierReceiptId"));
+
+                    b.Property<int>("PaymentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PurchaseId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("SupplierReceiptId");
+
+                    b.HasIndex("PaymentId");
+
+                    b.HasIndex("PurchaseId");
+
+                    b.ToTable("SupplierReceipt");
+                });
+
+            modelBuilder.Entity("Nordik_Aventure.Objects.Models.Finance.Taxes", b =>
+                {
+                    b.Property<double>("ValueTps")
+                        .HasColumnType("double");
+
+                    b.Property<double>("ValueTvq")
+                        .HasColumnType("double");
+
+                    b.ToTable("Taxes");
+                });
+
+            modelBuilder.Entity("Nordik_Aventure.Objects.Models.Finance.Transaction", b =>
+                {
+                    b.Property<int>("TransactionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("TransactionId"));
+
+                    b.Property<double>("Amount")
+                        .HasColumnType("double");
+
+                    b.Property<double>("AmountTotal")
+                        .HasColumnType("double");
+
+                    b.Property<double>("AmountTps")
+                        .HasColumnType("double");
+
+                    b.Property<double>("AmountTvq")
+                        .HasColumnType("double");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("TransactionId");
+
+                    b.ToTable("Transaction");
+                });
+
+            modelBuilder.Entity("Nordik_Aventure.Objects.Models.Finance.TransactionHistory", b =>
+                {
+                    b.Property<int>("TransactionHistoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("TransactionHistoryId"));
+
+                    b.Property<int>("TransactionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("TransactionHistoryId");
+
+                    b.HasIndex("TransactionId");
+
+                    b.ToTable("TransactionHistory");
+                });
+
+            modelBuilder.Entity("Nordik_Aventure.Objects.Models.Order", b =>
+                {
+                    b.Property<int>("OrderId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("OrderId"));
+
+                    b.HasKey("OrderId");
+
+                    b.ToTable("Order");
+                });
+
             modelBuilder.Entity("Nordik_Aventure.Objects.Models.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -67,398 +322,6 @@ namespace Nordik_Aventure.Migrations
                     b.HasIndex("SupplierId");
 
                     b.ToTable("Products");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CategoryId = 1,
-                            Name = "Tente légère 2 places",
-                            PaybackToSupplier = 0.050000000000000003,
-                            PriceToBuy = 145.0,
-                            PriceToSell = 299.0,
-                            Sku = "NC-TNT-001",
-                            Status = "Actif",
-                            SupplierId = 1,
-                            Weight = 2.7999999999999998
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CategoryId = 1,
-                            Name = "Tente familiale 6 places",
-                            PaybackToSupplier = 0.050000000000000003,
-                            PriceToBuy = 260.0,
-                            PriceToSell = 499.0,
-                            Sku = "NC-TNT-002",
-                            Status = "Actif",
-                            SupplierId = 1,
-                            Weight = 6.5
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CategoryId = 1,
-                            Name = "Toile imperméable 3x3 m",
-                            PaybackToSupplier = 0.040000000000000001,
-                            PriceToBuy = 25.0,
-                            PriceToSell = 59.0,
-                            Sku = "NC-TNT-003",
-                            Status = "Actif",
-                            SupplierId = 2,
-                            Weight = 1.1000000000000001
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CategoryId = 1,
-                            Name = "Tapis de sol isolant",
-                            PaybackToSupplier = 0.029999999999999999,
-                            PriceToBuy = 18.0,
-                            PriceToSell = 39.0,
-                            Sku = "NC-TNT-004",
-                            Status = "Actif",
-                            SupplierId = 3,
-                            Weight = 0.90000000000000002
-                        },
-                        new
-                        {
-                            Id = 5,
-                            CategoryId = 1,
-                            Name = "Abri cuisine pliable",
-                            PaybackToSupplier = 0.050000000000000003,
-                            PriceToBuy = 75.0,
-                            PriceToSell = 149.0,
-                            Sku = "NC-TNT-005",
-                            Status = "Actif",
-                            SupplierId = 1,
-                            Weight = 5.0
-                        },
-                        new
-                        {
-                            Id = 6,
-                            CategoryId = 1,
-                            Name = "Mat telescopique alu",
-                            PaybackToSupplier = 0.040000000000000001,
-                            PriceToBuy = 12.0,
-                            PriceToSell = 29.0,
-                            Sku = "NC-TNT-006",
-                            Status = "Actif",
-                            SupplierId = 2,
-                            Weight = 0.69999999999999996
-                        },
-                        new
-                        {
-                            Id = 7,
-                            CategoryId = 2,
-                            Name = "Sac à dos 50 L etanche",
-                            PaybackToSupplier = 0.059999999999999998,
-                            PriceToBuy = 65.0,
-                            PriceToSell = 139.0,
-                            Sku = "NC-SAC-001",
-                            Status = "Actif",
-                            SupplierId = 4,
-                            Weight = 1.3
-                        },
-                        new
-                        {
-                            Id = 8,
-                            CategoryId = 2,
-                            Name = "Sac de jour 25 L",
-                            PaybackToSupplier = 0.059999999999999998,
-                            PriceToBuy = 32.0,
-                            PriceToSell = 79.0,
-                            Sku = "NC-SAC-002",
-                            Status = "Actif",
-                            SupplierId = 4,
-                            Weight = 0.90000000000000002
-                        },
-                        new
-                        {
-                            Id = 9,
-                            CategoryId = 2,
-                            Name = "Sac de couchage -10 degree",
-                            PaybackToSupplier = 0.029999999999999999,
-                            PriceToBuy = 80.0,
-                            PriceToSell = 169.0,
-                            Sku = "NC-SAC-003",
-                            Status = "Actif",
-                            SupplierId = 3,
-                            Weight = 2.2000000000000002
-                        },
-                        new
-                        {
-                            Id = 10,
-                            CategoryId = 2,
-                            Name = "Tapis autogonflant",
-                            PaybackToSupplier = 0.029999999999999999,
-                            PriceToBuy = 25.0,
-                            PriceToSell = 59.0,
-                            Sku = "NC-SAC-004",
-                            Status = "Actif",
-                            SupplierId = 3,
-                            Weight = 1.1000000000000001
-                        },
-                        new
-                        {
-                            Id = 11,
-                            CategoryId = 2,
-                            Name = "Housse impermeable sac a dos",
-                            PaybackToSupplier = 0.040000000000000001,
-                            PriceToBuy = 9.0,
-                            PriceToSell = 19.0,
-                            Sku = "NC-SAC-005",
-                            Status = "Actif",
-                            SupplierId = 2,
-                            Weight = 0.40000000000000002
-                        },
-                        new
-                        {
-                            Id = 12,
-                            CategoryId = 2,
-                            Name = "Batons de marche carbone",
-                            PaybackToSupplier = 0.040000000000000001,
-                            PriceToBuy = 35.0,
-                            PriceToSell = 79.0,
-                            Sku = "NC-SAC-006",
-                            Status = "Actif",
-                            SupplierId = 2,
-                            Weight = 0.80000000000000004
-                        },
-                        new
-                        {
-                            Id = 13,
-                            CategoryId = 3,
-                            Name = "Chandail thermique homme",
-                            PaybackToSupplier = 0.050000000000000003,
-                            PriceToBuy = 22.0,
-                            PriceToSell = 59.0,
-                            Sku = "NC-VET-001",
-                            Status = "Actif",
-                            SupplierId = 5,
-                            Weight = 0.59999999999999998
-                        },
-                        new
-                        {
-                            Id = 14,
-                            CategoryId = 3,
-                            Name = "Chandail thermique femme",
-                            PaybackToSupplier = 0.050000000000000003,
-                            PriceToBuy = 22.0,
-                            PriceToSell = 59.0,
-                            Sku = "NC-VET-002",
-                            Status = "Actif",
-                            SupplierId = 5,
-                            Weight = 0.59999999999999998
-                        },
-                        new
-                        {
-                            Id = 15,
-                            CategoryId = 3,
-                            Name = "Pantalon de randonnee homme",
-                            PaybackToSupplier = 0.050000000000000003,
-                            PriceToBuy = 38.0,
-                            PriceToSell = 89.0,
-                            Sku = "NC-VET-003",
-                            Status = "Actif",
-                            SupplierId = 5,
-                            Weight = 0.80000000000000004
-                        },
-                        new
-                        {
-                            Id = 16,
-                            CategoryId = 3,
-                            Name = "Pantalon de randonnee femme",
-                            PaybackToSupplier = 0.050000000000000003,
-                            PriceToBuy = 38.0,
-                            PriceToSell = 89.0,
-                            Sku = "NC-VET-004",
-                            Status = "Actif",
-                            SupplierId = 5,
-                            Weight = 0.80000000000000004
-                        },
-                        new
-                        {
-                            Id = 17,
-                            CategoryId = 3,
-                            Name = "Manteau coupe-vent",
-                            PaybackToSupplier = 0.040000000000000001,
-                            PriceToBuy = 55.0,
-                            PriceToSell = 129.0,
-                            Sku = "NC-VET-005",
-                            Status = "Actif",
-                            SupplierId = 6,
-                            Weight = 1.1000000000000001
-                        },
-                        new
-                        {
-                            Id = 18,
-                            CategoryId = 3,
-                            Name = "Tuque en laine merinos",
-                            PaybackToSupplier = 0.040000000000000001,
-                            PriceToBuy = 10.0,
-                            PriceToSell = 29.0,
-                            Sku = "NC-VET-006",
-                            Status = "Actif",
-                            SupplierId = 6,
-                            Weight = 0.29999999999999999
-                        },
-                        new
-                        {
-                            Id = 19,
-                            CategoryId = 3,
-                            Name = "Gants isolants Hiver+",
-                            PaybackToSupplier = 0.040000000000000001,
-                            PriceToBuy = 18.0,
-                            PriceToSell = 45.0,
-                            Sku = "NC-VET-007",
-                            Status = "Actif",
-                            SupplierId = 6,
-                            Weight = 0.5
-                        },
-                        new
-                        {
-                            Id = 20,
-                            CategoryId = 4,
-                            Name = "Rechaud portatif",
-                            PaybackToSupplier = 0.040000000000000001,
-                            PriceToBuy = 25.0,
-                            PriceToSell = 59.0,
-                            Sku = "NC-ACC-001",
-                            Status = "Actif",
-                            SupplierId = 2,
-                            Weight = 0.90000000000000002
-                        },
-                        new
-                        {
-                            Id = 21,
-                            CategoryId = 4,
-                            Name = "Bouteille isotherme 1L",
-                            PaybackToSupplier = 0.029999999999999999,
-                            PriceToBuy = 12.0,
-                            PriceToSell = 29.0,
-                            Sku = "NC-ACC-002",
-                            Status = "Actif",
-                            SupplierId = 3,
-                            Weight = 0.40000000000000002
-                        },
-                        new
-                        {
-                            Id = 22,
-                            CategoryId = 4,
-                            Name = "Lampe frontale 300 lumens",
-                            PaybackToSupplier = 0.050000000000000003,
-                            PriceToBuy = 14.0,
-                            PriceToSell = 39.0,
-                            Sku = "NC-ACC-003",
-                            Status = "Actif",
-                            SupplierId = 1,
-                            Weight = 0.20000000000000001
-                        },
-                        new
-                        {
-                            Id = 23,
-                            CategoryId = 4,
-                            Name = "Ensemble vaisselle 4 pers.",
-                            PaybackToSupplier = 0.040000000000000001,
-                            PriceToBuy = 20.0,
-                            PriceToSell = 49.0,
-                            Sku = "NC-ACC-004",
-                            Status = "Actif",
-                            SupplierId = 2,
-                            Weight = 1.2
-                        },
-                        new
-                        {
-                            Id = 24,
-                            CategoryId = 4,
-                            Name = "Filtre a eau compact",
-                            PaybackToSupplier = 0.050000000000000003,
-                            PriceToBuy = 28.0,
-                            PriceToSell = 69.0,
-                            Sku = "NC-ACC-005",
-                            Status = "Actif",
-                            SupplierId = 1,
-                            Weight = 0.69999999999999996
-                        },
-                        new
-                        {
-                            Id = 25,
-                            CategoryId = 4,
-                            Name = "Couteau multifonction",
-                            PaybackToSupplier = 0.040000000000000001,
-                            PriceToBuy = 15.0,
-                            PriceToSell = 39.0,
-                            Sku = "NC-ACC-006",
-                            Status = "Actif",
-                            SupplierId = 4,
-                            Weight = 0.5
-                        },
-                        new
-                        {
-                            Id = 26,
-                            CategoryId = 5,
-                            Name = "Montre GPS plein air",
-                            PaybackToSupplier = 0.040000000000000001,
-                            PriceToBuy = 120.0,
-                            PriceToSell = 279.0,
-                            Sku = "NC-ELE-001",
-                            Status = "Actif",
-                            SupplierId = 7,
-                            Weight = 0.90000000000000002
-                        },
-                        new
-                        {
-                            Id = 27,
-                            CategoryId = 5,
-                            Name = "Chargeur solaire 20W",
-                            PaybackToSupplier = 0.040000000000000001,
-                            PriceToBuy = 35.0,
-                            PriceToSell = 79.0,
-                            Sku = "NC-ELE-002",
-                            Status = "Actif",
-                            SupplierId = 7,
-                            Weight = 0.59999999999999998
-                        },
-                        new
-                        {
-                            Id = 28,
-                            CategoryId = 5,
-                            Name = "Boussole de précision",
-                            PaybackToSupplier = 0.040000000000000001,
-                            PriceToBuy = 9.0,
-                            PriceToSell = 24.0,
-                            Sku = "NC-ELE-003",
-                            Status = "Actif",
-                            SupplierId = 2,
-                            Weight = 0.20000000000000001
-                        },
-                        new
-                        {
-                            Id = 29,
-                            CategoryId = 5,
-                            Name = "Radio météo portable",
-                            PaybackToSupplier = 0.040000000000000001,
-                            PriceToBuy = 22.0,
-                            PriceToSell = 49.0,
-                            Sku = "NC-ELE-004",
-                            Status = "Actif",
-                            SupplierId = 7,
-                            Weight = 0.80000000000000004
-                        },
-                        new
-                        {
-                            Id = 30,
-                            CategoryId = 5,
-                            Name = "Lampe USB rechargeable",
-                            PaybackToSupplier = 0.040000000000000001,
-                            PriceToBuy = 11.0,
-                            PriceToSell = 25.0,
-                            Sku = "NC-ELE-005",
-                            Status = "Actif",
-                            SupplierId = 7,
-                            Weight = 0.29999999999999999
-                        });
                 });
 
             modelBuilder.Entity("Nordik_Aventure.Objects.Models.Supplier", b =>
@@ -487,64 +350,6 @@ namespace Nordik_Aventure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Suppliers");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AverageDeliveryTime = "1 jour",
-                            Code = "AX",
-                            Discount = 0,
-                            Name = "AventureX"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AverageDeliveryTime = "5 jour",
-                            Code = "TS",
-                            Discount = 0,
-                            Name = "TrekSupply"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            AverageDeliveryTime = "6 jour",
-                            Code = "MN",
-                            Discount = 0,
-                            Name = "MontNord"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            AverageDeliveryTime = "3 jour",
-                            Code = "NP",
-                            Discount = 0,
-                            Name = "NordPack"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            AverageDeliveryTime = "4 jour",
-                            Code = "NW",
-                            Discount = 0,
-                            Name = "NordWear"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            AverageDeliveryTime = "2 jour",
-                            Code = "AL",
-                            Discount = 0,
-                            Name = "ArcticLine"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            AverageDeliveryTime = "2 jour",
-                            Code = "TT",
-                            Discount = 0,
-                            Name = "TechTrail"
-                        });
                 });
 
             modelBuilder.Entity("Nordik_Aventure.Objects.Models.User.Category", b =>
@@ -562,33 +367,6 @@ namespace Nordik_Aventure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Tentes & abris"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Sacs & portage"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Vetements techniques"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Accessoires & cuisine"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Name = "Electronique & navigation"
-                        });
                 });
 
             modelBuilder.Entity("Nordik_Aventure.Objects.Models.User.Client", b =>
@@ -631,28 +409,6 @@ namespace Nordik_Aventure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Clients");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Address = "144 rue de paul, Lévis, Qc, Canada",
-                            Email = "paul@paul.ca",
-                            Name = "Paul",
-                            Password = "Paul123",
-                            Phone = "418-878-4090",
-                            Type = "particulier"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Address = "123 rue du kayak, Montréal, Qc, Canada",
-                            Email = "kayak@kayak.ca",
-                            Name = "KayakManiac",
-                            Password = "Kayak123",
-                            Phone = "418-878-4990",
-                            Type = "entreprise"
-                        });
                 });
 
             modelBuilder.Entity("Nordik_Aventure.Objects.Models.User.Employee", b =>
@@ -692,41 +448,142 @@ namespace Nordik_Aventure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Employees");
+                });
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            EmailAddress = "marc123@gmail.com",
-                            HireDate = new DateTime(2025, 11, 12, 0, 0, 0, 0, DateTimeKind.Local),
-                            Name = "Marc",
-                            Password = "marc123*",
-                            PhoneNumber = "418-882-8636",
-                            Role = "Employee",
-                            Surname = "Leblond"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            EmailAddress = "jean123@gmail.com",
-                            HireDate = new DateTime(2025, 11, 12, 0, 0, 0, 0, DateTimeKind.Local),
-                            Name = "Jean",
-                            Password = "jean123*",
-                            PhoneNumber = "418-882-8646",
-                            Role = "Manager",
-                            Surname = "Laronde"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            EmailAddress = "money@gmail.com",
-                            HireDate = new DateTime(2025, 11, 12, 0, 0, 0, 0, DateTimeKind.Local),
-                            Name = "Arjean",
-                            Password = "money123*",
-                            PhoneNumber = "418-182-8646",
-                            Role = "Accountant",
-                            Surname = "Labonde"
-                        });
+            modelBuilder.Entity("Nordik_Aventure.Objects.Models.Finance.Payment", b =>
+                {
+                    b.HasOne("Nordik_Aventure.Objects.Models.Finance.Transaction", "Transaction")
+                        .WithMany()
+                        .HasForeignKey("TransactionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Transaction");
+                });
+
+            modelBuilder.Entity("Nordik_Aventure.Objects.Models.Finance.Purchase", b =>
+                {
+                    b.HasOne("Nordik_Aventure.Objects.Models.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Nordik_Aventure.Objects.Models.Finance.Transaction", "Transaction")
+                        .WithMany()
+                        .HasForeignKey("TransactionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Transaction");
+                });
+
+            modelBuilder.Entity("Nordik_Aventure.Objects.Models.Finance.PurchaseDetails", b =>
+                {
+                    b.HasOne("Nordik_Aventure.Objects.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Nordik_Aventure.Objects.Models.Finance.Purchase", "Purchase")
+                        .WithMany("PurchaseDetails")
+                        .HasForeignKey("PurchaseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Purchase");
+                });
+
+            modelBuilder.Entity("Nordik_Aventure.Objects.Models.Finance.Sale", b =>
+                {
+                    b.HasOne("Nordik_Aventure.Objects.Models.User.Client", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Nordik_Aventure.Objects.Models.Finance.Transaction", "Transaction")
+                        .WithMany()
+                        .HasForeignKey("TransactionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+
+                    b.Navigation("Transaction");
+                });
+
+            modelBuilder.Entity("Nordik_Aventure.Objects.Models.Finance.SaleDetails", b =>
+                {
+                    b.HasOne("Nordik_Aventure.Objects.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Nordik_Aventure.Objects.Models.Finance.Sale", "Sale")
+                        .WithMany()
+                        .HasForeignKey("SaleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Sale");
+                });
+
+            modelBuilder.Entity("Nordik_Aventure.Objects.Models.Finance.SaleReceipt", b =>
+                {
+                    b.HasOne("Nordik_Aventure.Objects.Models.Finance.Payment", "Payment")
+                        .WithMany()
+                        .HasForeignKey("PaymentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Nordik_Aventure.Objects.Models.Finance.Sale", "Sale")
+                        .WithMany()
+                        .HasForeignKey("SaleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Payment");
+
+                    b.Navigation("Sale");
+                });
+
+            modelBuilder.Entity("Nordik_Aventure.Objects.Models.Finance.SupplierReceipt", b =>
+                {
+                    b.HasOne("Nordik_Aventure.Objects.Models.Finance.Payment", "Payment")
+                        .WithMany()
+                        .HasForeignKey("PaymentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Nordik_Aventure.Objects.Models.Finance.Purchase", "Purchase")
+                        .WithMany()
+                        .HasForeignKey("PurchaseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Payment");
+
+                    b.Navigation("Purchase");
+                });
+
+            modelBuilder.Entity("Nordik_Aventure.Objects.Models.Finance.TransactionHistory", b =>
+                {
+                    b.HasOne("Nordik_Aventure.Objects.Models.Finance.Transaction", "Transaction")
+                        .WithMany()
+                        .HasForeignKey("TransactionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Transaction");
                 });
 
             modelBuilder.Entity("Nordik_Aventure.Objects.Models.Product", b =>
@@ -746,6 +603,11 @@ namespace Nordik_Aventure.Migrations
                     b.Navigation("Category");
 
                     b.Navigation("Supplier");
+                });
+
+            modelBuilder.Entity("Nordik_Aventure.Objects.Models.Finance.Purchase", b =>
+                {
+                    b.Navigation("PurchaseDetails");
                 });
 
             modelBuilder.Entity("Nordik_Aventure.Objects.Models.Supplier", b =>
