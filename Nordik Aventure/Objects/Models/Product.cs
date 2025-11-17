@@ -16,30 +16,30 @@ public class Product
     public string Sku { get; init; }
     
     [Required]
-    public string Name { get; init; }
+    public string Name { get; set; }
     
     [Required]
-    public double PriceToBuy { get; init; }
+    public double PriceToBuy { get; set; }
     
     [Required]
-    public double PriceToSell { get; init; }
+    public double PriceToSell { get; set; }
     
-    public double PaybackToSupplier { get; init; }
+    public double PaybackToSupplier { get; set; }
     
-    public double Weight { get; init; }
+    public double Weight { get; set; }
     
     [Required]
-    public string Status { get; init; }
+    public string Status { get; set; }
     
-    public double GrossMargin { get; init; }
+    public double GrossMargin { get; set; }
     
-    public int CategoryId { get; init; }
+    public int CategoryId { get; set; }
     
     [ForeignKey(nameof(CategoryId))]
-    public Category Category { get; init; }
+    public Category Category { get; set; }
     
-    public int SupplierId { get; init; }
+    public int SupplierId { get; set; }
     
     [ForeignKey(nameof(SupplierId))]
-    public Supplier Supplier { get; init; }
+    public Supplier Supplier { get; set; }
 }

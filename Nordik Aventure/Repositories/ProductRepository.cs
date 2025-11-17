@@ -55,6 +55,21 @@ public class ProductRepository
        
     }
 
+    public GenericResponse<Product> UpdateProduct(Product product)
+    {
+        try
+        {
+            _context.Products.Update(product);
+            _context.SaveChanges();
+            return new GenericResponse<Product>(product);
+        }
+        catch (Exception e)
+        {
+            return new GenericResponse<Product>($"error:{e}", 500);
+        }
+        
+    }
+
     public GenericResponse<List<Category>> GetAllCategories()
     {
         return new GenericResponse<List<Category>>(_context.Categories.ToList());

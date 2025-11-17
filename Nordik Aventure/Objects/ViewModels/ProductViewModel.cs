@@ -3,8 +3,9 @@ using Nordik_Aventure.Objects.Models.User;
 
 namespace GestBibli.Objects.ViewModels;
 
-public class AddProductViewModel
+public class ProductViewModel
 {
+    public int Id { get; set; }
     public string Sku { get; init; }
     
     public string Name { get; init; }

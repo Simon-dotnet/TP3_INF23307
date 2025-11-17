@@ -31,6 +31,11 @@ public class ProductService
         return result;
     }
 
+    public GenericResponse<Product> UpdateProduct(Product product)
+    {
+        return _productRepository.UpdateProduct(product);
+    }
+
     public GenericResponse<List<Category>> GetAllCategories()
     {
         return _productRepository.GetAllCategories();
