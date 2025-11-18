@@ -17,6 +17,9 @@ builder.Services.AddScoped<ProductRepository>();
 builder.Services.AddScoped<SupplierService>();
 builder.Services.AddScoped<SupplierRepository>();
 
+builder.Services.AddScoped<StockService>();
+builder.Services.AddScoped<StockRepository>();
+
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {

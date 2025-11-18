@@ -8,7 +8,6 @@ public static class DbInitializer
     public static void Seed(NordikAventureContext context)
     {
         context.Database.EnsureCreated();
-
         if (!context.Categories.Any())
         {
             context.Categories.AddRange(
@@ -18,6 +17,7 @@ public static class DbInitializer
                 new Category { Id = 4, Name = "Accessoires & cuisine" },
                 new Category { Id = 5, Name = "Electronique & navigation" }
             );
+            context.SaveChanges();
         }
 
         if (!context.Clients.Any())
@@ -35,6 +35,7 @@ public static class DbInitializer
                     Email = "kayak@kayak.ca", Phone = "418-878-4990", Type = "entreprise"
                 }
             );
+            context.SaveChanges();
         }
 
         if (!context.Employees.Any())
@@ -59,6 +60,7 @@ public static class DbInitializer
                     PhoneNumber = "418-182-8646", HireDate = DateTime.Today, Role = "Accountant"
                 }
             );
+            context.SaveChanges();
         }
 
         if (!context.Suppliers.Any())
@@ -72,6 +74,7 @@ public static class DbInitializer
                 new Supplier { Id = 6, Name = "ArcticLine", AverageDeliveryTime = "2 jour", Code = "AL" },
                 new Supplier { Id = 7, Name = "TechTrail", AverageDeliveryTime = "2 jour", Code = "TT" }
             );
+            context.SaveChanges();
         }
 
         if (!context.Products.Any())
@@ -258,6 +261,176 @@ public static class DbInitializer
                     CategoryId = 5, GrossMargin = 56.00
                 }
             );
+            context.SaveChanges();
+        }
+
+        if (!context.ProductInStock.Any())
+        {
+            context.ProductInStock.AddRange(
+                new ProductInStock
+                {
+                    Id = 1, ProductId = 1, QuantityInStock = 18, Threshold = 5, MinimalQuantity = 3, Status = "Actif",
+                    StorageLocation = "A1", LastRefill = new DateTime(2025, 3, 2)
+                },
+                new ProductInStock
+                {
+                    Id = 2, ProductId = 2, QuantityInStock = 9, Threshold = 3, MinimalQuantity = 2, Status = "Actif",
+                    StorageLocation = "A1", LastRefill = new DateTime(2025, 2, 18)
+                },
+                new ProductInStock
+                {
+                    Id = 3, ProductId = 3, QuantityInStock = 25, Threshold = 8, MinimalQuantity = 5, Status = "Actif",
+                    StorageLocation = "A2", LastRefill = new DateTime(2025, 3, 10)
+                },
+                new ProductInStock
+                {
+                    Id = 4, ProductId = 4, QuantityInStock = 40, Threshold = 10, MinimalQuantity = 6, Status = "Actif",
+                    StorageLocation = "A2", LastRefill = new DateTime(2025, 3, 5)
+                },
+                new ProductInStock
+                {
+                    Id = 5, ProductId = 5, QuantityInStock = 12, Threshold = 4, MinimalQuantity = 3, Status = "Actif",
+                    StorageLocation = "A1", LastRefill = new DateTime(2025, 2, 20)
+                },
+                new ProductInStock
+                {
+                    Id = 6, ProductId = 6, QuantityInStock = 30, Threshold = 10, MinimalQuantity = 6, Status = "Actif",
+                    StorageLocation = "A3", LastRefill = new DateTime(2025, 3, 8)
+                },
+                new ProductInStock
+                {
+                    Id = 7, ProductId = 7, QuantityInStock = 20, Threshold = 6, MinimalQuantity = 4, Status = "Actif",
+                    StorageLocation = "B1", LastRefill = new DateTime(2025, 3, 12)
+                },
+                new ProductInStock
+                {
+                    Id = 8, ProductId = 8, QuantityInStock = 25, Threshold = 8, MinimalQuantity = 5, Status = "Actif",
+                    StorageLocation = "B2", LastRefill = new DateTime(2025, 3, 10)
+                },
+                new ProductInStock
+                {
+                    Id = 9, ProductId = 9, QuantityInStock = 15, Threshold = 5, MinimalQuantity = 3, Status = "Actif",
+                    StorageLocation = "B3", LastRefill = new DateTime(2025, 2, 25)
+                },
+                new ProductInStock
+                {
+                    Id = 10, ProductId = 10, QuantityInStock = 35, Threshold = 10, MinimalQuantity = 5,
+                    Status = "Actif", StorageLocation = "B3", LastRefill = new DateTime(2025, 3, 5)
+                },
+                new ProductInStock
+                {
+                    Id = 11, ProductId = 11, QuantityInStock = 40, Threshold = 10, MinimalQuantity = 6,
+                    Status = "Actif", StorageLocation = "B2", LastRefill = new DateTime(2025, 3, 11)
+                },
+                new ProductInStock
+                {
+                    Id = 12, ProductId = 12, QuantityInStock = 18, Threshold = 5, MinimalQuantity = 3, Status = "Actif",
+                    StorageLocation = "B1", LastRefill = new DateTime(2025, 2, 28)
+                },
+                new ProductInStock
+                {
+                    Id = 13, ProductId = 13, QuantityInStock = 50, Threshold = 15, MinimalQuantity = 10,
+                    Status = "Actif", StorageLocation = "C1", LastRefill = new DateTime(2025, 3, 9)
+                },
+                new ProductInStock
+                {
+                    Id = 14, ProductId = 14, QuantityInStock = 48, Threshold = 15, MinimalQuantity = 10,
+                    Status = "Actif", StorageLocation = "C1", LastRefill = new DateTime(2025, 3, 9)
+                },
+                new ProductInStock
+                {
+                    Id = 15, ProductId = 15, QuantityInStock = 30, Threshold = 8, MinimalQuantity = 4, Status = "Actif",
+                    StorageLocation = "C2", LastRefill = new DateTime(2025, 3, 3)
+                },
+                new ProductInStock
+                {
+                    Id = 16, ProductId = 16, QuantityInStock = 32, Threshold = 8, MinimalQuantity = 4, Status = "Actif",
+                    StorageLocation = "C2", LastRefill = new DateTime(2025, 3, 3)
+                },
+                new ProductInStock
+                {
+                    Id = 17, ProductId = 17, QuantityInStock = 20, Threshold = 5, MinimalQuantity = 3, Status = "Actif",
+                    StorageLocation = "C3", LastRefill = new DateTime(2025, 2, 19)
+                },
+                new ProductInStock
+                {
+                    Id = 18, ProductId = 18, QuantityInStock = 40, Threshold = 10, MinimalQuantity = 6,
+                    Status = "Actif", StorageLocation = "C4", LastRefill = new DateTime(2025, 3, 10)
+                },
+                new ProductInStock
+                {
+                    Id = 19, ProductId = 19, QuantityInStock = 25, Threshold = 8, MinimalQuantity = 4, Status = "Actif",
+                    StorageLocation = "C4", LastRefill = new DateTime(2025, 2, 22)
+                },
+                new ProductInStock
+                {
+                    Id = 20, ProductId = 20, QuantityInStock = 20, Threshold = 5, MinimalQuantity = 3, Status = "Actif",
+                    StorageLocation = "D1", LastRefill = new DateTime(2025, 2, 28)
+                },
+                new ProductInStock
+                {
+                    Id = 21, ProductId = 21, QuantityInStock = 40, Threshold = 12, MinimalQuantity = 8,
+                    Status = "Actif", StorageLocation = "D2", LastRefill = new DateTime(2025, 3, 10)
+                },
+                new ProductInStock
+                {
+                    Id = 22, ProductId = 22, QuantityInStock = 35, Threshold = 10, MinimalQuantity = 6,
+                    Status = "Actif", StorageLocation = "D3", LastRefill = new DateTime(2025, 3, 12)
+                },
+                new ProductInStock
+                {
+                    Id = 23, ProductId = 23, QuantityInStock = 25, Threshold = 8, MinimalQuantity = 5, Status = "Actif",
+                    StorageLocation = "D2", LastRefill = new DateTime(2025, 3, 6)
+                },
+                new ProductInStock
+                {
+                    Id = 24, ProductId = 24, QuantityInStock = 18, Threshold = 5, MinimalQuantity = 3, Status = "Actif",
+                    StorageLocation = "D3", LastRefill = new DateTime(2025, 2, 25)
+                },
+                new ProductInStock
+                {
+                    Id = 25, ProductId = 25, QuantityInStock = 28, Threshold = 10, MinimalQuantity = 6,
+                    Status = "Actif", StorageLocation = "D4", LastRefill = new DateTime(2025, 3, 9)
+                },
+                new ProductInStock
+                {
+                    Id = 26, ProductId = 26, QuantityInStock = 10, Threshold = 3, MinimalQuantity = 2, Status = "Actif",
+                    StorageLocation = "E1", LastRefill = new DateTime(2025, 2, 17)
+                },
+                new ProductInStock
+                {
+                    Id = 27, ProductId = 27, QuantityInStock = 18, Threshold = 5, MinimalQuantity = 3, Status = "Actif",
+                    StorageLocation = "E2", LastRefill = new DateTime(2025, 3, 1)
+                },
+                new ProductInStock
+                {
+                    Id = 28, ProductId = 28, QuantityInStock = 40, Threshold = 12, MinimalQuantity = 8,
+                    Status = "Actif", StorageLocation = "E3", LastRefill = new DateTime(2025, 3, 11)
+                },
+                new ProductInStock
+                {
+                    Id = 29, ProductId = 29, QuantityInStock = 15, Threshold = 5, MinimalQuantity = 3, Status = "Actif",
+                    StorageLocation = "E4", LastRefill = new DateTime(2025, 2, 28)
+                },
+                new ProductInStock
+                {
+                    Id = 30, ProductId = 30, QuantityInStock = 35, Threshold = 10, MinimalQuantity = 6,
+                    Status = "Actif", StorageLocation = "E5", LastRefill = new DateTime(2025, 3, 7)
+                }
+            );
+            context.SaveChanges();
+        }
+
+
+        if (!context.Stock.Any())
+        {
+            var products = context.ProductInStock.ToList();
+            context.Stock.Add(new Stock
+            {
+                LastUpdate = products.Max(p => p.LastRefill),
+                Products = products,
+                TotalProducts = products.Sum(p => p.QuantityInStock)
+            });
         }
 
         context.SaveChanges();

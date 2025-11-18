@@ -14,6 +14,10 @@ public class NordikAventureContext : DbContext
     public DbSet<Product> Products { get; set; }
     public DbSet<Supplier> Suppliers { get; set; }
     
+    public DbSet<Stock> Stock { get; set; }
+    
+    public DbSet<ProductInStock> ProductInStock { get; set; }
+    
     //Modèles Finance
     public DbSet<Payment> Payments { get; set; }
     public DbSet<Purchase> Purchases { get; set; }
@@ -47,6 +51,8 @@ public class NordikAventureContext : DbContext
         modelBuilder.Entity<Employee>();
         modelBuilder.Entity<Product>();
         modelBuilder.Entity<Supplier>();
+        modelBuilder.Entity<Stock>();
+        modelBuilder.Entity<ProductInStock>();
         
         // Modèles Finance
         modelBuilder.Entity<Payment>();
