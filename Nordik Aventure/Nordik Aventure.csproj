@@ -10,7 +10,6 @@
     <ItemGroup>
       <Folder Include="Objects\TransitionObject\" />
       <Folder Include="Views\Module Client\" />
-      <Folder Include="Views\Module Finance\" />
     </ItemGroup>
 
     <ItemGroup>

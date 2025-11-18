@@ -1,0 +1,50 @@
+@{
+    Layout = "_FinanceLayout";
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4">Historique des commandes</h1>
+
+    @model List<GestBibli.Objects.ViewModels.OrderHistoryViewModel>
+
+    <section class="mb-5 cards-container">
+        @if (!Model.Any())
+        {
+            <p class="text-muted">Aucune commande pour l'instant</p>
+        }
+        else
+        {
+            @foreach (var order in Model)
+            {
+                <div class="mb-3 border p-2 rounded bg-white">
+                    <h5>
+                        Commande #@order.OrderId - @order.DateOfOrdering.ToShortDateString() -
+                        Total: @($"{order.TotalPrice:N2}".Replace('.', ','))$
+                    </h5>
+                    <table class="table table-sm table-bordered mt-2">
+                        <thead>
+                        <tr>
+                            <th>Produit</th>
+                            <th>Fournisseur</th>
+                            <th>Quantité</th>
+                            <th>Prix total</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var item in order.Items)
+                        {
+                            <tr>
+                                <td>@item.ProductName</td>
+                                <td>@item.SupplierName</td>
+                                <td>@item.Quantity</td>
+                                <td>@($"{item.TotalPrice:N2}".Replace('.', ','))$</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        }
+    </section>
+    
+</div>
