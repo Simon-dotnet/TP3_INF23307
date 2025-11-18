@@ -8,6 +8,7 @@ public static class DbInitializer
     public static void Seed(NordikAventureContext context)
     {
         context.Database.EnsureCreated();
+
         if (!context.Categories.Any())
         {
             context.Categories.AddRange(
@@ -431,6 +432,66 @@ public static class DbInitializer
                 Products = products,
                 TotalProducts = products.Sum(p => p.QuantityInStock)
             });
+        }
+
+        if (!context.OrderSupplierProducts.Any())
+        {
+            var osp = new List<OrderSupplierProduct>
+            {
+                // Order #1 contents
+                new OrderSupplierProduct
+                {
+                    OrderSupplierProductId = 1, Quantity = 2, TotalPrice = 290, SupplierId = 1, ProductId = 1,
+                    OrderId = 1
+                },
+                new OrderSupplierProduct
+                {
+                    OrderSupplierProductId = 2, Quantity = 4, TotalPrice = 100, SupplierId = 2, ProductId = 20,
+                    OrderId = 1
+                },
+                new OrderSupplierProduct
+                {
+                    OrderSupplierProductId = 3, Quantity = 1, TotalPrice = 260, SupplierId = 1, ProductId = 2,
+                    OrderId = 1
+                },
+
+                // Order #2 contents
+                new OrderSupplierProduct
+                {
+                    OrderSupplierProductId = 4, Quantity = 9, TotalPrice = 99, SupplierId = 7, ProductId = 30,
+                    OrderId = 2
+                },
+                new OrderSupplierProduct
+                {
+                    OrderSupplierProductId = 5, Quantity = 2, TotalPrice = 44, SupplierId = 7, ProductId = 29,
+                    OrderId = 2
+                }
+            };
+
+            context.OrderSupplierProducts.AddRange(osp);
+        }
+
+        if (!context.Orders.Any())
+        {
+            var order1Items = context.OrderSupplierProducts.Where(x => x.OrderId == 1).ToList();
+            var order2Items = context.OrderSupplierProducts.Where(x => x.OrderId == 2).ToList();
+
+            context.Orders.AddRange(new Order
+                {
+                    OrderId = 1,
+                    DateOfOrdering = new DateTime(2025, 09, 04),
+                    TotalPrice = 650,
+                    DateOfDelivery = new DateTime(2025, 09, 12),
+                    OrderSupplierProducts = order1Items
+                },
+                new Order
+                {
+                    OrderId = 2,
+                    DateOfOrdering = new DateTime(2025, 11, 10),
+                    TotalPrice = 143,
+                    DateOfDelivery = new DateTime(2025, 11, 17),
+                    OrderSupplierProducts = order2Items
+                });
         }
 
         context.SaveChanges();

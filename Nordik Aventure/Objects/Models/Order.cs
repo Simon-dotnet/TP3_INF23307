@@ -5,15 +5,20 @@ namespace Nordik_Aventure.Objects.Models;
 
 public class Order
 {
+    public Order()
+    {
+        OrderSupplierProducts = new List<OrderSupplierProduct>();
+    }
+    
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int OrderId { get; init; }
     
-    DateTime DateOfOrdering { get; init; }
+    public DateTime DateOfOrdering { get; init; }
     
-    double TotalPrice { get; init; }
+    public double TotalPrice { get; init; }
     
-    DateTime DateOfDelivery { get; init; }
+    public DateTime DateOfDelivery { get; init; }
     
-    IList<OrderSupplierProduct> ProductsInOrder { get; init; }
+    public ICollection<OrderSupplierProduct> OrderSupplierProducts { get; init; }
 }

@@ -19,10 +19,10 @@
             {
                 case "Manager":
                     <div class="col">
-                        <button asp-controller="Stock" asp-action="Index" class="big-button">Gestion des stocks et des produits</button>
+                        <button onclick="location.href='@Url.Action("Index","Stock")'" class="big-button">Gestion des stocks et des produits</button>
                     </div>
                     <div class="col">
-                        <button class="big-button">Gestion des finances et de la facturation</button>
+                        <button onclick="location.href='@Url.Action("Index","Finance")'" class="big-button">Gestion des finances et de la facturation</button>
                     </div>
                     <div class="col">
                         <button class="big-button">Gestion de la relation client</button>
@@ -33,19 +33,18 @@
                         <button class="big-button no-access">Gestion des stocks et des produits</button>
                     </div>
                     <div class="col">
-                        <button class="big-button">Gestion des finances et de la facturation</button>
+                        <button onclick="location.href='@Url.Action("Index","Finance")'" class="big-button">Gestion des finances et de la facturation</button>
                     </div>
                     <div class="col">
                         <button class="big-button no-access">Gestion de la relation client</button>
                     </div>
                     break;
                 case "Employee":
-
                     <div class="col">
                         <button onclick="location.href='@Url.Action("Index","Stock")'" class="big-button">Gestion des stocks et des produits</button>
                     </div>
                     <div class="col">
-                        <button class="big-button no-access">Gestion des finances et de la facturation</button>
+                        <button onclick="location.href='@Url.Action("Index","Finance")'" class="big-button">Gestion des finances et de la facturation</button>
                     </div>
                     <div class="col">
                         <button class="big-button">Gestion de la relation client</button>

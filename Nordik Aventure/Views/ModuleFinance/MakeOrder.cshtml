@@ -1,0 +1,260 @@
+@model MakeOrderViewModel
+@using GestBibli.Objects.ViewModels
+
+@{
+    Layout = "_FinanceLayout";
+}
+
+<h1>Créer une commande</h1>
+<br/>
+
+<div class="mb-3">
+    <button id="toggleAddProduct" type="button" class="btn"
+            style="background-color: var(--background-button); color: var(--text-white);">Ajouter un produit
+    </button>
+</div>
+
+<div class="mb-4 border p-3 rounded cards-container">
+    <div id="addProductSection" class="border p-3 rounded bg-white" style="display:none;">
+        <h5>Ajouter un produit</h5>
+        <div class="mb-2">
+            <label>Produit</label>
+            <select id="productSelect" class="form-control">
+                <option value="">-- Sélectionner un produit --</option>
+                @foreach (var product in Model.AvailableProducts)
+                {
+                    bool disabled = product.Status == "Inactif"
+                                        || product.Status == "Non disponible"
+                                        || product.Status == "Indisponible";
+
+                    if (disabled)
+                    {
+                        <option value="@product.Id"
+                                disabled="disabled"
+                                data-price="@product.PriceToBuy"
+                                data-supplierid="@product.SupplierId"
+                                data-supplier="@product.Supplier?.Name">
+                            @product.Name - @($"{product.PriceToBuy:N2}".Replace('.', ','))$
+                        </option>
+                    }
+                    else
+                    {
+                        <option value="@product.Id"
+                                data-price="@product.PriceToBuy"
+                                data-supplierid="@product.SupplierId"
+                                data-supplier="@product.Supplier?.Name">
+                            @product.Name - @($"{product.PriceToBuy:N2}".Replace('.', ','))$
+                        </option>
+                    }
+                }
+
+            </select>
+        </div>
+
+        <div class="mb-2">
+            <label>Quantité</label>
+            <select id="quantitySelect" class="form-control">
+                @for (int i = 1; i <= 20; i++)
+                {
+                    <option value="@i">@i</option>
+                }
+            </select>
+        </div>
+
+        <div class="mb-2">
+            <label>Fournisseur</label>
+            <input id="supplierField" class="form-control form-control-plaintext" readonly/>
+        </div>
+
+        <div class="mb-2">
+            <label>Prix unitaire</label>
+            <input id="priceField" class="form-control form-control-plaintext" readonly/>
+        </div>
+
+        <div class="mb-2">
+            <label>Total produit</label>
+            <input id="totalProductField" class="form-control form-control-plaintext" readonly/>
+        </div>
+
+        <button id="addToCart" type="button" class="btn"
+                style="background-color: var(--background-button); color: var(--text-white);">Ajouter au panier
+        </button>
+        <button id="cancelAddProduct" type="button" class="btn btn-secondary">Annuler</button>
+    </div>
+</div>
+
+<form id="orderForm" method="post" action="/order/SubmitOrder">
+    <input type="hidden" name="DateOfDelivery" id="DateOfDelivery" value=""/>
+
+    <table class="table table-bordered" id="orderTable">
+        <thead>
+        <tr>
+            <th>Produit</th>
+            <th>Fournisseur</th>
+            <th>Quantité</th>
+            <th>Prix total</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- JS will populate -->
+        </tbody>
+    </table>
+
+    <!-- Totals -->
+    <p>Total: <span id="totalPrice">0,00$</span></p>
+    <p>TPS: <span id="tps">0,00$</span></p>
+    <p>TVQ: <span id="tvq">0,00$</span></p>
+    <p>Total avec taxes: <span id="totalWithTaxes">0,00$</span></p>
+
+    <!-- Buttons -->
+    <button id="submitOrder" type="submit" class="btn"
+            style="background-color: var(--background-button); color: var(--text-white);">Faire la commande
+    </button>
+    <button id="cancelOrder" type="button" class="btn btn-secondary">Annuler</button>
+</form>
+
+<script>
+    let cart = [];
+
+    const format = v => v.toFixed(2).replace('.', ',') + '$';
+
+    const updateTotals = () => {
+        let total = cart.reduce((sum, i) => sum + i.totalPrice, 0);
+        let tps = total * 0.05;
+        let tvq = total * 0.09975;
+        let totalWithTaxes = total + tps + tvq;
+
+        document.getElementById('totalPrice').innerText = format(total);
+        document.getElementById('tps').innerText = format(tps);
+        document.getElementById('tvq').innerText = format(tvq);
+        document.getElementById('totalWithTaxes').innerText = format(totalWithTaxes);
+
+        // Update hidden inputs on the form for submission (optional: DateOfDelivery)
+        // document.getElementById('DateOfDelivery').value = new Date().toISOString();
+    };
+
+    const renderCart = () => {
+        const tbody = document.querySelector('#orderTable tbody');
+        tbody.innerHTML = '';
+
+        cart.forEach((item, index) => {
+            const row = document.createElement('tr');
+
+            // Build the table row
+            row.innerHTML = `
+                <td>${item.name}</td>
+                <td>${item.supplierName}</td>
+                <td>${item.quantity}</td>
+                <td>${item.totalPrice.toFixed(2).replace('.', ',')}$</td>
+                <td>
+                    <button type="button" class="btn btn-sm btn-danger" data-index="${index}">Supprimer</button>
+                    <!-- Hidden inputs that will be picked up by model binding -->
+                    <input type="hidden" name="Items[${index}].ProductId" value="${item.productId}" />
+                    <input type="hidden" name="Items[${index}].SupplierId" value="${item.supplierId}" />
+                    <input type="hidden" name="Items[${index}].Quantity" value="${item.quantity}" />
+                    <input type="hidden" name="Items[${index}].UnitPrice" value="${item.unitPrice}" />
+                    <input type="hidden" name="Items[${index}].TotalPrice" value="${item.totalPrice}" />
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+
+        // attach delete handlers
+        document.querySelectorAll('#orderTable button.btn-danger').forEach(btn => {
+            btn.onclick = (e) => {
+                const idx = parseInt(e.currentTarget.dataset.index, 10);
+                cart.splice(idx, 1);
+                renderCart();
+                updateTotals();
+            };
+        });
+
+        updateTotals();
+    };
+
+    // Show/hide add product section
+    document.getElementById('toggleAddProduct').onclick = () => {
+        document.getElementById('addProductSection').style.display = 'block';
+    };
+    document.getElementById('cancelAddProduct').onclick = () => {
+        document.getElementById('addProductSection').style.display = 'none';
+    };
+
+    // Add product fields
+    const productSelect = document.getElementById('productSelect');
+    const quantitySelect = document.getElementById('quantitySelect');
+    const supplierField = document.getElementById('supplierField');
+    const priceField = document.getElementById('priceField');
+    const totalProductField = document.getElementById('totalProductField');
+
+    const updateAddProductFields = () => {
+        const selected = productSelect.selectedOptions[0];
+        if (!selected || !selected.value) {
+            supplierField.value = '';
+            priceField.value = '';
+            totalProductField.value = '';
+            return;
+        }
+        const price = parseFloat(selected.dataset.price);
+        const supplier = selected.dataset.supplier;
+        const quantity = parseInt(quantitySelect.value);
+        supplierField.value = supplier || '';
+        priceField.value = price.toFixed(2).replace('.', ',') + '$';
+        totalProductField.value = (price * quantity).toFixed(2).replace('.', ',') + '$';
+    };
+
+    productSelect.onchange = updateAddProductFields;
+    quantitySelect.onchange = updateAddProductFields;
+
+    // Add to cart
+    document.getElementById('addToCart').onclick = () => {
+        const selected = productSelect.selectedOptions[0];
+        if (!selected || !selected.value) return alert('Sélectionnez un produit');
+
+        const productId = parseInt(selected.value);
+        const productName = selected.text.split('-')[0].trim();
+        const supplierId = parseInt(selected.dataset.supplierid || 0);
+        const supplierName = selected.dataset.supplier || '';
+        const unitPrice = parseFloat(selected.dataset.price);
+        const quantity = parseInt(quantitySelect.value);
+        const totalPrice = unitPrice * quantity;
+
+        cart.push({
+            productId,
+            name: productName,
+            supplierId,
+            supplierName,
+            quantity,
+            unitPrice,
+            totalPrice
+        });
+
+        renderCart();
+        document.getElementById('addProductSection').style.display = 'none';
+
+        // Reset selects
+        productSelect.selectedIndex = 0;
+        quantitySelect.value = 1;
+        supplierField.value = '';
+        priceField.value = '';
+        totalProductField.value = '';
+    };
+
+    // Cancel order button
+    document.getElementById('cancelOrder').onclick = () => {
+        window.location.href = '/finance';
+    };
+
+    // When submitting the form normally (press submit), ensure the inputs match up — renderCart already injects the right hidden inputs
+    // If needed, you can also block submit if cart empty:
+    document.getElementById('orderForm').onsubmit = (e) => {
+        if (cart.length === 0) {
+            e.preventDefault();
+            alert('Aucun produit dans la commande');
+            return false;
+        }
+        // allow normal submit; hidden inputs created by renderCart will be part of the form
+        return true;
+    };
+</script>
