@@ -17,4 +17,9 @@ public class SupplierService
     {
         return _supplierRepository.GetAllSuppliersWithItsProducts();
     }
+
+    public GenericResponse<Supplier> AddSupplier(Supplier supplier)
+    {
+        return _supplierRepository.AddSupplier(supplier);
+    } 
 }

@@ -51,10 +51,10 @@
                 </a>
                 <ul class="dropdown-menu" style="margin-bottom: -85px;position: relative; z-index: 200" aria-labelledby="navbarDropdownMenuLink">
                     <li>
-                        <a class="dropdown-item" onclick="location.href='@Url.Action("Index", "Supplier")'">Consulter fournisseurs</a>
+                        <a style="cursor: pointer;" class="dropdown-item" onclick="location.href='@Url.Action("Index", "Supplier")'">Consulter fournisseurs</a>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="#">Ajouter fournisseur</a>
+                        <a style="cursor: pointer;" class="dropdown-item" href="@Url.Action("AddSupplierForm", "Supplier")">Ajouter fournisseur</a>
                     </li>
                 </ul>
             </li>

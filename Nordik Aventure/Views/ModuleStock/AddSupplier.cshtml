@@ -1,0 +1,41 @@
+@model Nordik_Aventure.Objects.Models.Supplier
+@{
+    Layout = "_StockLayout";
+}
+
+<div class="container-fluid">
+    <form id="form-add" method="post" asp-action="AddSupplier" asp-controller="Supplier">
+        <div class="row align-items-center mb-4">
+            <div class="col">
+                <h3 class="h3 mb-0 ms-2">Ajouter un fournisseur</h3>
+            </div>
+        </div>
+        <hr/>
+        <div class="cards-container">
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label">Nom</label>
+                <input asp-for="Name" class="form-control" required="required"/>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Code" class="form-label">Code</label>
+                <input asp-for="Code" class="form-control" required="required"/>
+                <span asp-validation-for="Code" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Discount" class="form-label">Rabais (%)</label>
+                <input type="number" min="0" max="100" asp-for="Discount" class="form-control"/>
+                <span asp-validation-for="Discount" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="AverageDeliveryTime" class="form-label">Délai moyen de livraison</label>
+                <input asp-for="AverageDeliveryTime" class="form-control"/>
+                <span asp-validation-for="AverageDeliveryTime" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="text-center mt-3">
+            <button type="submit" style="background-color: var(--background-button); color: var(--text-white)" class="btn w-25">Confirmer</button>
+        </div>
+    </form>
+</div>

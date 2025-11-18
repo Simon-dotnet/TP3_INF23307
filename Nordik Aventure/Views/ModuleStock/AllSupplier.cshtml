@@ -1,19 +1,69 @@
 @model List<Nordik_Aventure.Objects.Models.Supplier>
 @{
     Layout = "_StockLayout";
+
+    var list = Model;
 }
 
-<div>
-    @foreach(var s in Model)
-    {
-        <h1>Supplier</h1>
-        <p>Nom: @s.Name</p>
-        <p>Code: @s.Code</p>
-        <h2>Possède produit:</h2>
-        @foreach (var p in s.Products)
+<div class="container-fluid">
+    <div class="row align-items-center mb-4">
+        <div class="col">
+            <h3 class="h3 mb-0 ms-2">Liste des fournisseurs</h3>
+        </div>
+        <div class="col text-end">
+            <input id="searchInput" oninput="FilterList()" type="text" class="form-control w-50 d-inline-block" placeholder="Rechercher un produit..."/>
+        </div>
+    </div>
+    <hr/>
+    <div class="row mb-4 cards-container py-4 px-2">
+        @foreach (var p in list)
         {
-            <h3>Nom: @p.Name</h3>
-            <p>SKU: @p.Sku</p>
+            <div class="col-md-6 mb-4" id="supplier-card-zone" data-name="@p.Name.ToLower()">
+                <div class="product-card">
+                    <div class="header">
+                        <div class="info">
+                            <p class="name">@p.Name</p>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <p><strong>Code:</strong> @p.Code</p>
+                    </div>
+                    <div class="card-content">
+                        <p><strong>Rabais:</strong> @p.Discount %</p>
+                    </div>
+                    <div class="card-content">
+                        <p><strong>Délai moyen de livraison:</strong> @p.AverageDeliveryTime</p>
+                    </div>
+                    <div class="card-content">
+                        <p><strong>Nombre de produits:</strong> @p.Products.Count</p>
+                    </div>
+                </div>
+            </div>
         }
-    }
+    </div>
+    <hr/>
+    <div class="row">
+        <div class="col text-center">
+            <a href="@Url.Action("AddSupplierForm", "Supplier")" class="btn w-25" style="background-color: var(--background-button); color: var(--text-white);">
+                Ajouter un fournisseur
+            </a>
+        </div>
+    </div>
 </div>
+
+<script>
+    function FilterList() {
+        let word = document.getElementById("searchInput").value.toLowerCase();
+        let cards = document.querySelectorAll("#supplier-card-zone");
+
+        if (word.length === 0){
+        cards.forEach(card => {
+            card.style.display = "block"
+        })
+        }
+        cards.forEach(card => {
+            let name = card.getAttribute("data-name");
+            card.style.display = name.startsWith(word) ? "block" : "none";
+        });
+    }
+</script>
