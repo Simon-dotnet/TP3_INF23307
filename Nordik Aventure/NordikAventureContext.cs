@@ -13,6 +13,8 @@ public class NordikAventureContext : DbContext
     public DbSet<Category> Categories { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<Supplier> Suppliers { get; set; }
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<OrderSupplierProduct> OrderSupplierProducts { get; set; }
     
     public DbSet<Stock> Stock { get; set; }
     
@@ -22,12 +24,12 @@ public class NordikAventureContext : DbContext
     public DbSet<Payment> Payments { get; set; }
     public DbSet<Purchase> Purchases { get; set; }
     public DbSet<PurchaseDetails> PurchaseDetails { get; set; }
-    public DbSet<Sale> Sale { get; set; }
+    public DbSet<Sale> Sales { get; set; }
     public DbSet<SaleDetails> SaleDetails { get; set; }
-    public DbSet<SaleReceipt> SaleReceipt { get; set; }
-    public DbSet<SupplierReceipt> SupplierReceipt { get; set; }
+    public DbSet<SaleReceipt> SaleReceipts { get; set; }
+    public DbSet<SupplierReceipt> SupplierReceipts { get; set; }
     public DbSet<Taxes> Taxes { get; set; }
-    public DbSet<Transaction> Transaction { get; set; }
+    public DbSet<Transaction> Transactions { get; set; }
     public DbSet<TransactionHistory> TransactionHistory { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -51,6 +53,8 @@ public class NordikAventureContext : DbContext
         modelBuilder.Entity<Employee>();
         modelBuilder.Entity<Product>();
         modelBuilder.Entity<Supplier>();
+        modelBuilder.Entity<Order>();
+        modelBuilder.Entity<OrderSupplierProduct>();
         modelBuilder.Entity<Stock>();
         modelBuilder.Entity<ProductInStock>();
         

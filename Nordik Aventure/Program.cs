@@ -20,6 +20,9 @@ builder.Services.AddScoped<SupplierRepository>();
 builder.Services.AddScoped<StockService>();
 builder.Services.AddScoped<StockRepository>();
 
+builder.Services.AddScoped<OrderService>();
+builder.Services.AddScoped<OrderRepository>();
+
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
