@@ -1,0 +1,65 @@
+@model Nordik_Aventure.Objects.Models.ProductInStock
+@{
+    Layout = "_StockLayout";
+}
+
+<div class="container-fluid">
+    <form id="form-edit" method="post" asp-action="UpdateProductStock" asp-controller="Stock">
+        <div class="row align-items-center mb-4">
+            <div class="col">
+                <h3 class="h3 mb-0 ms-2">Modifier le produit en stock @Model.Product.Name</h3>
+            </div>
+        </div>
+        <hr/>
+        <div class="cards-container">
+            <div class="mb-3" style="display: none">
+                <label asp-for="Id" class="form-label"></label>
+                <input asp-for="Id" class="form-control" required="required"/>
+                <span asp-validation-for="Id" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="QuantityInStock" class="form-label">Quantité en stock</label>
+                <input id="quantityInput" type="number" min="0" asp-for="QuantityInStock" class="form-control"/>
+                <span asp-validation-for="QuantityInStock" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Threshold" class="form-label">Seuil de réapprovisionnement</label>
+                <input type="number" min="0" asp-for="Threshold" class="form-control"/>
+                <span asp-validation-for="Threshold" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="MinimalQuantity" class="form-label">Quantité minimale</label>
+                <input type="number" min="0" asp-for="MinimalQuantity" class="form-control"/>
+                <span asp-validation-for="MinimalQuantity" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="StorageLocation" class="form-label">Emplacement</label>
+                <input type="text" asp-for="StorageLocation" class="form-control"/>
+                <span asp-validation-for="StorageLocation" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Status" class="form-label">Statut</label>
+                <select asp-for="Status" class="form-select" aria-label="status">
+                    <option selected="selected" value="Actif">Disponible</option>
+                    <option value="Inactif">Non-Disponible</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="text-center mt-3">
+            <button type="submit" style="background-color: var(--background-button); color: var(--text-white)" class="btn w-25">Confirmer la modification</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    let hasInterractedOnce = false;
+    let qteInput = document.getElementById('quantityInput')
+    qteInput.addEventListener('click', () => {
+        if (!hasInterractedOnce){
+            alert("Vous devriez changer la quantité qu'en dernier recours. \nPour ajouter des produits dans le stock, passer par les commandes.")
+            hasInterractedOnce = true
+        }
+    })
+
+</script>
