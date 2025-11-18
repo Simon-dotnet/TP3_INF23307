@@ -18,27 +18,27 @@
                 <span asp-validation-for="Sku" class="text-danger"></span>
             </div>
             <div class="mb-3">
-                <label asp-for="Name" class="form-label"></label>
+                <label asp-for="Name" class="form-label">Nom</label>
                 <input asp-for="Name" class="form-control" required="required"/>
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="mb-3">
-                <label asp-for="PriceToBuy" class="form-label"></label>
+                <label asp-for="PriceToBuy" class="form-label">Prix d'achat</label>
                 <input id="buy-price" type="number" step="0.01" min="0" max="99999" asp-for="PriceToBuy" class="form-control"/>
                 <span asp-validation-for="PriceToBuy" class="text-danger"></span>
             </div>
             <div class="mb-3">
-                <label asp-for="PriceToSell" class="form-label"></label>
+                <label asp-for="PriceToSell" class="form-label">Prix de revente</label>
                 <input id="sell-price" type="number" step="0.01" min="0" max="99999" asp-for="PriceToSell" class="form-control"/>
                 <span asp-validation-for="PriceToSell" class="text-danger"></span>
             </div>
             <div class="mb-3">
-                <label asp-for="PaybackToSupplier" class="form-label"></label>
+                <label asp-for="PaybackToSupplier" class="form-label">Remise au fournisseur (en décimal)</label>
                 <input type="number" step="0.01" min="0" max="99999" asp-for="PaybackToSupplier" class="form-control"/>
                 <span asp-validation-for="PaybackToSupplier" class="text-danger"></span>
             </div>
             <div class="mb-3">
-                <label asp-for="Weight" class="form-label"></label>
+                <label asp-for="Weight" class="form-label">Poid</label>
                 <input type="number" step="0.01" min="0" max="99999" asp-for="Weight" class="form-control"/>
                 <span asp-validation-for="Weight" class="text-danger"></span>
             </div>

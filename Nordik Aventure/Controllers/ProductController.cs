@@ -25,7 +25,7 @@ public class ProductController : Controller
     }
 
     [HttpGet]
-    [Route("/add")]
+    [Route("add")]
     public IActionResult AddProductForm()
     {
         var categories = _productService.GetAllCategories();
@@ -69,7 +69,7 @@ public class ProductController : Controller
     }
 
     [HttpGet]
-    [Route("/edit/{productId}")]
+    [Route("edit/{productId}")]
     public IActionResult ModifyProductForm(int productId)
     {
         var categories = _productService.GetAllCategories();
@@ -94,7 +94,7 @@ public class ProductController : Controller
     }
 
     [HttpPost]
-    [Route("/edit")]
+    [Route("edit")]
     public IActionResult ModifyProduct([FromForm] ProductViewModel productVM)
     {
         var existingProduct = _productService.GetProductById(productVM.Id).Data;
