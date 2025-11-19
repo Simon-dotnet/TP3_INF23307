@@ -15,24 +15,28 @@ public class OrderRepository
 
     public GenericResponse<Order> GetOrderById(int id)
     {
-        var order = _context.Orders.Where(order => order.OrderId == id)
-            .Include(order => order.TotalPrice)
-            .Include(order => order.DateOfOrdering)
-            .Include(order => order.DateOfDelivery)
-            .Include(order => order.OrderSupplierProducts).ToList()
+        var order = _context.Orders
+            .Where(o => o.OrderId == id)
+            .Include(o => o.OrderSupplierProducts)
+            .ThenInclude(osp => osp.Product)
+            .Include(o => o.OrderSupplierProducts)
+            .ThenInclude(osp => osp.Supplier)
             .SingleOrDefault();
 
         return new GenericResponse<Order>(order);
     }
 
+
     public GenericResponse<List<Order>> GetAllOrders()
     {
         var orders = _context.Orders
-            .OrderBy(order => order.OrderId)
-            .Include(order => order.TotalPrice)
-            .Include(order => order.DateOfOrdering)
-            .Include(order => order.DateOfDelivery)
-            .Include(order => order.OrderSupplierProducts).ToList();
+            .Include(o => o.OrderSupplierProducts)
+            .ThenInclude(osp => osp.Product)
+            .Include(o => o.OrderSupplierProducts)
+            .ThenInclude(osp => osp.Supplier)
+            .OrderBy(o => o.OrderId)
+            .ToList();
+
         return new GenericResponse<List<Order>>(orders);
     }
     

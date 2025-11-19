@@ -135,16 +135,20 @@ namespace Nordik_Aventure.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Taxes",
-                columns: table => new
-                {
-                    ValueTps = table.Column<double>(type: "double", nullable: false),
-                    ValueTvq = table.Column<double>(type: "double", nullable: false)
-                },
-                constraints: table =>
-                {
-                })
+                    name: "Taxes",
+                    columns: table => new
+                    {
+                        TaxesId = table.Column<int>(type: "int", nullable: false)
+                            .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                        ValueTps = table.Column<double>(type: "double", nullable: false),
+                        ValueTvq = table.Column<double>(type: "double", nullable: false)
+                    },
+                    constraints: table =>
+                    {
+                        table.PrimaryKey("PK_Taxes", x => x.TaxesId);
+                    })
                 .Annotation("MySql:CharSet", "utf8mb4");
+
 
             migrationBuilder.CreateTable(
                 name: "Transactions",

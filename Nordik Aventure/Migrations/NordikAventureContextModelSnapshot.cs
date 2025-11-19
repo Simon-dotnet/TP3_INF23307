@@ -205,11 +205,19 @@ namespace Nordik_Aventure.Migrations
 
             modelBuilder.Entity("Nordik_Aventure.Objects.Models.Finance.Taxes", b =>
                 {
+                    b.Property<int>("TaxesId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("TaxesId"));
+
                     b.Property<double>("ValueTps")
                         .HasColumnType("double");
 
                     b.Property<double>("ValueTvq")
                         .HasColumnType("double");
+
+                    b.HasKey("TaxesId");
 
                     b.ToTable("Taxes");
                 });

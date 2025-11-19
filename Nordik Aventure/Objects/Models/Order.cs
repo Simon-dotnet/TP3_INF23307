@@ -14,11 +14,11 @@ public class Order
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int OrderId { get; init; }
     
-    public DateTime DateOfOrdering { get; init; }
+    public DateTime DateOfOrdering { get; set; }
     
-    public double TotalPrice { get; init; }
+    public double TotalPrice { get; set; }
     
-    public DateTime DateOfDelivery { get; init; }
+    public DateTime DateOfDelivery { get; set; }
     
-    public ICollection<OrderSupplierProduct> OrderSupplierProducts { get; init; }
+    public ICollection<OrderSupplierProduct> OrderSupplierProducts { get; set; }
 }

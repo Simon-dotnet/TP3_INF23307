@@ -1,4 +1,5 @@
 using Nordik_Aventure.Objects.Models;
+using Nordik_Aventure.Objects.Models.Finance;
 using Nordik_Aventure.Objects.Models.User;
 
 namespace Nordik_Aventure;
@@ -483,6 +484,16 @@ public static class DbInitializer
                     TotalPrice = 143,
                     DateOfDelivery = new DateTime(2025, 11, 17),
                     OrderSupplierProducts = order2Items
+                });
+        }
+        
+        if (!context.Taxes.Any())
+        {
+            context.Taxes.AddRange(new Taxes
+                {
+                    TaxesId = 1,
+                    ValueTps = 5,
+                    ValueTvq = 9.975
                 });
         }
 
