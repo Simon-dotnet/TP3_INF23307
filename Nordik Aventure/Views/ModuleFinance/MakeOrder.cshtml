@@ -2,7 +2,7 @@
 @using GestBibli.Objects.ViewModels
 
 @{
-    Layout = "_FinanceLayout";
+Layout = "_FinanceLayout";
 }
 
 <h1>Créer une commande</h1>
@@ -23,42 +23,41 @@
                 <option value="">-- Sélectionner un produit --</option>
                 @foreach (var product in Model.AvailableProducts)
                 {
-                    bool disabled = product.Status == "Inactif"
-                                        || product.Status == "Non disponible"
-                                        || product.Status == "Indisponible";
+                bool disabled = product.Status == "Inactif"
+                || product.Status == "Non disponible"
+                || product.Status == "Indisponible";
 
-                    if (disabled)
-                    {
-                        <option value="@product.Id"
-                                disabled="disabled"
-                                data-price="@product.PriceToBuy"
-                                data-supplierid="@product.SupplierId"
-                                data-supplier="@product.Supplier?.Name">
-                            @product.Name - @($"{product.PriceToBuy:N2}".Replace('.', ','))$
-                        </option>
-                    }
-                    else
-                    {
-                        <option value="@product.Id"
-                                data-price="@product.PriceToBuy"
-                                data-supplierid="@product.SupplierId"
-                                data-supplier="@product.Supplier?.Name">
-                            @product.Name - @($"{product.PriceToBuy:N2}".Replace('.', ','))$
-                        </option>
-                    }
+                if (disabled)
+                {
+                <option value="@product.Id"
+                        disabled="disabled"
+                        data-price="@product.PriceToBuy"
+                        data-supplierid="@product.SupplierId"
+                        data-supplier="@product.Supplier?.Name">
+                    @product.Name - @($"{product.PriceToBuy:N2}".Replace('.', ','))$
+                </option>
                 }
-
+                else
+                {
+                <option value="@product.Id"
+                        data-price="@product.PriceToBuy"
+                        data-supplierid="@product.SupplierId"
+                        data-supplier="@product.Supplier?.Name">
+                    @product.Name - @($"{product.PriceToBuy:N2}".Replace('.', ','))$
+                </option>
+                }
+                }
             </select>
         </div>
 
         <div class="mb-2">
             <label>Quantité</label>
-            <select id="quantitySelect" class="form-control">
-                @for (int i = 1; i <= 20; i++)
-                {
-                    <option value="@i">@i</option>
-                }
-            </select>
+            <input id="quantitySelect"
+                   type="number"
+                   class="form-control"
+                   min="1"
+                   max="9999"
+                   value="1" />
         </div>
 
         <div class="mb-2">
@@ -85,6 +84,8 @@
 
 <form id="orderForm" method="post" action="/order/SubmitOrder">
     <input type="hidden" name="DateOfDelivery" id="DateOfDelivery" value=""/>
+    <input type="hidden" name="TPS" id="TPSField" value="0"/>
+    <input type="hidden" name="TVQ" id="TVQField" value="0"/>
 
     <table class="table table-bordered" id="orderTable">
         <thead>
@@ -97,17 +98,14 @@
         </tr>
         </thead>
         <tbody>
-        <!-- JS will populate -->
         </tbody>
     </table>
 
-    <!-- Totals -->
     <p>Total: <span id="totalPrice">0,00$</span></p>
     <p>TPS: <span id="tps">0,00$</span></p>
     <p>TVQ: <span id="tvq">0,00$</span></p>
     <p>Total avec taxes: <span id="totalWithTaxes">0,00$</span></p>
 
-    <!-- Buttons -->
     <button id="submitOrder" type="submit" class="btn"
             style="background-color: var(--background-button); color: var(--text-white);">Faire la commande
     </button>
@@ -117,12 +115,15 @@
 <script>
     let cart = [];
 
+    const TPS_RATE = (@Model.Taxes?.ValueTps ?? 5) / 100;
+    const TVQ_RATE = (@Model.Taxes?.ValueTvq ?? 9.975) / 100;
+
     const format = v => v.toFixed(2).replace('.', ',') + '$';
 
     const updateTotals = () => {
         let total = cart.reduce((sum, i) => sum + i.totalPrice, 0);
-        let tps = total * 0.05;
-        let tvq = total * 0.09975;
+        let tps = total * TPS_RATE;
+        let tvq = total * TVQ_RATE;
         let totalWithTaxes = total + tps + tvq;
 
         document.getElementById('totalPrice').innerText = format(total);
@@ -130,8 +131,8 @@
         document.getElementById('tvq').innerText = format(tvq);
         document.getElementById('totalWithTaxes').innerText = format(totalWithTaxes);
 
-        // Update hidden inputs on the form for submission (optional: DateOfDelivery)
-        // document.getElementById('DateOfDelivery').value = new Date().toISOString();
+        document.getElementById('TPSField').value = tps.toFixed(2);
+        document.getElementById('TVQField').value = tvq.toFixed(2);
     };
 
     const renderCart = () => {
@@ -141,7 +142,6 @@
         cart.forEach((item, index) => {
             const row = document.createElement('tr');
 
-            // Build the table row
             row.innerHTML = `
                 <td>${item.name}</td>
                 <td>${item.supplierName}</td>
@@ -149,7 +149,6 @@
                 <td>${item.totalPrice.toFixed(2).replace('.', ',')}$</td>
                 <td>
                     <button type="button" class="btn btn-sm btn-danger" data-index="${index}">Supprimer</button>
-                    <!-- Hidden inputs that will be picked up by model binding -->
                     <input type="hidden" name="Items[${index}].ProductId" value="${item.productId}" />
                     <input type="hidden" name="Items[${index}].SupplierId" value="${item.supplierId}" />
                     <input type="hidden" name="Items[${index}].Quantity" value="${item.quantity}" />
@@ -160,7 +159,6 @@
             tbody.appendChild(row);
         });
 
-        // attach delete handlers
         document.querySelectorAll('#orderTable button.btn-danger').forEach(btn => {
             btn.onclick = (e) => {
                 const idx = parseInt(e.currentTarget.dataset.index, 10);
@@ -173,7 +171,6 @@
         updateTotals();
     };
 
-    // Show/hide add product section
     document.getElementById('toggleAddProduct').onclick = () => {
         document.getElementById('addProductSection').style.display = 'block';
     };
@@ -181,7 +178,6 @@
         document.getElementById('addProductSection').style.display = 'none';
     };
 
-    // Add product fields
     const productSelect = document.getElementById('productSelect');
     const quantitySelect = document.getElementById('quantitySelect');
     const supplierField = document.getElementById('supplierField');
@@ -207,7 +203,6 @@
     productSelect.onchange = updateAddProductFields;
     quantitySelect.onchange = updateAddProductFields;
 
-    // Add to cart
     document.getElementById('addToCart').onclick = () => {
         const selected = productSelect.selectedOptions[0];
         if (!selected || !selected.value) return alert('Sélectionnez un produit');
@@ -220,20 +215,10 @@
         const quantity = parseInt(quantitySelect.value);
         const totalPrice = unitPrice * quantity;
 
-        cart.push({
-            productId,
-            name: productName,
-            supplierId,
-            supplierName,
-            quantity,
-            unitPrice,
-            totalPrice
-        });
+        cart.push({ productId, name: productName, supplierId, supplierName, quantity, unitPrice, totalPrice });
 
         renderCart();
         document.getElementById('addProductSection').style.display = 'none';
-
-        // Reset selects
         productSelect.selectedIndex = 0;
         quantitySelect.value = 1;
         supplierField.value = '';
@@ -241,20 +226,16 @@
         totalProductField.value = '';
     };
 
-    // Cancel order button
     document.getElementById('cancelOrder').onclick = () => {
         window.location.href = '/finance';
     };
 
-    // When submitting the form normally (press submit), ensure the inputs match up — renderCart already injects the right hidden inputs
-    // If needed, you can also block submit if cart empty:
     document.getElementById('orderForm').onsubmit = (e) => {
         if (cart.length === 0) {
             e.preventDefault();
             alert('Aucun produit dans la commande');
             return false;
         }
-        // allow normal submit; hidden inputs created by renderCart will be part of the form
         return true;
     };
 </script>

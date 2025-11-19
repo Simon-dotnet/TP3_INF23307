@@ -1,4 +1,7 @@
 @{
+    var type = TempData["ErrorType"]?.ToString()?.Trim().ToLower();
+    var errorType = (type == "error" ? "danger" : (type == "success" ? "success" : null));
+    var errorText = TempData["ErrorMessage"] as string;
 }
 
 <link rel="stylesheet" href="~/css/colors.css"/>
@@ -25,56 +28,28 @@
                 </a>
             </li>
             <li class="nav-item dropdown position-static" style="position: relative">
-                <a class="nav-link dropdown-toggle fs-5 fw-bold" href="#" id="navbarDropdownMenuLink" role="button"
-                   data-bs-toggle="dropdown" aria-expanded="false"
+                <a class="nav-link dropdown-toggle fs-5 fw-bold" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false"
                    style="color: var(--text-white); margin-left: 40px; transition: color 0.3s ease; cursor: pointer;"
                    onmouseover="this.style.color='var(--text-white-hover)'"
                    onmouseout="this.style.color='var(--text-white)'">
                     Commandes
                 </a>
-                <ul style="margin-bottom: -85px" class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <ul style="margin-bottom: -85px; position: relative; z-index: 200" class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                     <li>
-                        <a class="dropdown-item" href="@Url.Action("MakeOrder", "Order")">Passer une commande</a>
+                        <a style="cursor: pointer;" class="dropdown-item" onclick="location.href='@Url.Action("MakeOrder", "Order")'">Passer une commande</a>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="@Url.Action("OrderHistory", "Order")">Consulter l'historique des commandes</a>
-                    </li>
-                </ul>
-            </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle fs-5 fw-bold" href="#" id="navbarDropdownMenuLink" role="button"
-                   data-bs-toggle="dropdown" aria-expanded="false"
-                   style="color: var(--text-white); margin-left: 40px; transition: color 0.3s ease; cursor: pointer;"
-                   onmouseover="this.style.color='var(--text-white-hover)'"
-                   onmouseout="this.style.color='var(--text-white)'">
-                    Fournisseurs
-                </a>
-                <ul class="dropdown-menu" style="margin-bottom: -85px" aria-labelledby="navbarDropdownMenuLink">
-                    <li>
-                        <a class="dropdown-item" onclick="location.href='@Url.Action("Index", "Supplier")'">Consulter
-                            fournisseurs</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="#">Ajouter fournisseur</a>
+                        <a style="cursor: pointer;" onclick="location.href='@Url.Action("OrderHistory", "Order")'" class="dropdown-item" href="#">Consulter l'historique des commandes</a>
                     </li>
                 </ul>
             </li>
             <li class="nav-item">
                 <a class="nav-link fs-5 fw-bold"
-                   onclick="location.href='@Url.Action("Index", "Stock")'"
+                   href="@Url.Action("Index", "Taxes")"
                    style="color: var(--text-white); margin-left: 40px; transition: color 0.3s ease; cursor: pointer;"
                    onmouseover="this.style.color='var(--text-white-hover)'"
                    onmouseout="this.style.color='var(--text-white)'">
-                    Consulter Stock
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link fs-5 fw-bold"
-                   onclick="location.href='@Url.Action("Index", "Stock")'"
-                   style="color: var(--text-white); margin-left: 40px; transition: color 0.3s ease; cursor: pointer;"
-                   onmouseover="this.style.color='var(--text-white-hover)'"
-                   onmouseout="this.style.color='var(--text-white)'">
-                    Consulter Historique Mouvement
+                    Gérer taxes TPS/TVQ
                 </a>
             </li>
         </ul>
@@ -95,6 +70,13 @@
 
 
 <main class="p-3" style="flex: 1; background-color: var(--text-white)">
+    @if (!string.IsNullOrEmpty(errorText))
+    {
+        <div style="z-index: 100; position: relative" class="alert alert-@errorType alert-dismissible fade show" role="alert">
+            <p style="text-align: center" class="m-0">@errorText</p>
+        </div>
+    }
+
     @RenderBody()
 </main>
 
