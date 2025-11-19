@@ -15,7 +15,10 @@ public class StockService
 
     public GenericResponse<Stock> GetStock()
     {
-        return _stockRepository.GetStock();
+        var stock = _stockRepository.GetStock();
+        stock.Data.LastUpdate = stock.Data.Products.Max(p => p.LastRefill);
+        stock.Data.TotalProducts = stock.Data.Products.Sum(p => p.QuantityInStock);
+        return stock;
     }
 
     public GenericResponse<ProductInStock> GetProductInStock(int id)

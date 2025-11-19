@@ -9,8 +9,10 @@ public class Stock
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
     
+    [NotMapped]
     public int TotalProducts { get; set; }
     
+    [NotMapped]
     public DateTime LastUpdate { get; set; }
     
     public IList<ProductInStock> Products { get; set; }
