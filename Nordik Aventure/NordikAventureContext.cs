@@ -71,4 +71,27 @@ public class NordikAventureContext : DbContext
         modelBuilder.Entity<TransactionHistory>();
 
     }
+    
+    public override int SaveChanges()
+    {
+        UpdateProductInStockStatus();
+        return base.SaveChanges();
+    }
+    
+    private void UpdateProductInStockStatus()
+    {
+        var entries = ChangeTracker.Entries<ProductInStock>()
+            .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified);
+
+        foreach (var entry in entries)
+        {
+            var product = entry.Entity;
+
+            if (product.QuantityInStock <= 0)
+            {
+                product.Status = "Inactif";
+            }
+            product.Status = product.QuantityInStock <= 0 ? "Inactif" : product.Status;
+        }
+    }
 }
