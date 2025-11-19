@@ -37,13 +37,27 @@
                 <input type="text" asp-for="StorageLocation" class="form-control"/>
                 <span asp-validation-for="StorageLocation" class="text-danger"></span>
             </div>
-            <div class="mb-3">
-                <label asp-for="Status" class="form-label">Statut</label>
-                <select asp-for="Status" class="form-select" aria-label="status">
-                    <option selected="selected" value="Actif">Disponible</option>
-                    <option value="Inactif">Non-Disponible</option>
-                </select>
-            </div>
+            @if (Model.QuantityInStock <= 0)
+            {
+                <div class="mb-3" title="Impossible de changer le statut d'un objet avec une quantité à 0">
+                    <label asp-for="Status" class="form-label">Statut</label>
+                    <select disabled asp-for="Status" class="form-select" aria-label="status">
+                        <option selected="selected" value="Inactif">Non-Disponible</option>
+                    </select>
+                    <input value="Inactif" asp-for="Status" hidden/>
+                </div>
+            }
+            else
+            {
+                <div class="mb-3">
+                    <label asp-for="Status" class="form-label">Statut</label>
+                    <select asp-for="Status" class="form-select" aria-label="status">
+                        <option value="Actif">Disponible</option>
+                        <option value="Inactif">Non-Disponible</option>
+                    </select>
+                </div>
+            }
+        
         </div>
 
         <div class="text-center mt-3">
