@@ -25,4 +25,9 @@ public class ProductInStock
     
     [ForeignKey(nameof(ProductId))]
     public Product Product { get; set; }
+    
+    public int StockId { get; set; }
+    
+    [ForeignKey(nameof(StockId))]
+    public Stock Stock { get; set; }
 }

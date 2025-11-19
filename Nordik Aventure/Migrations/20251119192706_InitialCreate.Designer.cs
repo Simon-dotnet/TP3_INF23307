@@ -12,8 +12,8 @@ using Nordik_Aventure;
 namespace Nordik_Aventure.Migrations
 {
     [DbContext(typeof(NordikAventureContext))]
-    [Migration("20251118172630_add-product-stock")]
-    partial class addproductstock
+    [Migration("20251119192706_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -123,7 +123,7 @@ namespace Nordik_Aventure.Migrations
 
                     b.HasIndex("TransactionId");
 
-                    b.ToTable("Sale");
+                    b.ToTable("Sales");
                 });
 
             modelBuilder.Entity("Nordik_Aventure.Objects.Models.Finance.SaleDetails", b =>
@@ -176,7 +176,7 @@ namespace Nordik_Aventure.Migrations
 
                     b.HasIndex("SaleId");
 
-                    b.ToTable("SaleReceipt");
+                    b.ToTable("SaleReceipts");
                 });
 
             modelBuilder.Entity("Nordik_Aventure.Objects.Models.Finance.SupplierReceipt", b =>
@@ -203,7 +203,7 @@ namespace Nordik_Aventure.Migrations
 
                     b.HasIndex("PurchaseId");
 
-                    b.ToTable("SupplierReceipt");
+                    b.ToTable("SupplierReceipts");
                 });
 
             modelBuilder.Entity("Nordik_Aventure.Objects.Models.Finance.Taxes", b =>
@@ -246,7 +246,7 @@ namespace Nordik_Aventure.Migrations
 
                     b.HasKey("TransactionId");
 
-                    b.ToTable("Transaction");
+                    b.ToTable("Transactions");
                 });
 
             modelBuilder.Entity("Nordik_Aventure.Objects.Models.Finance.TransactionHistory", b =>
@@ -275,9 +275,52 @@ namespace Nordik_Aventure.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("OrderId"));
 
+                    b.Property<DateTime>("DateOfDelivery")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("DateOfOrdering")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<double>("TotalPrice")
+                        .HasColumnType("double");
+
                     b.HasKey("OrderId");
 
-                    b.ToTable("Order");
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("Nordik_Aventure.Objects.Models.OrderSupplierProduct", b =>
+                {
+                    b.Property<int>("OrderSupplierProductId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("OrderSupplierProductId"));
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SupplierId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("TotalPrice")
+                        .HasColumnType("double");
+
+                    b.HasKey("OrderSupplierProductId");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("SupplierId");
+
+                    b.ToTable("OrderSupplierProducts");
                 });
 
             modelBuilder.Entity("Nordik_Aventure.Objects.Models.Product", b =>
@@ -354,7 +397,7 @@ namespace Nordik_Aventure.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int?>("StockId")
+                    b.Property<int>("StockId")
                         .HasColumnType("int");
 
                     b.Property<string>("StorageLocation")
@@ -380,12 +423,6 @@ namespace Nordik_Aventure.Migrations
                         .HasColumnType("int");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("LastUpdate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("TotalProducts")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -654,6 +691,33 @@ namespace Nordik_Aventure.Migrations
                     b.Navigation("Transaction");
                 });
 
+            modelBuilder.Entity("Nordik_Aventure.Objects.Models.OrderSupplierProduct", b =>
+                {
+                    b.HasOne("Nordik_Aventure.Objects.Models.Order", "Order")
+                        .WithMany("OrderSupplierProducts")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Nordik_Aventure.Objects.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Nordik_Aventure.Objects.Models.Supplier", "Supplier")
+                        .WithMany()
+                        .HasForeignKey("SupplierId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Supplier");
+                });
+
             modelBuilder.Entity("Nordik_Aventure.Objects.Models.Product", b =>
                 {
                     b.HasOne("Nordik_Aventure.Objects.Models.User.Category", "Category")
@@ -681,16 +745,25 @@ namespace Nordik_Aventure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Nordik_Aventure.Objects.Models.Stock", null)
+                    b.HasOne("Nordik_Aventure.Objects.Models.Stock", "Stock")
                         .WithMany("Products")
-                        .HasForeignKey("StockId");
+                        .HasForeignKey("StockId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Product");
+
+                    b.Navigation("Stock");
                 });
 
             modelBuilder.Entity("Nordik_Aventure.Objects.Models.Finance.Purchase", b =>
                 {
                     b.Navigation("PurchaseDetails");
+                });
+
+            modelBuilder.Entity("Nordik_Aventure.Objects.Models.Order", b =>
+                {
+                    b.Navigation("OrderSupplierProducts");
                 });
 
             modelBuilder.Entity("Nordik_Aventure.Objects.Models.Stock", b =>

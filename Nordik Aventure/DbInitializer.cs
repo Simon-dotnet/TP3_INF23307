@@ -265,180 +265,173 @@ public static class DbInitializer
             context.SaveChanges();
         }
 
+        if (!context.Stock.Any())
+        {
+            context.Stock.Add(new Stock());
+            context.SaveChanges();
+        }
+
         if (!context.ProductInStock.Any())
         {
             context.ProductInStock.AddRange(
                 new ProductInStock
                 {
                     Id = 1, ProductId = 1, QuantityInStock = 18, Threshold = 5, MinimalQuantity = 3, Status = "Actif",
-                    StorageLocation = "A1", LastRefill = new DateTime(2025, 3, 2)
+                    StorageLocation = "A1", LastRefill = new DateTime(2025, 3, 2), StockId = 1
                 },
                 new ProductInStock
                 {
                     Id = 2, ProductId = 2, QuantityInStock = 9, Threshold = 3, MinimalQuantity = 2, Status = "Actif",
-                    StorageLocation = "A1", LastRefill = new DateTime(2025, 2, 18)
+                    StorageLocation = "A1", LastRefill = new DateTime(2025, 2, 18), StockId = 1
                 },
                 new ProductInStock
                 {
                     Id = 3, ProductId = 3, QuantityInStock = 25, Threshold = 8, MinimalQuantity = 5, Status = "Actif",
-                    StorageLocation = "A2", LastRefill = new DateTime(2025, 3, 10)
+                    StorageLocation = "A2", LastRefill = new DateTime(2025, 3, 10), StockId = 1
                 },
                 new ProductInStock
                 {
                     Id = 4, ProductId = 4, QuantityInStock = 40, Threshold = 10, MinimalQuantity = 6, Status = "Actif",
-                    StorageLocation = "A2", LastRefill = new DateTime(2025, 3, 5)
+                    StorageLocation = "A2", LastRefill = new DateTime(2025, 3, 5), StockId = 1
                 },
                 new ProductInStock
                 {
                     Id = 5, ProductId = 5, QuantityInStock = 12, Threshold = 4, MinimalQuantity = 3, Status = "Actif",
-                    StorageLocation = "A1", LastRefill = new DateTime(2025, 2, 20)
+                    StorageLocation = "A1", LastRefill = new DateTime(2025, 2, 20), StockId = 1
                 },
                 new ProductInStock
                 {
                     Id = 6, ProductId = 6, QuantityInStock = 30, Threshold = 10, MinimalQuantity = 6, Status = "Actif",
-                    StorageLocation = "A3", LastRefill = new DateTime(2025, 3, 8)
+                    StorageLocation = "A3", LastRefill = new DateTime(2025, 3, 8), StockId = 1
                 },
                 new ProductInStock
                 {
                     Id = 7, ProductId = 7, QuantityInStock = 20, Threshold = 6, MinimalQuantity = 4, Status = "Actif",
-                    StorageLocation = "B1", LastRefill = new DateTime(2025, 3, 12)
+                    StorageLocation = "B1", LastRefill = new DateTime(2025, 3, 12), StockId = 1
                 },
                 new ProductInStock
                 {
                     Id = 8, ProductId = 8, QuantityInStock = 25, Threshold = 8, MinimalQuantity = 5, Status = "Actif",
-                    StorageLocation = "B2", LastRefill = new DateTime(2025, 3, 10)
+                    StorageLocation = "B2", LastRefill = new DateTime(2025, 3, 10), StockId = 1
                 },
                 new ProductInStock
                 {
                     Id = 9, ProductId = 9, QuantityInStock = 15, Threshold = 5, MinimalQuantity = 3, Status = "Actif",
-                    StorageLocation = "B3", LastRefill = new DateTime(2025, 2, 25)
+                    StorageLocation = "B3", LastRefill = new DateTime(2025, 2, 25), StockId = 1
                 },
                 new ProductInStock
                 {
                     Id = 10, ProductId = 10, QuantityInStock = 35, Threshold = 10, MinimalQuantity = 5,
-                    Status = "Actif", StorageLocation = "B3", LastRefill = new DateTime(2025, 3, 5)
+                    Status = "Actif", StorageLocation = "B3", LastRefill = new DateTime(2025, 3, 5), StockId = 1
                 },
                 new ProductInStock
                 {
                     Id = 11, ProductId = 11, QuantityInStock = 40, Threshold = 10, MinimalQuantity = 6,
-                    Status = "Actif", StorageLocation = "B2", LastRefill = new DateTime(2025, 3, 11)
+                    Status = "Actif", StorageLocation = "B2", LastRefill = new DateTime(2025, 3, 11), StockId = 1
                 },
                 new ProductInStock
                 {
                     Id = 12, ProductId = 12, QuantityInStock = 18, Threshold = 5, MinimalQuantity = 3, Status = "Actif",
-                    StorageLocation = "B1", LastRefill = new DateTime(2025, 2, 28)
+                    StorageLocation = "B1", LastRefill = new DateTime(2025, 2, 28), StockId = 1
                 },
                 new ProductInStock
                 {
                     Id = 13, ProductId = 13, QuantityInStock = 50, Threshold = 15, MinimalQuantity = 10,
-                    Status = "Actif", StorageLocation = "C1", LastRefill = new DateTime(2025, 3, 9)
+                    Status = "Actif", StorageLocation = "C1", LastRefill = new DateTime(2025, 3, 9), StockId = 1
                 },
                 new ProductInStock
                 {
                     Id = 14, ProductId = 14, QuantityInStock = 48, Threshold = 15, MinimalQuantity = 10,
-                    Status = "Actif", StorageLocation = "C1", LastRefill = new DateTime(2025, 3, 9)
+                    Status = "Actif", StorageLocation = "C1", LastRefill = new DateTime(2025, 3, 9), StockId = 1
                 },
                 new ProductInStock
                 {
                     Id = 15, ProductId = 15, QuantityInStock = 30, Threshold = 8, MinimalQuantity = 4, Status = "Actif",
-                    StorageLocation = "C2", LastRefill = new DateTime(2025, 3, 3)
+                    StorageLocation = "C2", LastRefill = new DateTime(2025, 3, 3), StockId = 1
                 },
                 new ProductInStock
                 {
                     Id = 16, ProductId = 16, QuantityInStock = 32, Threshold = 8, MinimalQuantity = 4, Status = "Actif",
-                    StorageLocation = "C2", LastRefill = new DateTime(2025, 3, 3)
+                    StorageLocation = "C2", LastRefill = new DateTime(2025, 3, 3), StockId = 1
                 },
                 new ProductInStock
                 {
                     Id = 17, ProductId = 17, QuantityInStock = 20, Threshold = 5, MinimalQuantity = 3, Status = "Actif",
-                    StorageLocation = "C3", LastRefill = new DateTime(2025, 2, 19)
+                    StorageLocation = "C3", LastRefill = new DateTime(2025, 2, 19), StockId = 1
                 },
                 new ProductInStock
                 {
                     Id = 18, ProductId = 18, QuantityInStock = 40, Threshold = 10, MinimalQuantity = 6,
-                    Status = "Actif", StorageLocation = "C4", LastRefill = new DateTime(2025, 3, 10)
+                    Status = "Actif", StorageLocation = "C4", LastRefill = new DateTime(2025, 3, 10), StockId = 1
                 },
                 new ProductInStock
                 {
                     Id = 19, ProductId = 19, QuantityInStock = 25, Threshold = 8, MinimalQuantity = 4, Status = "Actif",
-                    StorageLocation = "C4", LastRefill = new DateTime(2025, 2, 22)
+                    StorageLocation = "C4", LastRefill = new DateTime(2025, 2, 22), StockId = 1
                 },
                 new ProductInStock
                 {
                     Id = 20, ProductId = 20, QuantityInStock = 20, Threshold = 5, MinimalQuantity = 3, Status = "Actif",
-                    StorageLocation = "D1", LastRefill = new DateTime(2025, 2, 28)
+                    StorageLocation = "D1", LastRefill = new DateTime(2025, 2, 28), StockId = 1
                 },
                 new ProductInStock
                 {
                     Id = 21, ProductId = 21, QuantityInStock = 40, Threshold = 12, MinimalQuantity = 8,
-                    Status = "Actif", StorageLocation = "D2", LastRefill = new DateTime(2025, 3, 10)
+                    Status = "Actif", StorageLocation = "D2", LastRefill = new DateTime(2025, 3, 10), StockId = 1
                 },
                 new ProductInStock
                 {
                     Id = 22, ProductId = 22, QuantityInStock = 35, Threshold = 10, MinimalQuantity = 6,
-                    Status = "Actif", StorageLocation = "D3", LastRefill = new DateTime(2025, 3, 12)
+                    Status = "Actif", StorageLocation = "D3", LastRefill = new DateTime(2025, 3, 12), StockId = 1
                 },
                 new ProductInStock
                 {
                     Id = 23, ProductId = 23, QuantityInStock = 25, Threshold = 8, MinimalQuantity = 5, Status = "Actif",
-                    StorageLocation = "D2", LastRefill = new DateTime(2025, 3, 6)
+                    StorageLocation = "D2", LastRefill = new DateTime(2025, 3, 6), StockId = 1
                 },
                 new ProductInStock
                 {
                     Id = 24, ProductId = 24, QuantityInStock = 18, Threshold = 5, MinimalQuantity = 3, Status = "Actif",
-                    StorageLocation = "D3", LastRefill = new DateTime(2025, 2, 25)
+                    StorageLocation = "D3", LastRefill = new DateTime(2025, 2, 25), StockId = 1
                 },
                 new ProductInStock
                 {
                     Id = 25, ProductId = 25, QuantityInStock = 28, Threshold = 10, MinimalQuantity = 6,
-                    Status = "Actif", StorageLocation = "D4", LastRefill = new DateTime(2025, 3, 9)
+                    Status = "Actif", StorageLocation = "D4", LastRefill = new DateTime(2025, 3, 9), StockId = 1
                 },
                 new ProductInStock
                 {
                     Id = 26, ProductId = 26, QuantityInStock = 10, Threshold = 3, MinimalQuantity = 2, Status = "Actif",
-                    StorageLocation = "E1", LastRefill = new DateTime(2025, 2, 17)
+                    StorageLocation = "E1", LastRefill = new DateTime(2025, 2, 17), StockId = 1
                 },
                 new ProductInStock
                 {
                     Id = 27, ProductId = 27, QuantityInStock = 18, Threshold = 5, MinimalQuantity = 3, Status = "Actif",
-                    StorageLocation = "E2", LastRefill = new DateTime(2025, 3, 1)
+                    StorageLocation = "E2", LastRefill = new DateTime(2025, 3, 1), StockId = 1
                 },
                 new ProductInStock
                 {
                     Id = 28, ProductId = 28, QuantityInStock = 40, Threshold = 12, MinimalQuantity = 8,
-                    Status = "Actif", StorageLocation = "E3", LastRefill = new DateTime(2025, 3, 11)
+                    Status = "Actif", StorageLocation = "E3", LastRefill = new DateTime(2025, 3, 11), StockId = 1
                 },
                 new ProductInStock
                 {
                     Id = 29, ProductId = 29, QuantityInStock = 15, Threshold = 5, MinimalQuantity = 3, Status = "Actif",
-                    StorageLocation = "E4", LastRefill = new DateTime(2025, 2, 28)
+                    StorageLocation = "E4", LastRefill = new DateTime(2025, 2, 28), StockId = 1
                 },
                 new ProductInStock
                 {
                     Id = 30, ProductId = 30, QuantityInStock = 35, Threshold = 10, MinimalQuantity = 6,
-                    Status = "Actif", StorageLocation = "E5", LastRefill = new DateTime(2025, 3, 7)
+                    Status = "Actif", StorageLocation = "E5", LastRefill = new DateTime(2025, 3, 7), StockId = 1
                 }
             );
             context.SaveChanges();
-        }
-
-
-        if (!context.Stock.Any())
-        {
-            var products = context.ProductInStock.ToList();
-            context.Stock.Add(new Stock
-            {
-                LastUpdate = products.Max(p => p.LastRefill),
-                Products = products,
-                TotalProducts = products.Sum(p => p.QuantityInStock)
-            });
         }
 
         if (!context.OrderSupplierProducts.Any())
         {
             var osp = new List<OrderSupplierProduct>
             {
-                // Order #1 contents
                 new OrderSupplierProduct
                 {
                     OrderSupplierProductId = 1, Quantity = 2, TotalPrice = 290, SupplierId = 1, ProductId = 1,
@@ -455,7 +448,6 @@ public static class DbInitializer
                     OrderId = 1
                 },
 
-                // Order #2 contents
                 new OrderSupplierProduct
                 {
                     OrderSupplierProductId = 4, Quantity = 9, TotalPrice = 99, SupplierId = 7, ProductId = 30,

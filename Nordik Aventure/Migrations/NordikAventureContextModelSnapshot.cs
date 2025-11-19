@@ -394,7 +394,7 @@ namespace Nordik_Aventure.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int?>("StockId")
+                    b.Property<int>("StockId")
                         .HasColumnType("int");
 
                     b.Property<string>("StorageLocation")
@@ -420,12 +420,6 @@ namespace Nordik_Aventure.Migrations
                         .HasColumnType("int");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("LastUpdate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("TotalProducts")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -748,11 +742,15 @@ namespace Nordik_Aventure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Nordik_Aventure.Objects.Models.Stock", null)
+                    b.HasOne("Nordik_Aventure.Objects.Models.Stock", "Stock")
                         .WithMany("Products")
-                        .HasForeignKey("StockId");
+                        .HasForeignKey("StockId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Product");
+
+                    b.Navigation("Stock");
                 });
 
             modelBuilder.Entity("Nordik_Aventure.Objects.Models.Finance.Purchase", b =>
