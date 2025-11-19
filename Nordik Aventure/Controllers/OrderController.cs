@@ -25,38 +25,41 @@ public class OrderController : Controller
     {
         var viewModel = new MakeOrderViewModel
         {
-            AvailableProducts = _context.Products.Include(p => p.Supplier).ToList()
+            AvailableProducts = _context.Products.Include(p => p.Supplier).ToList(),
+            Taxes = _context.Taxes.FirstOrDefault()
         };
+
         return View("../ModuleFinance/MakeOrder", viewModel);
     }
     
     [HttpGet("OrderHistory")]
-    public async Task<IActionResult> OrderHistory()
+    public IActionResult OrderHistory()
     {
-        var orders = await _context.Orders
-            .Include(order => order.OrderSupplierProducts)
-            .ThenInclude(orderSupplierProduct => orderSupplierProduct.Product)
-            .Include(order => order.OrderSupplierProducts)
-            .ThenInclude(orderSupplierProduct => orderSupplierProduct.Supplier)
-            .OrderByDescending(order => order.DateOfOrdering)
+        var result = _orderService.GetAllOrders();
+
+        if (!result.Success || result.Data == null)
+            return View("../ModuleFinance/OrderHistory", new List<OrderHistoryViewModel>()); 
+
+        var orders = result.Data
+            .OrderByDescending(o => o.DateOfOrdering)
             .Take(50)
-            .ToListAsync();
-        
+            .ToList();
+
         var orderHistory = orders.Select(order => new OrderHistoryViewModel
         {
             OrderId = order.OrderId,
             DateOfOrdering = order.DateOfOrdering,
             DateOfDelivery = order.DateOfDelivery,
             TotalPrice = order.TotalPrice,
-            Items = order.OrderSupplierProducts.Select(orderSupplierProduct => new OrderItemViewModel
+            Items = order.OrderSupplierProducts.Select(osp => new OrderItemViewModel
             {
-                ProductName = orderSupplierProduct.Product?.Name ?? "Non disponible",
-                SupplierName = orderSupplierProduct.Supplier?.Name ?? "Non disponible",
-                Quantity = orderSupplierProduct.Quantity,
-                TotalPrice = orderSupplierProduct.TotalPrice
+                ProductName = osp.Product?.Name ?? "Non disponible",
+                SupplierName = osp.Supplier?.Name ?? "Non disponible",
+                Quantity = osp.Quantity,
+                TotalPrice = osp.TotalPrice
             }).ToList()
         }).ToList();
-        
+
         return View("../ModuleFinance/OrderHistory", orderHistory);
     }
 
@@ -65,19 +68,22 @@ public class OrderController : Controller
     {
         if (model == null || model.Items == null || !model.Items.Any())
         {
-            TempData["Error"] = "Aucune ligne de commande.";
+            TempData["ErrorMessage"] = "Aucune ligne de commande.";
+            TempData["ErrorType"] = "error";
             return RedirectToAction("MakeOrder");
         }
 
         var result = _orderService.CreateOrder(model);
         if (result.Success)
         {
-            TempData["Success"] = "Commande créée.";
+            TempData["ErrorMessage"] = "Commande créée.";
+            TempData["ErrorType"] = "success";
             return RedirectToAction("Index", "Finance");
         }
         else
         {
-            TempData["Error"] = "Erreur: " + result.Message;
+            TempData["ErrorMessage"] = "Erreur: " + result.Message;
+            TempData["ErrorType"] = "error";
             return RedirectToAction("MakeOrder");
         }
     }

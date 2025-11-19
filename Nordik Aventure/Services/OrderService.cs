@@ -19,10 +19,9 @@ public class OrderService
         return _orderRepository.GetOrderById(id);
     }
 
-    public GenericResponse<List<Order>> GetAllProducts()
+    public GenericResponse<List<Order>> GetAllOrders()
     {
-        var result = _orderRepository.GetAllOrders();
-        return result;
+        return _orderRepository.GetAllOrders();
     }
     
     public GenericResponse<Order> CreateOrder(OrderCreateViewModel createModel)
@@ -32,10 +31,10 @@ public class OrderService
             {
                 Code = 500,
                 Data = null,
-                Message = $"Erreur inattendue",
+                Message = "Erreur inattendue",
                 Success = false
             };
-        
+
         var order = new Order
         {
             DateOfOrdering = DateTime.UtcNow,
@@ -58,14 +57,8 @@ public class OrderService
             order.OrderSupplierProducts.Add(osp);
             total += item.TotalPrice;
         }
-        
-        order = new Order
-        {
-            DateOfOrdering = DateTime.UtcNow,
-            DateOfDelivery = createModel.DateOfDelivery ?? DateTime.UtcNow.AddDays(7),
-            TotalPrice = total,
-            OrderSupplierProducts = order.OrderSupplierProducts
-        };
+
+        order.TotalPrice = total;
 
         return _orderRepository.CreateOrder(order);
     }

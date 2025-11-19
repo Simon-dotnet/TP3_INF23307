@@ -1,0 +1,28 @@
+@{
+    Layout = "_FinanceLayout";
+}
+
+@model Nordik_Aventure.Objects.Models.Finance.Taxes
+
+<h3>Modifier les taxes</h3>
+<div class="mb-4 border p-3 rounded cards-container">
+    <form asp-controller="Taxes" asp-action="Edit" method="post">
+        <input type="hidden" asp-for="TaxesId" />
+    
+        <div class="mb-3">
+            <label class="form-label">TPS (%)</label>
+            <input asp-for="ValueTps" class="form-control" />
+            <span asp-validation-for="ValueTps" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">TVQ (%)</label>
+            <input asp-for="ValueTvq" class="form-control" />
+            <span asp-validation-for="ValueTvq" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn" style="background-color: var(--background-button); color: var(--text-white);">
+            Sauvegarder
+        </button>
+    </form>
+</div>

@@ -66,7 +66,7 @@ public class NordikAventureContext : DbContext
         modelBuilder.Entity<SaleDetails>();
         modelBuilder.Entity<SaleReceipt>();
         modelBuilder.Entity<SupplierReceipt>();
-        modelBuilder.Entity<Taxes>().HasNoKey();
+        modelBuilder.Entity<Taxes>();
         modelBuilder.Entity<Transaction>();
         modelBuilder.Entity<TransactionHistory>();
 

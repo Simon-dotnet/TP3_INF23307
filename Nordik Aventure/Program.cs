@@ -23,6 +23,9 @@ builder.Services.AddScoped<StockRepository>();
 builder.Services.AddScoped<OrderService>();
 builder.Services.AddScoped<OrderRepository>();
 
+builder.Services.AddScoped<TaxesService>();
+builder.Services.AddScoped<TaxesRepository>();
+
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
