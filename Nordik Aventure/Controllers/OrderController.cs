@@ -1,10 +1,10 @@
 using GestBibli.Objects.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Nordik_Aventure;
 using Nordik_Aventure.Objects.Models;
 using Nordik_Aventure.Services;
-using Nordik_Aventure.Repositories;
+
+namespace Nordik_Aventure.Controllers;
 
 [Route("order")]
 public class OrderController : Controller
@@ -12,12 +12,15 @@ public class OrderController : Controller
     private readonly NordikAventureContext _context;
     private readonly OrderService _orderService;
     private readonly ProductService _productService;
+    private readonly StockService _stockService;
 
-    public OrderController(NordikAventureContext context, OrderService orderService, ProductService productService)
+    public OrderController(NordikAventureContext context, OrderService orderService, ProductService productService,
+        StockService stockService)
     {
         _context = context;
         _orderService = orderService;
         _productService = productService;
+        _stockService = stockService;
     }
 
     [HttpGet("MakeOrder")]
@@ -31,14 +34,14 @@ public class OrderController : Controller
 
         return View("../ModuleFinance/MakeOrder", viewModel);
     }
-    
+
     [HttpGet("OrderHistory")]
     public IActionResult OrderHistory()
     {
         var result = _orderService.GetAllOrders();
 
         if (!result.Success || result.Data == null)
-            return View("../ModuleFinance/OrderHistory", new List<OrderHistoryViewModel>()); 
+            return View("../ModuleFinance/OrderHistory", new List<OrderHistoryViewModel>());
 
         var orders = result.Data
             .OrderByDescending(o => o.DateOfOrdering)
@@ -76,21 +79,83 @@ public class OrderController : Controller
         var result = _orderService.CreateOrder(model);
         if (result.Success)
         {
-            TempData["ErrorMessage"] = "Commande créée.";
-            TempData["ErrorType"] = "success";
-            return RedirectToAction("Index", "Finance");
+            var resultSuccess = CheckProductInStock(result.Data);
+            if (!resultSuccess.isError)
+            {
+                if (resultSuccess.hasNewObject)
+                {
+                    TempData["ErrorMessage"] =
+                        "Commande créé. \n Vous avez ajouté un nouveau produit, veuillez allez changer ces valeurs dans le stock pour le rendre actif";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Commande créée.";
+                }
+
+                TempData["ErrorType"] = "success";
+                return RedirectToAction("Index", "Finance");
+            }
+
+            return View("../ModuleFinance/OrderHistory", new List<OrderHistoryViewModel>());
         }
-        else
-        {
-            TempData["ErrorMessage"] = "Erreur: " + result.Message;
-            TempData["ErrorType"] = "error";
-            return RedirectToAction("MakeOrder");
-        }
+
+        TempData["ErrorMessage"] = "Erreur: " + result.Message;
+        TempData["ErrorType"] = "error";
+        return RedirectToAction("MakeOrder");
     }
 
     [HttpPost("cancel")]
     public IActionResult Cancel()
     {
         return RedirectToAction("Index", "Finance");
+    }
+
+    private (bool isError, bool hasNewObject) CheckProductInStock(Order listItems)
+    {
+        bool isError = false;
+        bool hasNewObject = false;
+
+        foreach (var item in listItems.OrderSupplierProducts)
+        {
+            var stockResponse = _stockService.GetProductInStockFromProductId(item.ProductId);
+
+            if (stockResponse.Success)
+            {
+                var product = stockResponse.Data;
+                product.LastRefill = listItems.DateOfDelivery;
+                product.QuantityInStock += item.Quantity;
+
+                if (!_stockService.UpdateProductStockFromForm(product).Success)
+                    isError = true;
+            }
+            else
+            {
+                var newProduct = new ProductInStock
+                {
+                    ProductId = item.ProductId,
+                    QuantityInStock = item.Quantity,
+                    LastRefill = listItems.DateOfDelivery,
+                    MinimalQuantity = 0,
+                    Threshold = 0,
+                    Status = "Inactif",
+                    StockId = 1,
+                    StorageLocation = "Pas encore établi"
+                };
+
+                if (!_stockService.AddProductToStock(newProduct).Success)
+                    isError = true;
+                else
+                    hasNewObject = true;
+            }
+        }
+
+        if (isError)
+        {
+            TempData["ErrorMessage"] = "Erreur lors de l'update/ajout de la quantité du produit en stock";
+            TempData["ErrorType"] = "error";
+            return (true, false);
+        }
+
+        return (false, hasNewObject);
     }
 }

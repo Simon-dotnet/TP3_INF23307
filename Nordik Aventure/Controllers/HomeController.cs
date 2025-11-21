@@ -5,7 +5,7 @@ namespace Nordik_Aventure.Controllers;
 
 public class HomeController : Controller
 {
-    UserService _userService;
+    private readonly UserService _userService;
     public HomeController(UserService userService)
     {
         _userService = userService;

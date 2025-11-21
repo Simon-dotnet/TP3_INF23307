@@ -30,4 +30,14 @@ public class StockService
     {
         return _stockRepository.UpdateProductInStockFromForm(productInStock);
     }
+
+    public GenericResponse<ProductInStock> GetProductInStockFromProductId(int id)
+    {
+        return _stockRepository.GetProductInStockByProductId(id);
+    }
+
+    public GenericResponse<ProductInStock> AddProductToStock(ProductInStock productInStock)
+    {
+        return _stockRepository.AddProductInStock(productInStock);
+    }
 }

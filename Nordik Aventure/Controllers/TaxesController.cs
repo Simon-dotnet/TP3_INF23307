@@ -1,17 +1,15 @@
 using Microsoft.AspNetCore.Mvc;
-using Nordik_Aventure;
 using Nordik_Aventure.Objects.Models.Finance;
-using Nordik_Aventure.Services;
+
+namespace Nordik_Aventure.Controllers;
 
 [Route("taxes")]
 public class TaxesController : Controller
 {
-    private readonly NordikAventureContext _context;
     private readonly TaxesService _taxesService;
 
-    public TaxesController(NordikAventureContext context, TaxesService taxesService)
+    public TaxesController(TaxesService taxesService)
     {
-        _context = context;
         _taxesService = taxesService;
     }
 
@@ -19,7 +17,7 @@ public class TaxesController : Controller
     public IActionResult Index()
     {
         var response = _taxesService.GetTaxes();
-    
+
         if (!response.Success)
         {
             TempData["ErrorMessage"] = response.Message;
@@ -29,7 +27,7 @@ public class TaxesController : Controller
 
         return View("../ModuleFinance/EditTaxes", response.Data);
     }
-    
+
     [HttpPost("edit")]
     public IActionResult Edit(Taxes model)
     {
@@ -48,6 +46,5 @@ public class TaxesController : Controller
         TempData["ErrorType"] = "success";
         TempData["ErrorMessage"] = "Taxes modifiés avec succès";
         return RedirectToAction("Index");
-        
     }
 }

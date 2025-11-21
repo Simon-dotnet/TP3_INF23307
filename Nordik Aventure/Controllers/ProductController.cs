@@ -8,8 +8,8 @@ namespace Nordik_Aventure.Controllers;
 [Route("stock/products")]
 public class ProductController : Controller
 {
-    private ProductService _productService;
-    private SupplierService _supplierService;
+    private readonly ProductService _productService;
+    private readonly SupplierService _supplierService;
 
     public ProductController(ProductService productService, SupplierService supplierService)
     {

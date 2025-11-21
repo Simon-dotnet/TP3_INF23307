@@ -7,7 +7,7 @@ namespace Nordik_Aventure.Controllers;
 [Route("stock")]
 public class StockController : Controller
 {
-    StockService _stockService;
+    private readonly StockService _stockService;
 
     public StockController(StockService stockService)
     {
