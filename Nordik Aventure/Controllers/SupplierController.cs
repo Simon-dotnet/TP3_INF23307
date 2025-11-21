@@ -7,7 +7,7 @@ namespace Nordik_Aventure.Controllers;
 [Route("stock/supplier")]
 public class SupplierController : Controller
 {
-    private SupplierService _supplierService;
+    private readonly SupplierService _supplierService;
     public SupplierController(SupplierService supplierService)
     {
         _supplierService = supplierService;

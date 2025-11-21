@@ -12,8 +12,8 @@ using Nordik_Aventure;
 namespace Nordik_Aventure.Migrations
 {
     [DbContext(typeof(NordikAventureContext))]
-    [Migration("20251119192706_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20251121194231_initial-migration")]
+    partial class initialmigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -208,11 +208,19 @@ namespace Nordik_Aventure.Migrations
 
             modelBuilder.Entity("Nordik_Aventure.Objects.Models.Finance.Taxes", b =>
                 {
+                    b.Property<int>("TaxesId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("TaxesId"));
+
                     b.Property<double>("ValueTps")
                         .HasColumnType("double");
 
                     b.Property<double>("ValueTvq")
                         .HasColumnType("double");
+
+                    b.HasKey("TaxesId");
 
                     b.ToTable("Taxes");
                 });
