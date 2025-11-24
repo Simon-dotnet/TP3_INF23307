@@ -31,6 +31,11 @@ public class NordikAventureContext : DbContext
     public DbSet<Taxes> Taxes { get; set; }
     public DbSet<Transaction> Transactions { get; set; }
     public DbSet<TransactionHistory> TransactionHistory { get; set; }
+    
+    //Modèles Client
+    public DbSet<Client> Client { get; set; }
+    public DbSet<ClientInterraction> ClientInterractions { get; set; }
+    public DbSet<ClientBuyingHistoric> ClientBuyingHistorics { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -69,6 +74,11 @@ public class NordikAventureContext : DbContext
         modelBuilder.Entity<Taxes>();
         modelBuilder.Entity<Transaction>();
         modelBuilder.Entity<TransactionHistory>();
+        
+        // Modèles Client
+        modelBuilder.Entity<Client>();
+        modelBuilder.Entity<ClientInterraction>();
+        modelBuilder.Entity<ClientBuyingHistoric>();
 
     }
     

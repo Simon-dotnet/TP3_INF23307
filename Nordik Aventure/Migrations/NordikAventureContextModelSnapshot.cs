@@ -22,6 +22,54 @@ namespace Nordik_Aventure.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
+            modelBuilder.Entity("Nordik_Aventure.Objects.Models.ClientBuyingHistoric", b =>
+                {
+                    b.Property<int>("ClientId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("TransactionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ClientId");
+
+                    b.HasIndex("TransactionId");
+
+                    b.ToTable("ClientBuyingHistorics");
+                });
+
+            modelBuilder.Entity("Nordik_Aventure.Objects.Models.ClientInterraction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.ToTable("ClientInterractions");
+                });
+
             modelBuilder.Entity("Nordik_Aventure.Objects.Models.Finance.Payment", b =>
                 {
                     b.Property<int>("PaymentId")
@@ -518,7 +566,7 @@ namespace Nordik_Aventure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Clients");
+                    b.ToTable("Client");
                 });
 
             modelBuilder.Entity("Nordik_Aventure.Objects.Models.User.Employee", b =>
@@ -558,6 +606,44 @@ namespace Nordik_Aventure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Employees");
+                });
+
+            modelBuilder.Entity("Nordik_Aventure.Objects.Models.ClientBuyingHistoric", b =>
+                {
+                    b.HasOne("Nordik_Aventure.Objects.Models.Finance.Transaction", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Nordik_Aventure.Objects.Models.Finance.Transaction", "Transaction")
+                        .WithMany()
+                        .HasForeignKey("TransactionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+
+                    b.Navigation("Transaction");
+                });
+
+            modelBuilder.Entity("Nordik_Aventure.Objects.Models.ClientInterraction", b =>
+                {
+                    b.HasOne("Nordik_Aventure.Objects.Models.User.Client", "Client")
+                        .WithMany("ClientInterraction")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Nordik_Aventure.Objects.Models.User.Employee", "Employee")
+                        .WithMany("ClientInterraction")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+
+                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("Nordik_Aventure.Objects.Models.Finance.Payment", b =>
@@ -779,6 +865,16 @@ namespace Nordik_Aventure.Migrations
             modelBuilder.Entity("Nordik_Aventure.Objects.Models.Supplier", b =>
                 {
                     b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("Nordik_Aventure.Objects.Models.User.Client", b =>
+                {
+                    b.Navigation("ClientInterraction");
+                });
+
+            modelBuilder.Entity("Nordik_Aventure.Objects.Models.User.Employee", b =>
+                {
+                    b.Navigation("ClientInterraction");
                 });
 #pragma warning restore 612, 618
         }

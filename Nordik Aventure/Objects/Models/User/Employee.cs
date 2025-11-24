@@ -5,6 +5,11 @@ namespace Nordik_Aventure.Objects.Models.User;
 
 public class Employee
 {
+    public Employee()
+    {
+        ClientInterraction = new List<ClientInterraction>();
+    }
+    
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
@@ -27,4 +32,6 @@ public class Employee
     
     [Required]
     public string Role { get; set; }
+    
+    public ICollection<ClientInterraction> ClientInterraction { get; set; }
 }
