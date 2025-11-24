@@ -2,7 +2,7 @@
 @using GestBibli.Objects.ViewModels
 
 @{
-Layout = "_FinanceLayout";
+    Layout = "_FinanceLayout";
 }
 
 <h1>Créer une commande</h1>
@@ -10,7 +10,8 @@ Layout = "_FinanceLayout";
 
 <div class="mb-3">
     <button id="toggleAddProduct" type="button" class="btn"
-            style="background-color: var(--background-button); color: var(--text-white);">Ajouter un produit
+            style="background-color: var(--background-button); color: var(--text-white);">
+        Ajouter un produit
     </button>
 </div>
 
@@ -23,29 +24,29 @@ Layout = "_FinanceLayout";
                 <option value="">-- Sélectionner un produit --</option>
                 @foreach (var product in Model.AvailableProducts)
                 {
-                bool disabled = product.Status == "Inactif"
-                || product.Status == "Non disponible"
-                || product.Status == "Indisponible";
+                    bool disabled = product.Status == "Inactif"
+                                    || product.Status == "Non disponible"
+                                    || product.Status == "Indisponible";
 
-                if (disabled)
-                {
-                <option value="@product.Id"
-                        disabled="disabled"
-                        data-price="@product.PriceToBuy"
-                        data-supplierid="@product.SupplierId"
-                        data-supplier="@product.Supplier?.Name">
-                    @product.Name - @($"{product.PriceToBuy:N2}".Replace('.', ','))$
-                </option>
-                }
-                else
-                {
-                <option value="@product.Id"
-                        data-price="@product.PriceToBuy"
-                        data-supplierid="@product.SupplierId"
-                        data-supplier="@product.Supplier?.Name">
-                    @product.Name - @($"{product.PriceToBuy:N2}".Replace('.', ','))$
-                </option>
-                }
+                    if (disabled)
+                    {
+                        <option value="@product.Id"
+                                disabled="disabled"
+                                data-price="@product.PriceToBuy"
+                                data-supplierid="@product.SupplierId"
+                                data-supplier="@product.Supplier?.Name">
+                            @product.Name - @($"{product.PriceToBuy:N2}".Replace('.', ','))$
+                        </option>
+                    }
+                    else
+                    {
+                        <option value="@product.Id"
+                                data-price="@product.PriceToBuy"
+                                data-supplierid="@product.SupplierId"
+                                data-supplier="@product.Supplier?.Name">
+                            @product.Name - @($"{product.PriceToBuy:N2}".Replace('.', ','))$
+                        </option>
+                    }
                 }
             </select>
         </div>
@@ -56,8 +57,8 @@ Layout = "_FinanceLayout";
                    type="number"
                    class="form-control"
                    min="1"
-                   max="9999"
-                   value="1" />
+                   max="999"
+                   value="1"/>
         </div>
 
         <div class="mb-2">
@@ -76,7 +77,8 @@ Layout = "_FinanceLayout";
         </div>
 
         <button id="addToCart" type="button" class="btn"
-                style="background-color: var(--background-button); color: var(--text-white);">Ajouter au panier
+                style="background-color: var(--background-button); color: var(--text-white);">
+            Ajouter au panier
         </button>
         <button id="cancelAddProduct" type="button" class="btn btn-secondary">Annuler</button>
     </div>
@@ -107,7 +109,8 @@ Layout = "_FinanceLayout";
     <p>Total avec taxes: <span id="totalWithTaxes">0,00$</span></p>
 
     <button id="submitOrder" type="submit" class="btn"
-            style="background-color: var(--background-button); color: var(--text-white);">Faire la commande
+            style="background-color: var(--background-button); color: var(--text-white);">
+        Faire la commande
     </button>
     <button id="cancelOrder" type="button" class="btn btn-secondary">Annuler</button>
 </form>
@@ -192,6 +195,12 @@ Layout = "_FinanceLayout";
             totalProductField.value = '';
             return;
         }
+
+        const data = parseInt(quantitySelect.value);
+        if (data > 9999){
+            quantitySelect.value = 9999
+        }
+        
         const price = parseFloat(selected.dataset.price);
         const supplier = selected.dataset.supplier;
         const quantity = parseInt(quantitySelect.value);
@@ -238,4 +247,5 @@ Layout = "_FinanceLayout";
         }
         return true;
     };
+ 
 </script>

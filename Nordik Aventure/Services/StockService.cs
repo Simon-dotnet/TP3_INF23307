@@ -38,6 +38,6 @@ public class StockService
 
     public GenericResponse<ProductInStock> AddProductToStock(ProductInStock productInStock)
     {
-        return _stockRepository.AddProductInStock(productInStock);
+        return _stockRepository.AddProductToStock(productInStock);
     }
 }

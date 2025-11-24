@@ -1,4 +1,6 @@
 using Nordik_Aventure;
+using Nordik_Aventure.Controllers;
+using Nordik_Aventure.Mapper;
 using Nordik_Aventure.Repositories;
 using Nordik_Aventure.Services;
 
@@ -6,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<NordikAventureContext>();
+
+builder.Services.AddScoped<StockMovementController>();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<UserRepository>();
@@ -26,6 +30,18 @@ builder.Services.AddScoped<OrderRepository>();
 builder.Services.AddScoped<TaxesService>();
 builder.Services.AddScoped<TaxesRepository>();
 
+builder.Services.AddScoped<MovementHistoryService>();
+builder.Services.AddScoped<MovementHistoryRepository>();
+
+builder.Services.AddScoped<TransactionService>();
+builder.Services.AddScoped<TransactionRepository>();
+
+builder.Services.AddScoped<PurchaseService>();
+builder.Services.AddScoped<PurchaseRepository>();
+
+builder.Services.AddScoped<UserSession>();
+
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
@@ -34,6 +50,7 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
+builder.Services.AddAutoMapper(typeof(Nordik_Aventure.Mapper.Mapper));
 
 var app = builder.Build();
 
@@ -52,13 +69,13 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.MapStaticAssets();
+
 app.UseRouting();
+app.UseSession();
 
 app.UseAuthorization();
 
-app.MapStaticAssets();
-
-app.UseSession();
 
 app.MapControllerRoute(
         name: "default",

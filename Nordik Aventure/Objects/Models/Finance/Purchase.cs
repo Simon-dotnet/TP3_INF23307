@@ -15,12 +15,6 @@ public class Purchase
     public int PurchaseId { get; init; }
 
     [Required]
-    public int OrderId { get; init; }
-    
-    [ForeignKey(nameof(OrderId))]
-    public Order Order { get; init; }
-
-    [Required]
     public int TransactionId { get; init; }
     
     [ForeignKey(nameof(TransactionId))]

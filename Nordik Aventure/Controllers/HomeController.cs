@@ -6,9 +6,11 @@ namespace Nordik_Aventure.Controllers;
 public class HomeController : Controller
 {
     private readonly UserService _userService;
-    public HomeController(UserService userService)
+    private readonly UserSession _userSession;
+    public HomeController(UserService userService, UserSession userSession)
     {
         _userService = userService;
+        _userSession = userSession;
     }
 
     [Route("/")]
@@ -27,24 +29,29 @@ public class HomeController : Controller
             TempData["ErrorType"] = "error";
             return View("Login");
         }
-        
-        HttpContext.Session.SetString("userId", result.Data.Id.ToString());
+
+        _userSession.UserId = result.Data.Id;
         return View("Index", result.Data);
     }
 
     [Route("/login")]
     public IActionResult Logout()
     {
-        HttpContext.Session.Remove("userId");
-        HttpContext.Session.Clear();
+        _userSession.ClearSession();
         return View("Login");
     }
     
     [Route("homepage")]
     public IActionResult Index()
     {
-        var id = HttpContext.Session.GetString("userId");
-        var currentEmployee = _userService.GetEmployeeById(Convert.ToInt32(id));
+        var id = _userSession.UserId;
+        if (id == null)
+        {
+            TempData["ErrorMessage"] = "L'id n'existe pas, vous êtes illégal";
+            TempData["ErrorType"] = "error";
+            return View("Login");
+        }
+        var currentEmployee = _userService.GetEmployeeById(id.Value);
         if (currentEmployee.Code == 404)
         {
             TempData["ErrorMessage"] = currentEmployee.Message;

@@ -72,11 +72,10 @@
 <main class="p-3" style="flex: 1; background-color: var(--text-white)">
     @if (!string.IsNullOrEmpty(errorText))
     {
-        <div style="z-index: 100; position: relative" class="alert alert-@errorType alert-dismissible fade show" role="alert">
-            <p style="text-align: center" class="m-0">@errorText</p>
-        </div>
+    <div style="z-index: 100; position: relative" class="alert alert-@errorType alert-dismissible fade show" role="alert">
+        <p style="text-align: center" class="m-0">@errorText</p>
+    </div>
     }
-
     @RenderBody()
 </main>
 

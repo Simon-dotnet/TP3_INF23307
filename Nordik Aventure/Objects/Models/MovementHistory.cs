@@ -1,20 +1,34 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Nordik_Aventure.Objects.Models.Finance;
 using Nordik_Aventure.Objects.Models.User;
 
 namespace Nordik_Aventure.Objects.Models;
 
 public class MovementHistory
 {
-    int Id { get; init; }
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id { get; init; }
     
-    string Type { get; init; }
+    public string Type { get; init; }
     
-    DateTime Date { get; init; }
+    public DateTime Date { get; init; }
     
-    string? Motif { get; init; }
+    public string? Motif { get; init; }
     
-    // Sell
+    public int? PurchaseId { get; init; }
     
-    // Buy
+    [ForeignKey("PurchaseId")]
+    public Purchase? Purchase { get; init; }
     
-    Employee OperatedByUser { get; init; }
+    public int? SaleId { get; init; }
+    
+    [ForeignKey("SaleId")]
+    public Sale? Sale { get; init; }
+    
+    public int EmployeeId { get; init; } 
+    
+    [ForeignKey("EmployeeId")]
+    public Employee Employee { get; init; }
 }
