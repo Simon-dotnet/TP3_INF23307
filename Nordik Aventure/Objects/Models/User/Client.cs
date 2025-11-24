@@ -5,6 +5,11 @@ namespace Nordik_Aventure.Objects.Models.User;
 
 public class Client
 {
+    public Client()
+    {
+        ClientInterraction = new List<ClientInterraction>();
+    }
+    
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; init; }
@@ -30,7 +35,7 @@ public class Client
     
     public string? SatisfactionLevel { get; init; }
     
-    // IList<ClientInterraction> Interractions { get; init; } = new List<ClientInterraction>();
+    public ICollection<ClientInterraction> ClientInterraction { get; set; }
     
     // TotalVente
 }

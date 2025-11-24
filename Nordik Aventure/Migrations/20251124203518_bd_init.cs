@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Nordik_Aventure.Migrations
 {
     /// <inheritdoc />
-    public partial class initialmigration : Migration
+    public partial class bd_init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -31,7 +31,7 @@ namespace Nordik_Aventure.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Clients",
+                name: "Client",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -55,7 +55,7 @@ namespace Nordik_Aventure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Clients", x => x.Id);
+                    table.PrimaryKey("PK_Client", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -170,6 +170,38 @@ namespace Nordik_Aventure.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "ClientInterractions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Date = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Type = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Description = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    EmployeeId = table.Column<int>(type: "int", nullable: false),
+                    ClientId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClientInterractions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ClientInterractions_Client_ClientId",
+                        column: x => x.ClientId,
+                        principalTable: "Client",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClientInterractions_Employees_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employees",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Products",
                 columns: table => new
                 {
@@ -203,6 +235,31 @@ namespace Nordik_Aventure.Migrations
                         column: x => x.SupplierId,
                         principalTable: "Suppliers",
                         principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "ClientBuyingHistorics",
+                columns: table => new
+                {
+                    ClientId = table.Column<int>(type: "int", nullable: false),
+                    TransactionId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClientBuyingHistorics", x => x.ClientId);
+                    table.ForeignKey(
+                        name: "FK_ClientBuyingHistorics_Transactions_ClientId",
+                        column: x => x.ClientId,
+                        principalTable: "Transactions",
+                        principalColumn: "TransactionId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClientBuyingHistorics_Transactions_TransactionId",
+                        column: x => x.TransactionId,
+                        principalTable: "Transactions",
+                        principalColumn: "TransactionId",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
@@ -272,9 +329,9 @@ namespace Nordik_Aventure.Migrations
                 {
                     table.PrimaryKey("PK_Sales", x => x.SaleId);
                     table.ForeignKey(
-                        name: "FK_Sales_Clients_ClientId",
+                        name: "FK_Sales_Client_ClientId",
                         column: x => x.ClientId,
-                        principalTable: "Clients",
+                        principalTable: "Client",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -492,6 +549,21 @@ namespace Nordik_Aventure.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ClientBuyingHistorics_TransactionId",
+                table: "ClientBuyingHistorics",
+                column: "TransactionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClientInterractions_ClientId",
+                table: "ClientInterractions",
+                column: "ClientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClientInterractions_EmployeeId",
+                table: "ClientInterractions",
+                column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_OrderSupplierProducts_OrderId",
                 table: "OrderSupplierProducts",
                 column: "OrderId");
@@ -601,7 +673,10 @@ namespace Nordik_Aventure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Employees");
+                name: "ClientBuyingHistorics");
+
+            migrationBuilder.DropTable(
+                name: "ClientInterractions");
 
             migrationBuilder.DropTable(
                 name: "OrderSupplierProducts");
@@ -628,6 +703,9 @@ namespace Nordik_Aventure.Migrations
                 name: "TransactionHistory");
 
             migrationBuilder.DropTable(
+                name: "Employees");
+
+            migrationBuilder.DropTable(
                 name: "Stock");
 
             migrationBuilder.DropTable(
@@ -649,7 +727,7 @@ namespace Nordik_Aventure.Migrations
                 name: "Suppliers");
 
             migrationBuilder.DropTable(
-                name: "Clients");
+                name: "Client");
 
             migrationBuilder.DropTable(
                 name: "Orders");

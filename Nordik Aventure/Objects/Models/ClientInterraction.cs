@@ -1,18 +1,29 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Nordik_Aventure.Objects.Models.User;
+using Nordik_Aventure.Objects.Models;
 
 namespace Nordik_Aventure.Objects.Models;
 
 public class ClientInterraction
 {
-    int Id { get; set; }
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id { get; set; }
     
-    DateTime Date { get; set; }
+    public DateTime Date { get; set; }
     
-    // UserId
+    public string? Type { get; set; }
     
-    string Type { get; set; }
+    public string? Description { get; set; }
     
-    string Description { get; set; }
+    public int EmployeeId { get; set; }
     
-    Client Client { get; set; }
+    [ForeignKey(nameof(EmployeeId))]
+    public Employee Employee { get; set; }
+    
+    public int ClientId { get; set; }
+    
+    [ForeignKey(nameof(ClientId))]
+    public Client Client { get; set; }
 }
