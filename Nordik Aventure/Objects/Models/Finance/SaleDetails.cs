@@ -10,10 +10,10 @@ public class SaleDetails
     public int SaleDetailsId { get; init; }
     
     [Required]
-    public int ProductId { get; init; }
+    public int ProductStockId { get; init; }
     
-    [ForeignKey(nameof(ProductId))]
-    public Product Product { get; init; }
+    [ForeignKey(nameof(ProductStockId))]
+    public ProductInStock ProductInStock { get; init; }
 
     [Required]
     public int SaleId { get; init; }

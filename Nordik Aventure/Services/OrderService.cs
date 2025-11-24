@@ -1,33 +1,35 @@
 using GestBibli.Objects;
 using GestBibli.Objects.ViewModels;
 using Nordik_Aventure.Objects.Models;
+using Nordik_Aventure.Objects.Models.Finance;
 using Nordik_Aventure.Repositories;
 
 namespace Nordik_Aventure.Services;
 
 public class OrderService
 {
-    OrderRepository _orderRepository;
+    private readonly OrderRepository _orderRepository;
+
 
     public OrderService(OrderRepository orderRepository)
     {
         _orderRepository = orderRepository;
     }
 
-    public GenericResponse<Order> GetProductById(int id)
-    {
-        return _orderRepository.GetOrderById(id);
-    }
-
     public GenericResponse<List<Order>> GetAllOrders()
     {
         return _orderRepository.GetAllOrders();
     }
-    
-    public GenericResponse<Order> CreateOrder(OrderCreateViewModel createModel)
+
+    public GenericResponse<Order> GetOrderById(int id)
+    {
+        return _orderRepository.GetOrderById(id);
+    }
+
+    public GenericResponse<Order> CreateOrder(OrderCreateViewModel createModel, int purchaseId)
     {
         if (createModel == null || createModel.Items == null || !createModel.Items.Any())
-            return new GenericResponse<Order>()
+            return new GenericResponse<Order>
             {
                 Code = 500,
                 Data = null,
@@ -39,7 +41,8 @@ public class OrderService
         {
             DateOfOrdering = DateTime.UtcNow,
             DateOfDelivery = createModel.DateOfDelivery ?? DateTime.UtcNow.AddDays(7),
-            OrderSupplierProducts = new List<OrderSupplierProduct>()
+            OrderSupplierProducts = new List<OrderSupplierProduct>(),
+            PurchaseId = purchaseId,
         };
 
         double total = 0.0;

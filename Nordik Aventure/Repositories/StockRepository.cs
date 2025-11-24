@@ -81,7 +81,7 @@ public class StockRepository
         }
     }
 
-    public GenericResponse<ProductInStock> AddProductInStock(ProductInStock productInStock)
+    public GenericResponse<ProductInStock> AddProductToStock(ProductInStock productInStock)
     {
         try
         {
@@ -91,8 +91,7 @@ public class StockRepository
         }
         catch (Exception e)
         {
-            return new GenericResponse<ProductInStock>("Erreur lors de l'enregistrement du nouveau produit en stock",
-                500);
+            return new GenericResponse<ProductInStock>($"Erreur lors de l'ajout du produit dans le stock: {e}", 500);
         }
     }
 }

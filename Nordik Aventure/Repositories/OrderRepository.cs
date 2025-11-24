@@ -15,15 +15,23 @@ public class OrderRepository
 
     public GenericResponse<Order> GetOrderById(int id)
     {
-        var order = _context.Orders
-            .Where(o => o.OrderId == id)
-            .Include(o => o.OrderSupplierProducts)
-            .ThenInclude(osp => osp.Product)
-            .Include(o => o.OrderSupplierProducts)
-            .ThenInclude(osp => osp.Supplier)
-            .SingleOrDefault();
+        try
+        {
+            var order = _context.Orders
+                .Where(o => o.OrderId == id)
+                .Include(o => o.OrderSupplierProducts)
+                .ThenInclude(osp => osp.Product)
+                .Include(o => o.OrderSupplierProducts)
+                .ThenInclude(osp => osp.Supplier)
+                .SingleOrDefault();
 
-        return new GenericResponse<Order>(order);
+            return new GenericResponse<Order>(order);
+        }
+        catch (Exception ex)
+        {
+            return new GenericResponse<Order>($"Erreur dans le get de la commande: {ex}", 500);
+        }
+  
     }
 
 

@@ -21,4 +21,6 @@ public class Sale
     
     [ForeignKey(nameof(TransactionId))]
     public Transaction Transaction { get; init; }
+    
+    public ICollection<SaleDetails> SaleDetails { get; init; }
 }

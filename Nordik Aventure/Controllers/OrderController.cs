@@ -1,7 +1,10 @@
+using AutoMapper;
+using GestBibli.Objects;
 using GestBibli.Objects.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Nordik_Aventure.Objects.Models;
+using Nordik_Aventure.Objects.Models.Finance;
 using Nordik_Aventure.Services;
 
 namespace Nordik_Aventure.Controllers;
@@ -11,16 +14,25 @@ public class OrderController : Controller
 {
     private readonly NordikAventureContext _context;
     private readonly OrderService _orderService;
-    private readonly ProductService _productService;
     private readonly StockService _stockService;
+    private readonly StockMovementController _stockMovementController;
+    private readonly PurchaseService _purchaseService;
+    private readonly TransactionService _transactionService;
+    private readonly TaxesService _taxesService;
+    private readonly IMapper _mapper;
 
-    public OrderController(NordikAventureContext context, OrderService orderService, ProductService productService,
-        StockService stockService)
+    public OrderController(NordikAventureContext context, OrderService orderService,
+        StockService stockService, StockMovementController stockMovementController, PurchaseService purchaseService,
+        TransactionService transactionService, TaxesService taxesService, IMapper mapper)
     {
         _context = context;
         _orderService = orderService;
-        _productService = productService;
         _stockService = stockService;
+        _stockMovementController = stockMovementController;
+        _purchaseService = purchaseService;
+        _taxesService = taxesService;
+        _transactionService = transactionService;
+        _mapper = mapper;
     }
 
     [HttpGet("MakeOrder")]
@@ -76,7 +88,23 @@ public class OrderController : Controller
             return RedirectToAction("MakeOrder");
         }
 
-        var result = _orderService.CreateOrder(model);
+        var resultTransaction = AddEnteringTransaction(model);
+        if (!resultTransaction.Success)
+        {
+            TempData["ErrorMessage"] = resultTransaction.Message;
+            TempData["ErrorType"] = "error";
+            return RedirectToAction("MakeOrder");
+        }
+
+        var resultPurchase = AddEnteringPurchase(model, resultTransaction.Data.TransactionId);
+        if (!resultPurchase.Success)
+        {
+            TempData["ErrorMessage"] = resultTransaction.Message;
+            TempData["ErrorType"] = "error";
+            return RedirectToAction("MakeOrder");
+        }
+
+        var result = _orderService.CreateOrder(model, resultPurchase.Data.PurchaseId);
         if (result.Success)
         {
             var resultSuccess = CheckProductInStock(result.Data);
@@ -93,6 +121,7 @@ public class OrderController : Controller
                 }
 
                 TempData["ErrorType"] = "success";
+                AddEnteringMovementHistory(result.Data.OrderId);
                 return RedirectToAction("Index", "Finance");
             }
 
@@ -157,5 +186,44 @@ public class OrderController : Controller
         }
 
         return (false, hasNewObject);
+    }
+
+    private void AddEnteringMovementHistory(int orderId)
+    {
+        var result = _stockMovementController.CreateEnteringStockMovement(orderId);
+        if (!result.Success)
+        {
+            TempData["ErrorMessage"] = result.Message;
+            TempData["ErrorType"] = "error";
+        }
+    }
+
+    private GenericResponse<Transaction> AddEnteringTransaction(OrderCreateViewModel model)
+    {
+        var taxValues = _taxesService.GetTaxes();
+        var sumPrice = model.Items.Sum(oicm => oicm.TotalPrice);
+        var totalPrice = sumPrice + sumPrice * (taxValues.Data.ValueTvq / 100) +
+                         sumPrice * (taxValues.Data.ValueTps / 100);
+        var newTransaction = new Transaction
+        {
+            Amount = sumPrice,
+            Type = "purchase",
+            Date = DateTime.Now,
+            AmountTps = taxValues.Data.ValueTps,
+            AmountTvq = taxValues.Data.ValueTvq,
+            AmountTotal = totalPrice,
+        };
+        return _transactionService.AddEnteringTransaction(newTransaction);
+    }
+
+    private GenericResponse<Purchase> AddEnteringPurchase(OrderCreateViewModel model, int transactionId)
+    {
+        var newPurchase = new Purchase
+        {
+            TransactionId = transactionId,
+            PurchaseDetails = _mapper.Map<List<PurchaseDetails>>(model.Items),
+        };
+
+        return _purchaseService.AddPurchase(newPurchase);
     }
 }
