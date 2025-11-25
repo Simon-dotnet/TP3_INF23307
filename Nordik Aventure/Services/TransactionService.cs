@@ -22,4 +22,9 @@ public class TransactionService
     {
         return _transactionRepository.AddLeavingTransaction(transaction);
     }
+
+    public GenericResponse<double> GetProfitFromWeek()
+    {
+        return _transactionRepository.GetProfitOfTheWeek();
+    }
 }

@@ -1,16 +1,21 @@
 using GestBibli.Objects;
 using Nordik_Aventure.Objects.Models;
+using Nordik_Aventure.Objects.Models.Finance;
 using Nordik_Aventure.Repositories;
 
 namespace Nordik_Aventure.Services;
 
 public class StockService
 {
-    StockRepository _stockRepository;
+    private readonly StockRepository _stockRepository;
+    private readonly SaleRepository _saleRepository;
+    private readonly PurchaseRepository _purchaseRepository;
 
-    public StockService(StockRepository stockRepository)
+    public StockService(StockRepository stockRepository, SaleRepository saleRepository, PurchaseRepository purchaseRepository)
     {
         _stockRepository = stockRepository;
+        _saleRepository = saleRepository;
+        _purchaseRepository = purchaseRepository;
     }
 
     public GenericResponse<Stock> GetStock()
@@ -40,4 +45,15 @@ public class StockService
     {
         return _stockRepository.AddProductToStock(productInStock);
     }
+
+    public GenericResponse<List<ProductInStock>> GetProductInStockToRefill()
+    {
+        return _stockRepository.GetProductInStockToRefill();
+    }
+
+    // public GenericResponse<double> CalculateProfitOfTheWeek()
+    // {
+    //     var saleOfTheWeek = _saleRepository.GetSaleOfTheWeek();
+    //     var purchaseOfTheWeek = 
+    // }
 }

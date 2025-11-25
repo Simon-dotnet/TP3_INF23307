@@ -24,4 +24,9 @@ public class SaleService
     {
         return _saleRepository.AddSale(sale);
     }
+
+    public GenericResponse<List<Sale>> GetSalesOfTheWeek()
+    {
+        return _saleRepository.GetSalesOfTheWeek();
+    }
 }

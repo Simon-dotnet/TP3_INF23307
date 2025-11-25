@@ -189,13 +189,17 @@ public class SaleController : Controller
 
     private GenericResponse<Sale> AddLeavingSale(SaleCreateViewModel model, int transactionId)
     {
+        var totalSale = model.Items.Sum(i => i.TotalPrice);
+        var tvq = totalSale * (_taxesService.GetTaxes().Data.ValueTvq/100);
+        var tps = totalSale * (_taxesService.GetTaxes().Data.ValueTps/100);
+        var totalPriceWithTaxes = totalSale + tvq + tps;
         var sale = new Sale
         {
             ClientId = model.ClientId,
             TransactionId = transactionId,
             SaleDetails = _mapper.Map<List<SaleDetails>>(model.Items),
             DateOfSale = DateTime.Now,
-            TotalPrice = model.Items.Sum(item => item.TotalPrice),
+            TotalPrice = totalPriceWithTaxes,
         };
 
         return _saleService.AddSale(sale);

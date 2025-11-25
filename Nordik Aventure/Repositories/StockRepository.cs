@@ -94,4 +94,18 @@ public class StockRepository
             return new GenericResponse<ProductInStock>($"Erreur lors de l'ajout du produit dans le stock: {e}", 500);
         }
     }
+
+    public GenericResponse<List<ProductInStock>> GetProductInStockToRefill()
+    {
+        try
+        {
+            var result = _context.ProductInStock.Where(ps => ps.QuantityInStock < ps.Threshold)
+                .Include(ps => ps.Product).ToList();
+            return new GenericResponse<List<ProductInStock>>(result);
+        }
+        catch (Exception ex)
+        {
+            return new GenericResponse<List<ProductInStock>>("Erreur lors du get des produits à refill", 500);
+        }
+    }
 }

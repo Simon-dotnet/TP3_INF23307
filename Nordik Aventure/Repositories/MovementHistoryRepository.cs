@@ -48,11 +48,11 @@ public class MovementHistoryRepository
         }
         catch (Exception ex)
         {
-            return new GenericResponse<MovementHistory>($"Erreur lors de la sauvegarde du movement history entrante: {ex}", 500);
+            return new GenericResponse<MovementHistory>(
+                $"Erreur lors de la sauvegarde du movement history entrante: {ex}", 500);
         }
-      
     }
-    
+
     public GenericResponse<MovementHistory> AddLeavingMovementStock(MovementHistory movementHistory)
     {
         try
@@ -63,8 +63,8 @@ public class MovementHistoryRepository
         }
         catch (Exception ex)
         {
-            return new GenericResponse<MovementHistory>($"Erreur lors de la sauvegarde du movement history sortante: {ex}", 500);
+            return new GenericResponse<MovementHistory>(
+                $"Erreur lors de la sauvegarde du movement history sortante: {ex}", 500);
         }
-      
     }
 }
