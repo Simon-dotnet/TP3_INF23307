@@ -9,11 +9,13 @@ namespace Nordik_Aventure.Services;
 public class OrderService
 {
     private readonly OrderRepository _orderRepository;
+    private readonly TaxesRepository _taxeRepository;
 
 
-    public OrderService(OrderRepository orderRepository)
+    public OrderService(OrderRepository orderRepository, TaxesRepository taxesRepository)
     {
         _orderRepository = orderRepository;
+        _taxeRepository = taxesRepository;
     }
 
     public GenericResponse<List<Order>> GetAllOrders()
@@ -49,16 +51,20 @@ public class OrderService
 
         foreach (var item in createModel.Items)
         {
+            var totalPurchase = item.TotalPrice;
+            var tvq = totalPurchase * (_taxeRepository.GetTaxes().Data.ValueTvq/100);
+            var tps = totalPurchase * (_taxeRepository.GetTaxes().Data.ValueTps/100);
+            var totalWithTaxes = tvq + tps + totalPurchase;
             var osp = new OrderSupplierProduct
             {
                 ProductId = item.ProductId,
                 SupplierId = item.SupplierId,
                 Quantity = item.Quantity,
-                TotalPrice = item.TotalPrice,
+                TotalPrice = totalWithTaxes,
             };
 
             order.OrderSupplierProducts.Add(osp);
-            total += item.TotalPrice;
+            total += totalWithTaxes;
         }
 
         order.TotalPrice = total;

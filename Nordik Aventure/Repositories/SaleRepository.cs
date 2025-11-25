@@ -10,9 +10,8 @@ public class SaleRepository
 
     public SaleRepository()
     {
-        
     }
-    
+
     public GenericResponse<Sale> GetSaleById(int saleId)
     {
         try
@@ -33,7 +32,7 @@ public class SaleRepository
             return new GenericResponse<Sale>("Erreur de get sale details", 500);
         }
     }
-    
+
     public GenericResponse<Sale> AddSale(Sale sale)
     {
         try
@@ -46,5 +45,16 @@ public class SaleRepository
         {
             return new GenericResponse<Sale>($"Erreur lors de la sauvegarde d'une vente client: {ex}", 500);
         }
+    }
+
+    public GenericResponse<List<Sale>> GetSalesOfTheWeek()
+    {
+        var result = _context.Sales
+            .Where(s => s.DateOfSale >= DateTime.Now.AddDays(-7))
+            .Include(s => s.SaleDetails)
+            .ThenInclude(sd => sd.ProductInStock)
+            .ThenInclude(ps => ps.Product)
+            .ToList();
+        return new GenericResponse<List<Sale>>(result);
     }
 }
