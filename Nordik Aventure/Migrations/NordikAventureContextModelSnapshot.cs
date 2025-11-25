@@ -145,19 +145,25 @@ namespace Nordik_Aventure.Migrations
 
             modelBuilder.Entity("Nordik_Aventure.Objects.Models.Finance.Sale", b =>
                 {
-                    b.Property<int>("SaleId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("SaleId"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ClientId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("DateOfSale")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<double>("TotalPrice")
+                        .HasColumnType("double");
+
                     b.Property<int>("TransactionId")
                         .HasColumnType("int");
 
-                    b.HasKey("SaleId");
+                    b.HasKey("Id");
 
                     b.HasIndex("ClientId");
 
@@ -168,11 +174,11 @@ namespace Nordik_Aventure.Migrations
 
             modelBuilder.Entity("Nordik_Aventure.Objects.Models.Finance.SaleDetails", b =>
                 {
-                    b.Property<int>("SaleDetailsId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("SaleDetailsId"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ProductStockId")
                         .HasColumnType("int");
@@ -183,7 +189,10 @@ namespace Nordik_Aventure.Migrations
                     b.Property<int>("SaleId")
                         .HasColumnType("int");
 
-                    b.HasKey("SaleDetailsId");
+                    b.Property<double>("TotalPrice")
+                        .HasColumnType("double");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("ProductStockId");
 

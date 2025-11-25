@@ -17,15 +17,34 @@ public class SaleRepository
     {
         try
         {
-            var result = _context.Sales.Where(s => s.SaleId == saleId)
+            var result = _context.Sales
+                .Where(s => s.Id == saleId)
                 .Include(s => s.SaleDetails)
-                .ThenInclude(ps => ps.ProductInStock)
-                .Include(s => s.Client).FirstOrDefault();
+                .ThenInclude(sd => sd.ProductInStock)
+                .ThenInclude(pis => pis.Product)
+                .Include(s => s.SaleDetails)
+                .Include(s => s.Client)
+                .FirstOrDefault();
+
             return new GenericResponse<Sale>(result);
         }
         catch (Exception ex)
         {
             return new GenericResponse<Sale>("Erreur de get sale details", 500);
+        }
+    }
+    
+    public GenericResponse<Sale> AddSale(Sale sale)
+    {
+        try
+        {
+            _context.Sales.Add(sale);
+            _context.SaveChanges();
+            return new GenericResponse<Sale>(sale);
+        }
+        catch (Exception ex)
+        {
+            return new GenericResponse<Sale>($"Erreur lors de la sauvegarde d'une vente client: {ex}", 500);
         }
     }
 }
