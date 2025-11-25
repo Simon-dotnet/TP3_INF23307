@@ -1,6 +1,7 @@
 using GestBibli.Objects;
 using Microsoft.AspNetCore.Mvc;
 using Nordik_Aventure.Objects.Models;
+using Nordik_Aventure.Objects.Models.Finance;
 using Nordik_Aventure.Services;
 
 namespace Nordik_Aventure.Controllers;
@@ -12,14 +13,16 @@ public class StockMovementController : Controller
     private readonly UserService _userService;
     private readonly UserSession _userSession;
     private readonly OrderService _orderService;
+    private readonly SaleService _saleService;
 
     public StockMovementController(MovementHistoryService movementHistoryService, UserService userService,
-        UserSession userSession, OrderService orderService)
+        UserSession userSession, OrderService orderService, SaleService saleService)
     {
         _movementHistoryService = movementHistoryService;
         _userService = userService;
         _userSession = userSession;
         _orderService = orderService;
+        _saleService = saleService;
     }
 
     [HttpGet]
@@ -62,6 +65,35 @@ public class StockMovementController : Controller
             EmployeeId = currentEmployee.Data.Id
         };
         var result = _movementHistoryService.AddEnteringMovementHistory(movementHistory);
+        return result;
+    }
+    
+    public GenericResponse<MovementHistory> CreateLeavingStockMovement(int id)
+    {
+        var userId = _userSession.UserId;
+        var sale = _saleService.GetSaleById(id);
+        if (!sale.Success)
+        {
+            return new GenericResponse<MovementHistory>("Sale not found", 404);
+        }
+        
+        var saleData = sale.Data;
+        var currentEmployee = _userService.GetEmployeeById(userId.Value);
+        var motifBuilder =
+            $"{currentEmployee.Data.Name} {currentEmployee.Data.Surname} a vendu(e) le {saleData.DateOfSale:dd/MM/yyyy}: " +
+            $"{string.Join("", saleData.SaleDetails.Select(osp => $"\n • {osp.Quantity} - {osp.ProductInStock.Product.Name}"))} " +
+            $"\npour une quantité totale de {saleData.TotalPrice} $";
+
+        var movementHistory = new MovementHistory()
+        {
+            Type = "sale",
+            Date = DateTime.Now,
+            Motif = motifBuilder,
+            PurchaseId = null,
+            SaleId = saleData.Id,
+            EmployeeId = currentEmployee.Data.Id
+        };
+        var result = _movementHistoryService.AddLeavingMovementHistory(movementHistory);
         return result;
     }
 }

@@ -17,4 +17,9 @@ public class TransactionService
     {
         return _transactionRepository.AddEnteringTransaction(transaction);
     }
+    
+    public GenericResponse<Transaction> AddLeavingTransaction(Transaction transaction)
+    {
+        return _transactionRepository.AddLeavingTransaction(transaction);
+    }
 }

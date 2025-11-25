@@ -23,4 +23,9 @@ public class MovementHistoryService
     {
         return _movementHistoryRepository.AddEnteringMovementStock(movementHistory);
     }
+    
+    public GenericResponse<MovementHistory> AddLeavingMovementHistory(MovementHistory movementHistory)
+    {
+        return _movementHistoryRepository.AddLeavingMovementStock(movementHistory);
+    }
 }

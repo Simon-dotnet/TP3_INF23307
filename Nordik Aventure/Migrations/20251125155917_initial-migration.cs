@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Nordik_Aventure.Migrations
 {
     /// <inheritdoc />
-    public partial class bd_init : Migration
+    public partial class initialmigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -82,22 +82,6 @@ namespace Nordik_Aventure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Employees", x => x.Id);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "Orders",
-                columns: table => new
-                {
-                    OrderId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    DateOfOrdering = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    TotalPrice = table.Column<double>(type: "double", nullable: false),
-                    DateOfDelivery = table.Column<DateTime>(type: "datetime(6)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Orders", x => x.OrderId);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -295,18 +279,11 @@ namespace Nordik_Aventure.Migrations
                 {
                     PurchaseId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    OrderId = table.Column<int>(type: "int", nullable: false),
                     TransactionId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Purchases", x => x.PurchaseId);
-                    table.ForeignKey(
-                        name: "FK_Purchases_Orders_OrderId",
-                        column: x => x.OrderId,
-                        principalTable: "Orders",
-                        principalColumn: "OrderId",
-                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Purchases_Transactions_TransactionId",
                         column: x => x.TransactionId,
@@ -320,14 +297,16 @@ namespace Nordik_Aventure.Migrations
                 name: "Sales",
                 columns: table => new
                 {
-                    SaleId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    DateOfSale = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    TotalPrice = table.Column<double>(type: "double", nullable: false),
                     ClientId = table.Column<int>(type: "int", nullable: false),
                     TransactionId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Sales", x => x.SaleId);
+                    table.PrimaryKey("PK_Sales", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Sales_Client_ClientId",
                         column: x => x.ClientId,
@@ -364,42 +343,6 @@ namespace Nordik_Aventure.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "OrderSupplierProducts",
-                columns: table => new
-                {
-                    OrderSupplierProductId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
-                    TotalPrice = table.Column<double>(type: "double", nullable: false),
-                    SupplierId = table.Column<int>(type: "int", nullable: false),
-                    ProductId = table.Column<int>(type: "int", nullable: false),
-                    OrderId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_OrderSupplierProducts", x => x.OrderSupplierProductId);
-                    table.ForeignKey(
-                        name: "FK_OrderSupplierProducts_Orders_OrderId",
-                        column: x => x.OrderId,
-                        principalTable: "Orders",
-                        principalColumn: "OrderId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_OrderSupplierProducts_Products_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "Products",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_OrderSupplierProducts_Suppliers_SupplierId",
-                        column: x => x.SupplierId,
-                        principalTable: "Suppliers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
                 name: "ProductInStock",
                 columns: table => new
                 {
@@ -430,6 +373,29 @@ namespace Nordik_Aventure.Migrations
                         column: x => x.StockId,
                         principalTable: "Stock",
                         principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Orders",
+                columns: table => new
+                {
+                    OrderId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    DateOfOrdering = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    TotalPrice = table.Column<double>(type: "double", nullable: false),
+                    DateOfDelivery = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    PurchaseId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Orders", x => x.OrderId);
+                    table.ForeignKey(
+                        name: "FK_Orders_Purchases_PurchaseId",
+                        column: x => x.PurchaseId,
+                        principalTable: "Purchases",
+                        principalColumn: "PurchaseId",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
@@ -492,30 +458,39 @@ namespace Nordik_Aventure.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "SaleDetails",
+                name: "MovementHistory",
                 columns: table => new
                 {
-                    SaleDetailsId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    ProductId = table.Column<int>(type: "int", nullable: false),
-                    SaleId = table.Column<int>(type: "int", nullable: false),
-                    Quantity = table.Column<int>(type: "int", nullable: false)
+                    Type = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Date = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Motif = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    PurchaseId = table.Column<int>(type: "int", nullable: true),
+                    SaleId = table.Column<int>(type: "int", nullable: true),
+                    EmployeeId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SaleDetails", x => x.SaleDetailsId);
+                    table.PrimaryKey("PK_MovementHistory", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_SaleDetails_Products_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "Products",
+                        name: "FK_MovementHistory_Employees_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employees",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_SaleDetails_Sales_SaleId",
+                        name: "FK_MovementHistory_Purchases_PurchaseId",
+                        column: x => x.PurchaseId,
+                        principalTable: "Purchases",
+                        principalColumn: "PurchaseId");
+                    table.ForeignKey(
+                        name: "FK_MovementHistory_Sales_SaleId",
                         column: x => x.SaleId,
                         principalTable: "Sales",
-                        principalColumn: "SaleId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -543,7 +518,72 @@ namespace Nordik_Aventure.Migrations
                         name: "FK_SaleReceipts_Sales_SaleId",
                         column: x => x.SaleId,
                         principalTable: "Sales",
-                        principalColumn: "SaleId",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "SaleDetails",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    TotalPrice = table.Column<double>(type: "double", nullable: false),
+                    ProductStockId = table.Column<int>(type: "int", nullable: false),
+                    SaleId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SaleDetails", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SaleDetails_ProductInStock_ProductStockId",
+                        column: x => x.ProductStockId,
+                        principalTable: "ProductInStock",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SaleDetails_Sales_SaleId",
+                        column: x => x.SaleId,
+                        principalTable: "Sales",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "OrderSupplierProducts",
+                columns: table => new
+                {
+                    OrderSupplierProductId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    TotalPrice = table.Column<double>(type: "double", nullable: false),
+                    SupplierId = table.Column<int>(type: "int", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    OrderId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderSupplierProducts", x => x.OrderSupplierProductId);
+                    table.ForeignKey(
+                        name: "FK_OrderSupplierProducts_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "OrderId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrderSupplierProducts_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrderSupplierProducts_Suppliers_SupplierId",
+                        column: x => x.SupplierId,
+                        principalTable: "Suppliers",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
@@ -562,6 +602,26 @@ namespace Nordik_Aventure.Migrations
                 name: "IX_ClientInterractions_EmployeeId",
                 table: "ClientInterractions",
                 column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MovementHistory_EmployeeId",
+                table: "MovementHistory",
+                column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MovementHistory_PurchaseId",
+                table: "MovementHistory",
+                column: "PurchaseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MovementHistory_SaleId",
+                table: "MovementHistory",
+                column: "SaleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Orders_PurchaseId",
+                table: "Orders",
+                column: "PurchaseId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrderSupplierProducts_OrderId",
@@ -614,19 +674,14 @@ namespace Nordik_Aventure.Migrations
                 column: "PurchaseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Purchases_OrderId",
-                table: "Purchases",
-                column: "OrderId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Purchases_TransactionId",
                 table: "Purchases",
                 column: "TransactionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SaleDetails_ProductId",
+                name: "IX_SaleDetails_ProductStockId",
                 table: "SaleDetails",
-                column: "ProductId");
+                column: "ProductStockId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SaleDetails_SaleId",
@@ -679,10 +734,10 @@ namespace Nordik_Aventure.Migrations
                 name: "ClientInterractions");
 
             migrationBuilder.DropTable(
-                name: "OrderSupplierProducts");
+                name: "MovementHistory");
 
             migrationBuilder.DropTable(
-                name: "ProductInStock");
+                name: "OrderSupplierProducts");
 
             migrationBuilder.DropTable(
                 name: "PurchaseDetails");
@@ -706,10 +761,10 @@ namespace Nordik_Aventure.Migrations
                 name: "Employees");
 
             migrationBuilder.DropTable(
-                name: "Stock");
+                name: "Orders");
 
             migrationBuilder.DropTable(
-                name: "Products");
+                name: "ProductInStock");
 
             migrationBuilder.DropTable(
                 name: "Sales");
@@ -721,19 +776,22 @@ namespace Nordik_Aventure.Migrations
                 name: "Purchases");
 
             migrationBuilder.DropTable(
-                name: "Categories");
+                name: "Products");
 
             migrationBuilder.DropTable(
-                name: "Suppliers");
+                name: "Stock");
 
             migrationBuilder.DropTable(
                 name: "Client");
 
             migrationBuilder.DropTable(
-                name: "Orders");
+                name: "Transactions");
 
             migrationBuilder.DropTable(
-                name: "Transactions");
+                name: "Categories");
+
+            migrationBuilder.DropTable(
+                name: "Suppliers");
         }
     }
 }

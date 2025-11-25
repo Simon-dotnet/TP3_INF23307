@@ -1,4 +1,6 @@
 using GestBibli.Objects;
+using GestBibli.Objects.ViewModels;
+using Nordik_Aventure.Objects.Models;
 using Nordik_Aventure.Objects.Models.Finance;
 using Nordik_Aventure.Repositories;
 
@@ -16,5 +18,10 @@ public class SaleService
     public GenericResponse<Sale> GetSaleById(int id)
     {
         return _saleRepository.GetSaleById(id);
+    }
+    
+    public GenericResponse<Sale> AddSale(Sale sale)
+    {
+        return _saleRepository.AddSale(sale);
     }
 }

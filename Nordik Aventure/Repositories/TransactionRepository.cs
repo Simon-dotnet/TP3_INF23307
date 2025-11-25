@@ -22,7 +22,21 @@ public class TransactionRepository
         }
         catch (Exception e)
         {
-            return new GenericResponse<Transaction>($"Erreur lors de la création de la transaction: {e}", 500);
+            return new GenericResponse<Transaction>($"Erreur lors de la création de la transaction entrante: {e}", 500);
+        }
+    }
+    
+    public GenericResponse<Transaction> AddLeavingTransaction(Transaction transaction)
+    {
+        try
+        {
+            _context.Transactions.Add(transaction);
+            _context.SaveChanges();
+            return new GenericResponse<Transaction>(transaction);
+        }
+        catch (Exception e)
+        {
+            return new GenericResponse<Transaction>($"Erreur lors de la création de la transaction sortante: {e}", 500);
         }
     }
 }

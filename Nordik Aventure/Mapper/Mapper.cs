@@ -13,5 +13,11 @@ public class Mapper : Profile
             .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId))
             .ForMember(dest => dest.Purchase, opt => opt.Ignore())
             .ForMember(dest => dest.PurchaseId, opt => opt.Ignore());
+
+        CreateMap<SaleItemCreateViewModel, SaleDetails>()
+            .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
+            .ForMember(dest => dest.Sale, opt => opt.Ignore())
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.ProductStockId, opt => opt.MapFrom(src => src.ProductStockId));
     }
 }

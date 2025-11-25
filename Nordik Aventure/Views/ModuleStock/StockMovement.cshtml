@@ -116,7 +116,7 @@
 
         axios.get(`/finance/purchase/${id}`)
             .then(r => {
-                const data = r.data; // already parsed JSON
+                const data = r.data;
                 if (!data || data.length === 0) {
                     alert("Aucun détail trouvé.");
                     return;
@@ -137,6 +137,40 @@
                         <td>${item.quantity ?? "-"}</td>
                         <td>${lineTotal.toFixed(2)} $</td>
                         <td>${item.supplierName ?? "-"}</td>
+                    </tr>`;
+                });
+
+                document.getElementById("transactionTotal").textContent =
+                    "Total : " + total.toFixed(2) + " $";
+            })
+            .catch(err => console.error(err));
+    }
+
+    function GetSaleModal(id) {
+        clearModal();
+
+        axios.get(`/finance/sale/${id}`)
+            .then(r => {
+                const data = r.data;
+                if (!data || data.length === 0) {
+                    alert("Aucun détail trouvé.");
+                    return;
+                }
+
+                const tbody = document.getElementById("transactionModalBody");
+                let total = 0;
+
+                data.forEach(item => {
+                    const lineTotal = item.totalPrice ?? 0;
+                    total += lineTotal;
+
+                    tbody.innerHTML += `
+                    <tr>
+                        <td>${item.nameProduct ?? "-"}</td>
+                        <td>${item.sku ?? "-"}</td>
+                        <td>${item.quantity ?? "-"}</td>
+                        <td>${lineTotal.toFixed(2)} $</td>
+                        <td>${item.clientName ?? "-"}</td>
                     </tr>`;
                 });
 

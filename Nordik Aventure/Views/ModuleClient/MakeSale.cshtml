@@ -1,0 +1,280 @@
+@model MakeSaleViewModel
+@using GestBibli.Objects.ViewModels
+@using Nordik_Aventure.Objects.Models.User
+
+@{
+    Layout = "_ClientLayout";
+}
+
+<h1>Créer une vente client</h1>
+<br/>
+
+<div class="mb-4 border p-3 rounded cards-container">
+    <div id="selectClientSection" class="border p-3 rounded bg-white" style="display:block;">
+        <h5>Sélectionner un client</h5>
+        <div class="mb-2">
+            <select id="clientSelect" class="form-control">
+                <option value="">-- Sélectionner un client --</option>
+                @foreach (var client in Model.AvailableClients)
+                {
+                    <option value="@client.Id"
+                            data-address="@client.Address"
+                            data-phone="@client.Phone"
+                            data-name="@client.Name">
+                        @client.Name - @client.Email - @client.Phone
+                    </option>
+                }
+            </select>
+        </div>
+    </div> 
+</div><br/>  
+
+<div class="mb-3">
+    <button id="toggleAddProduct" type="button" class="btn"
+            style="background-color: var(--background-button); color: var(--text-white);">
+        Ajouter un produit
+    </button>
+</div><br/>
+
+<div class="mb-4 border p-3 rounded cards-container">
+    <div id="addProductSection" class="border p-3 rounded bg-white" style="display:none;">
+        <h5>Ajouter un produit</h5>
+        <div class="mb-2">
+            <label>Produit</label>
+            <select id="productSelect" class="form-control">
+                <option value="">-- Sélectionner un produit --</option>
+                @foreach (var product in Model.AvailableProducts)
+                {
+                    bool disabled = product.Status == "Inactif"
+                                    || product.Status == "Non disponible"
+                                    || product.Status == "Indisponible";
+
+                    if (disabled)
+                    {
+                        <option value="@product.Id"
+                                disabled="disabled"
+                                data-price="@product.Product.PriceToSell"
+                                data-supplierid="@product.Product.SupplierId"
+                                data-supplier="@product.Product.Supplier?.Name">
+                            @product.Product.Name - @($"{product.Product.PriceToSell:N2}".Replace('.', ','))$
+                        </option>
+                    }
+                    else
+                    {
+                        <option value="@product.Id"
+                                data-price="@product.Product.PriceToSell"
+                                data-supplierid="@product.Product.SupplierId"
+                                data-supplier="@product.Product.Supplier?.Name">
+                            @product.Product.Name - @($"{product.Product.PriceToSell:N2}".Replace('.', ','))$
+                        </option>
+                    }
+                }
+            </select>
+        </div>
+
+        <div class="mb-2">
+            <label>Quantité</label>
+            <input id="quantitySelect"
+                   type="number"
+                   class="form-control"
+                   min="1"
+                   max="999"
+                   value="1"/>
+        </div>
+
+        <div class="mb-2">
+            <label>Fournisseur</label>
+            <input id="supplierField" class="form-control form-control-plaintext" readonly/>
+        </div>
+
+        <div class="mb-2">
+            <label>Prix unitaire</label>
+            <input id="priceField" class="form-control form-control-plaintext" readonly/>
+        </div>
+
+        <div class="mb-2">
+            <label>Total produit</label>
+            <input id="totalProductField" class="form-control form-control-plaintext" readonly/>
+        </div>
+
+        <button id="addToCart" type="button" class="btn"
+                style="background-color: var(--background-button); color: var(--text-white);">
+            Ajouter au panier
+        </button>
+        <button id="cancelAddProduct" type="button" class="btn btn-secondary">Annuler</button>
+    </div>
+</div>
+
+<form id="saleForm" method="post" action="/finance/sale/SubmitSale">
+    <input type="hidden" name="ClientId" id="ClientIdField" value=""/>
+    <input type="hidden" name="DateOfSale" id="DateOfSale" value=""/>
+    <input type="hidden" name="TPS" id="TPSField" value="0"/>
+    <input type="hidden" name="TVQ" id="TVQField" value="0"/>
+
+    <table class="table table-bordered" id="saleTable">
+        <thead>
+        <tr>
+            <th>Produit</th>
+            <th>Fournisseur</th>
+            <th>Quantité</th>
+            <th>Prix total</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <p>Total: <span id="totalPrice">0,00$</span></p>
+    <p>TPS: <span id="tps">0,00$</span></p>
+    <p>TVQ: <span id="tvq">0,00$</span></p>
+    <p>Total avec taxes: <span id="totalWithTaxes">0,00$</span></p>
+
+    <button id="submitSale" type="submit" class="btn"
+            style="background-color: var(--background-button); color: var(--text-white);">
+        Faire la vente client
+    </button>
+    <button id="cancelSale" type="button" class="btn btn-secondary">Annuler</button>
+</form>
+
+<script>
+    let cart = [];
+
+    const TPS_RATE = (@Model.Taxes?.ValueTps ?? 5) / 100;
+    const TVQ_RATE = (@Model.Taxes?.ValueTvq ?? 9.975) / 100;
+
+    const format = v => v.toFixed(2).replace('.', ',') + '$';
+
+    const updateTotals = () => {
+        let total = cart.reduce((sum, i) => sum + i.totalPrice, 0);
+        let tps = total * TPS_RATE;
+        let tvq = total * TVQ_RATE;
+        let totalWithTaxes = total + tps + tvq;
+
+        document.getElementById('totalPrice').innerText = format(total);
+        document.getElementById('tps').innerText = format(tps);
+        document.getElementById('tvq').innerText = format(tvq);
+        document.getElementById('totalWithTaxes').innerText = format(totalWithTaxes);
+
+        document.getElementById('TPSField').value = tps.toFixed(2);
+        document.getElementById('TVQField').value = tvq.toFixed(2);
+    };
+
+    document.getElementById("clientSelect").onchange = e => {
+        document.getElementById("ClientIdField").value = e.target.value;
+    };
+    
+    let buttonAjout = document.getElementById('addToCart');
+    buttonAjout.addEventListener('click', ()=>{
+        document.getElementById("clientSelect").disabled = true;
+    });
+
+    const renderCart = () => {
+        const tbody = document.querySelector('#saleTable tbody');
+        tbody.innerHTML = '';
+
+        cart.forEach((item, index) => {
+            const row = document.createElement('tr');
+
+            row.innerHTML = `
+                <td>${item.name}</td>
+                <td>${item.supplierName}</td>
+                <td>${item.quantity}</td>
+                <td>${item.totalPrice.toFixed(2).replace('.', ',')}$</td>
+                <td>
+                    <button type="button" class="btn btn-sm btn-danger" data-index="${index}">Supprimer</button>
+                    <input type="hidden" name="Items[${index}].ProductStockId" value="${item.productStockId}" />
+                    <input type="hidden" name="Items[${index}].Quantity" value="${item.quantity}" />
+                    <input type="hidden" name="Items[${index}].UnitPrice" value="${item.unitPrice}" />
+                    <input type="hidden" name="Items[${index}].TotalPrice" value="${item.totalPrice}" />
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+
+        document.querySelectorAll('#saleTable button.btn-danger').forEach(btn => {
+            btn.onclick = (e) => {
+                const idx = parseInt(e.currentTarget.dataset.index, 10);
+                cart.splice(idx, 1);
+                renderCart();
+                updateTotals();
+            };
+        });
+
+        updateTotals();
+    };
+
+    document.getElementById('toggleAddProduct').onclick = () => {
+        document.getElementById('addProductSection').style.display = 'block';
+    };
+    document.getElementById('cancelAddProduct').onclick = () => {
+        document.getElementById('addProductSection').style.display = 'none';
+    };
+
+    const productSelect = document.getElementById('productSelect');
+    const quantitySelect = document.getElementById('quantitySelect');
+    const supplierField = document.getElementById('supplierField');
+    const priceField = document.getElementById('priceField');
+    const totalProductField = document.getElementById('totalProductField');
+
+    const updateAddProductFields = () => {
+        const selected = productSelect.selectedOptions[0];
+        if (!selected || !selected.value) {
+            supplierField.value = '';
+            priceField.value = '';
+            totalProductField.value = '';
+            return;
+        }
+
+        const data = parseInt(quantitySelect.value);
+        if (data > 9999){
+            quantitySelect.value = 9999
+        }
+        
+        const price = parseFloat(selected.dataset.price);
+        const supplier = selected.dataset.supplier;
+        const quantity = parseInt(quantitySelect.value);
+        supplierField.value = supplier || '';
+        priceField.value = price.toFixed(2).replace('.', ',') + '$';
+        totalProductField.value = (price * quantity).toFixed(2).replace('.', ',') + '$';
+    };
+
+    productSelect.onchange = updateAddProductFields;
+    quantitySelect.onchange = updateAddProductFields;
+
+    document.getElementById('addToCart').onclick = () => {
+        const selected = productSelect.selectedOptions[0];
+        if (!selected || !selected.value) return alert('Sélectionnez un produit');
+
+        const productStockId = parseInt(selected.value);
+        const productName = selected.text.split('-')[0].trim();
+        const supplierName = selected.dataset.supplier || '';
+        const unitPrice = parseFloat(selected.dataset.price);
+        const quantity = parseInt(quantitySelect.value);
+        const totalPrice = unitPrice * quantity;
+
+        cart.push({ productStockId, name: productName, supplierName, quantity, unitPrice, totalPrice });
+
+        renderCart();
+        document.getElementById('addProductSection').style.display = 'none';
+        productSelect.selectedIndex = 0;
+        quantitySelect.value = 1;
+        supplierField.value = '';
+        priceField.value = '';
+        totalProductField.value = '';
+    };
+
+    document.getElementById('cancelSale').onclick = () => {
+        window.location.href = '/finance';
+    };
+
+    document.getElementById('saleForm').onsubmit = (e) => {
+        if (cart.length === 0) {
+            e.preventDefault();
+            alert('Aucun produit dans la commande');
+            return false;
+        }
+        return true;
+    };
+ 
+</script>
