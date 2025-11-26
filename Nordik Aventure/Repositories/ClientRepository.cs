@@ -5,7 +5,7 @@ namespace Nordik_Aventure.Repositories;
 
 public class ClientRepository
 {
-    NordikAventureContext _context = new NordikAventureContext();
+    private readonly NordikAventureContext _context = new NordikAventureContext();
 
     public ClientRepository()
     {
@@ -53,6 +53,20 @@ public class ClientRepository
         catch (Exception ex)
         {
             return new GenericResponse<Client>("Erreur lors du add client", 500);
+        }
+    }
+
+    public GenericResponse<Client> UpdateClient(Client client)
+    {
+        try
+        {
+            _context.Clients.Update(client);
+            _context.SaveChanges();
+            return new GenericResponse<Client>(client);
+        }
+        catch (Exception ex)
+        {
+            return new GenericResponse<Client>("Erreur lors du update client", 500);
         }
     }
 }

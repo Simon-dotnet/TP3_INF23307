@@ -4,14 +4,19 @@
 }
 
 <div class="container-fluid">
-    <form id="form-edit" method="post" asp-action="CreateClient" asp-controller="Client">
+    <form id="form-edit" method="post" asp-action="EditClient" asp-controller="Client">
         <div class="row align-items-center mb-4">
             <div class="col">
-                <h3 class="h3 mb-0 ms-2">Création d'un client</h3>
+                <h3 class="h3 mb-0 ms-2">Modifier le client @Model.Name</h3>
             </div>
         </div>
         <hr/>
         <div class="cards-container">
+            <div class="mb-3" style="display: none">
+                <label asp-for="Id" class="form-label"></label>
+                <input asp-for="Id" class="form-control" required="required"/>
+                <span asp-validation-for="Id" class="text-danger"></span>
+            </div>
             <div class="mb-3">
                 <label asp-for="Name" class="form-label">Nom</label>
                 <input type="text" required="required" asp-for="Name" class="form-control"/>
@@ -59,7 +64,7 @@
         </div>
 
         <div class="text-center mt-3">
-            <button type="submit" style="background-color: var(--background-button); color: var(--text-white)" class="btn w-25">Confirmer</button>
+            <button type="submit" style="background-color: var(--background-button); color: var(--text-white)" class="btn w-25">Confirmer la modification</button>
         </div>
     </form>
 </div>

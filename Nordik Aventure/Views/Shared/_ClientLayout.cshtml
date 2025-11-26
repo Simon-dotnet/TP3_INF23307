@@ -36,10 +36,10 @@ var errorText = TempData["ErrorMessage"] as string;
                 </a>
                 <ul style="margin-bottom: -85px; position: relative; z-index: 200" class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                     <li>
-                        <a style="cursor: pointer;" class="dropdown-item" onclick="location.href='@Url.Action("MakeOrder", "Order")'">Consulter les clients</a>
+                        <a style="cursor: pointer;" class="dropdown-item" onclick="location.href='@Url.Action("GetAllClients", "Client")'">Consulter les clients</a>
                     </li>
                     <li>
-                        <a style="cursor: pointer;" onclick="location.href='@Url.Action("OrderHistory", "Order")'" class="dropdown-item" href="#">Ajouter un client</a>
+                        <a style="cursor: pointer;" onclick="location.href='@Url.Action("GetAddClientForm", "Client")'" class="dropdown-item" href="#">Ajouter un client</a>
                     </li>
                 </ul>
             </li>

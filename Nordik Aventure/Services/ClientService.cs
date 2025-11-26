@@ -27,4 +27,9 @@ public class ClientService
     {
         return _clientRepository.GetAllClients();
     }
+
+    public GenericResponse<Client> UpdateClient(Client client)
+    {
+        return _clientRepository.UpdateClient(client);
+    }
 }

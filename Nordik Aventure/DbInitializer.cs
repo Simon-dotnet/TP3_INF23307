@@ -28,13 +28,13 @@ public static class DbInitializer
                 new Client
                 {
                     Id = 1, Name = "Paul", Password = "Paul123", Address = "144 rue de paul, Lévis, Qc, Canada",
-                    Email = "paul@paul.ca", Phone = "418-878-4090", Type = "particulier"
+                    Email = "paul@paul.ca", Phone = "418-878-4090", Type = "particulier", Status = "Actif", SatisfactionLevel = 1
                 },
                 new Client
                 {
                     Id = 2, Name = "KayakManiac", Password = "Kayak123",
                     Address = "123 rue du kayak, Montréal, Qc, Canada",
-                    Email = "kayak@kayak.ca", Phone = "418-878-4990", Type = "entreprise"
+                    Email = "kayak@kayak.ca", Phone = "418-878-4990", Type = "entreprise", Status = "Inactif"
                 }
             );
             context.SaveChanges();

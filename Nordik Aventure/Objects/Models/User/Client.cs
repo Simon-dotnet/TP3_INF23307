@@ -34,7 +34,7 @@ public class Client
     
     public string? Status { get; set; }
     
-    public string? SatisfactionLevel { get; set; }
+    public int? SatisfactionLevel { get; set; }
     
     public ICollection<ClientInterraction> ClientInterraction { get; set; }
     

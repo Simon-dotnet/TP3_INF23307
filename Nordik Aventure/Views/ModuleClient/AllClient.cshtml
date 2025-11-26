@@ -1,6 +1,6 @@
-@model List<Nordik_Aventure.Objects.Models.Product>
+@model List<Nordik_Aventure.Objects.Models.User.Client>
 @{
-    Layout = "_StockLayout";
+    Layout = "_ClientLayout";
 
     var list = Model;
 }
@@ -8,24 +8,24 @@
 <div class="container-fluid">
     <div class="row align-items-center mb-4">
         <div class="col">
-            <h3 class="h3 mb-0 ms-2">Liste des fiches de produit</h3>
+            <h3 class="h3 mb-0 ms-2">Liste des clients</h3>
         </div>
         <div class="col text-end">
-            <input id="searchInput" oninput="FilterList()" type="text" class="form-control w-50 d-inline-block" placeholder="Rechercher un produit..."/>
+            <input id="searchInput" oninput="FilterList()" type="text" class="form-control w-50 d-inline-block" placeholder="Rechercher un client..."/>
         </div>
     </div>
     <hr/>
     <div class="row mb-4 cards-container py-4 px-2">
-        @foreach (var p in list)
+        @foreach (var c in list)
         {
-            <div class="col-md-6 mb-4" id="product-card-zone" data-name="@p.Name.ToLower()">
+            <div class="col-md-6 mb-4" id="product-card-zone" data-name="@c.Name.ToLower()">
                 <div class="product-card">
                     <div class="header">
                         <div class="info">
-                            <p class="name">(@p.Sku) @p.Name</p>
+                            <p class="name">@c.Name</p>
                         </div>
                         <div class="status">
-                            @if (p.Status == "Actif")
+                            @if (c.Status == "Actif")
                             {
                                 <span class="status-actif">● Actif</span>
                             }
@@ -37,21 +37,14 @@
                     </div>
 
                     <div class="card-content">
-                        <p><strong>Prix Achat:</strong> @p.PriceToBuy.ToString("F2") $</p>
-                        <p><strong>Prix Vente:</strong> @p.PriceToSell.ToString("F2") $</p>
-                        <p><strong>Marge Brute:</strong> @p.GrossMargin.ToString("F2") %</p>
-                        <p>
-                            <strong>Catégories:</strong> @p.Category.Name
-                        </p>
-                        <p><strong>Poids:</strong> @p.Weight kg</p>
-                        <p>
-                            <strong>Fournisseur:</strong> @p.Supplier.Name
-                        </p>
+                        <p><strong>Email:</strong> @c.Email</p>
+                        <p><strong>Type:</strong> @c.Type</p>
+                        <p><strong>Satisfaction:</strong> @(c.SatisfactionLevel.HasValue ? c.SatisfactionLevel.Value : "*") / 5</p>
                     </div>
 
                     <div class="text-center mt-2">
-                        <a href=@Url.Action("ModifyProductForm", "Product", new { productId = p.Id }) class="btn w-50" style="background-color: var(--background-button); color: var(--text-white);">
-                            Modifier
+                        <a href=@Url.Action("GetSingleClient", "Client", new { id = c.Id }) class="btn w-50" style="background-color: var(--background-button); color: var(--text-white);">
+                            Consulter
                         </a>
                     </div>
                 </div>
