@@ -8,34 +8,35 @@ public class Client
     public Client()
     {
         ClientInterraction = new List<ClientInterraction>();
+        ClientBuyingHistoric = new List<ClientBuyingHistoric>();
     }
     
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; init; }
     
-    [Microsoft.Build.Framework.Required]
-    public string Name { get; init; }
+    [Required]
+    public string Name { get; set; }
     
-    [Microsoft.Build.Framework.Required]
-    public string Address { get; init; }
+    [Required]
+    public string Address { get; set; }
     
-    public string? Phone { get; init; }
+    public string? Phone { get; set; }
     
-    [Microsoft.Build.Framework.Required]
-    public string Email { get; init; }
+    [Required]
+    public string Email { get; set; }
     
-    [Microsoft.Build.Framework.Required]
-    public string Password { get; init; }
+    [Required]
+    public string Password { get; set; }
     
-    [Microsoft.Build.Framework.Required]
-    public string Type { get; init; }
+    [Required]
+    public string Type { get; set; }
     
-    public string? Status { get; init; }
+    public string? Status { get; set; }
     
-    public string? SatisfactionLevel { get; init; }
+    public string? SatisfactionLevel { get; set; }
     
     public ICollection<ClientInterraction> ClientInterraction { get; set; }
     
-    // TotalVente
+    public ICollection<ClientBuyingHistoric> ClientBuyingHistoric { get; set; }
 }
