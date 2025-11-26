@@ -45,7 +45,7 @@
                                                 +
                                             </button>
                                         </td>
-                                        <td>@p.TotalPrice.ToString("0.00")</td>
+                                        <td>@p.TotalPrice.ToString("0.00") $</td>
                                     </tr>
                                 }
                                 </tbody>
@@ -58,11 +58,11 @@
         </div>
 
         <div class="col-4 d-flex flex-column h-100">
-            <h3 class="p-3 h3">Liste des produits à recommander</h3>
+            <h3 class="p-3 h3">Liste des produits à commander</h3>
             <div class="flex-fill p-3 bg-light text-white d-flex flex-column rounded">
                 @if (Model.ProductInStockToRefill.Count == 0)
                 {
-                    <h4 class="h4 text-dark">Aucun produit à recommander!</h4>
+                    <h4 class="h4 text-dark">Aucun produit à commander!</h4>
                 }
                 else
                 {

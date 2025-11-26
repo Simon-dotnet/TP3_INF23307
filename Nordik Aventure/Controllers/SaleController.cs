@@ -47,7 +47,7 @@ public class SaleController : Controller
         {
             AvailableProducts = _context.ProductInStock.Include(ps => ps.Product).ThenInclude(p => p.Supplier)
                 .Where(ps => ps.Status == "Actif").ToList(),
-            AvailableClients = _context.Client.ToList(),
+            AvailableClients = _context.Client.Where(c => c.Status == "Actif").ToList(),
             Taxes = taxes
         };
 
@@ -60,6 +60,12 @@ public class SaleController : Controller
         if (model == null || model.Items == null || !model.Items.Any())
         {
             SetError("Aucune ligne de commande.");
+            return RedirectToAction("MakeSale");
+        }
+
+        var isError = CheckProductInStock(model);
+        if (isError)
+        {
             return RedirectToAction("MakeSale");
         }
 
@@ -78,12 +84,6 @@ public class SaleController : Controller
         }
 
         var sale = resultSale.Data;
-
-        var isError = CheckProductInStock(sale);
-        if (isError)
-        {
-            return RedirectToAction("MakeSale");
-        }
 
         AddLeavingMovementHistory(sale.Id);
 
@@ -118,16 +118,17 @@ public class SaleController : Controller
         return Ok(listSaleDto);
     }
 
-    private bool CheckProductInStock(Sale listItems)
+    private bool CheckProductInStock(SaleCreateViewModel sale)
     {
         var hasError = false;
-        foreach (var item in listItems.SaleDetails)
+        foreach (var item in sale.Items)
         {
             var stockResponse = _stockService.GetProductInStock(item.ProductStockId);
             if (!stockResponse.Success)
             {
-                SetError($"Le produit ID {item.Id} n'existe pas en stock.");
+                SetError($"Le produit ID {item.ProductStockId} n'existe pas en stock.");
                 hasError = true;
+                break;
             }
 
             var stockItem = stockResponse.Data;
@@ -137,6 +138,7 @@ public class SaleController : Controller
                 SetError(
                     $"Impossible de vendre {item.Quantity} unités. Stock disponible: {stockItem.QuantityInStock}.");
                 hasError = true;
+                break;
             }
 
             stockItem.QuantityInStock -= item.Quantity;
@@ -146,6 +148,7 @@ public class SaleController : Controller
             {
                 SetError(resultSave.Message);
                 hasError = true;
+                break;
             }
         }
 
@@ -190,8 +193,8 @@ public class SaleController : Controller
     private GenericResponse<Sale> AddLeavingSale(SaleCreateViewModel model, int transactionId)
     {
         var totalSale = model.Items.Sum(i => i.TotalPrice);
-        var tvq = totalSale * (_taxesService.GetTaxes().Data.ValueTvq/100);
-        var tps = totalSale * (_taxesService.GetTaxes().Data.ValueTps/100);
+        var tvq = totalSale * (_taxesService.GetTaxes().Data.ValueTvq / 100);
+        var tps = totalSale * (_taxesService.GetTaxes().Data.ValueTps / 100);
         var totalPriceWithTaxes = totalSale + tvq + tps;
         var sale = new Sale
         {

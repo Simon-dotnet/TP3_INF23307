@@ -1,0 +1,65 @@
+@model Nordik_Aventure.Objects.Models.User.Client
+@{
+    Layout = "_ClientLayout";
+}
+
+<div class="container-fluid">
+    <form id="form-edit" method="post" asp-action="CreateClient" asp-controller="Client">
+        <div class="row align-items-center mb-4">
+            <div class="col">
+                <h3 class="h3 mb-0 ms-2">Création d'un client</h3>
+            </div>
+        </div>
+        <hr/>
+        <div class="cards-container">
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label">Nom</label>
+                <input type="text" required="required" asp-for="Name" class="form-control"/>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label">Email</label>
+                <input type="email" asp-for="Email" class="form-control"/>
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Address" class="form-label">Adresse</label>
+                <input type="text" asp-for="Address" class="form-control"/>
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Type" class="form-label">Type</label>
+                <select asp-for="Type" class="form-select" aria-label="type">
+                    <option value="particulier">Paticulier</option>
+                    <option value="entreprise">Entreprise</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label">Mot de passe</label>
+                <input type="text" asp-for="Password" class="form-control"/>
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Phone" class="form-label">Téléphone</label>
+                <input type="text" asp-for="Phone" class="form-control"/>
+                <span asp-validation-for="Phone" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Status" class="form-label">Statut</label>
+                <select asp-for="Status" class="form-select" aria-label="status">
+                    <option value="Actif">Disponible</option>
+                    <option value="Inactif">Non-Disponible</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label asp-for="SatisfactionLevel" class="form-label">Niveau de satisfaction</label>
+                <input type="number" min="0" max="5" asp-for="SatisfactionLevel" class="form-control"/>
+                <span asp-validation-for="SatisfactionLevel" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="text-center mt-3">
+            <button type="submit" style="background-color: var(--background-button); color: var(--text-white)" class="btn w-25">Confirmer</button>
+        </div>
+    </form>
+</div>
