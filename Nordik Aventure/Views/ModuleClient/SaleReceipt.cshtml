@@ -1,0 +1,100 @@
+@model Nordik_Aventure.Objects.ViewModels.ClientSaleReceiptViewModel
+
+@{
+    var fromFinance = ViewBag.FromFinance as bool?;
+    Layout = (fromFinance ?? false) ? "_FinanceLayout" : "_ClientLayout";
+}
+
+<style>
+    @@media print {
+        .no-print,
+        header,
+        nav,
+        .navbar,
+        .sidebar,
+        .topbar {
+            display: none !important;
+            visibility: hidden !important;
+            height: 0 !important;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: white;
+        }
+
+        #receipt {
+            width: 100%;
+            padding: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        h2, h4 {
+            margin-top: 0;
+        }
+    }
+</style>
+
+<div id="receipt">
+
+    <h2>Reçu de vente #@Model.SaleReceiptId</h2>
+
+    <div class="mb-3">
+        <strong>Date :</strong>
+        @(Model.Transaction?.Date.ToString("dd/MM/yyyy HH:mm") ?? DateTime.Now.ToString("dd/MM/yyyy HH:mm"))
+        <br/>
+        <strong>Client :</strong> @Model.Sale.Client.Name
+    </div>
+
+    <h4>Produits</h4>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Produit</th>
+            <th>SKU</th>
+            <th>Quantité</th>
+            <th>Prix unitaire</th>
+            <th>Prix total</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var sd in Model.Sale.SaleDetails)
+        {
+            var p = sd.ProductInStock.Product;
+            var lineTotal = sd.Quantity * p.PriceToSell;
+            <tr>
+                <td>@p.Name</td>
+                <td>@p.Sku</td>
+                <td>@sd.Quantity</td>
+                <td>@p.PriceToSell.ToString("N2") $</td>
+                <td>@lineTotal.ToString("N2") $</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+    @{
+        var subtotal = Model.Sale.SaleDetails.Sum(sd => sd.Quantity * sd.ProductInStock.Product.PriceToSell);
+        var tps = subtotal * ((Model.Taxes?.ValueTps ?? 0) / 100.0);
+        var tvq = subtotal * ((Model.Taxes?.ValueTvq ?? 0) / 100.0);
+        var total = subtotal + tps + tvq;
+    }
+
+    <div class="text-end">
+        <p>Sous-total : <strong>@subtotal.ToString("N2") $</strong></p>
+        <p>TPS (@(Model.Taxes?.ValueTps ?? 0)%): <strong>@tps.ToString("N2") $</strong></p>
+        <p>TVQ (@(Model.Taxes?.ValueTvq ?? 0)%): <strong>@tvq.ToString("N2") $</strong></p>
+        <h4>Total : <strong>@total.ToString("N2") $</strong></h4>
+    </div>
+</div>
+
+<div class="mt-3 no-print">
+    <a class="btn btn-secondary" href="/Client">Retour</a>
+    <button class="btn btn-primary" style="background-color: var(--background-button); color: var(--text-white);" onclick="window.print()">Imprimer/Exporter</button>
+</div>

@@ -27,4 +27,14 @@ public class TransactionService
     {
         return _transactionRepository.GetProfitOfTheWeek();
     }
+    
+    public GenericResponse<List<Transaction>> GetLastTransactions(int count)
+    {
+        return _transactionRepository.GetLast(count);
+    }
+
+    public GenericResponse<List<Transaction>> GetAllTransactions()
+    {
+        return _transactionRepository.GetAll();
+    }
 }

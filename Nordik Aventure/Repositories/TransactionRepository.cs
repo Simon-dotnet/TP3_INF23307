@@ -60,4 +60,37 @@ public class TransactionRepository
             return new GenericResponse<double>("Erreur lors du calcul du profit", 500);
         }
     }
+    
+    public GenericResponse<List<Transaction>> GetLast(int count)
+    {
+        try
+        {
+            var data = _context.Transactions
+                .OrderByDescending(t => t.Date)
+                .Take(count)
+                .ToList();
+
+            return new GenericResponse<List<Transaction>>(data);
+        }
+        catch (Exception ex)
+        {
+            return new GenericResponse<List<Transaction>>($"Erreur GetLast: {ex}", 500);
+        }
+    }
+
+    public GenericResponse<List<Transaction>> GetAll()
+    {
+        try
+        {
+            var data = _context.Transactions
+                .OrderByDescending(t => t.Date)
+                .ToList();
+
+            return new GenericResponse<List<Transaction>>(data);
+        }
+        catch (Exception ex)
+        {
+            return new GenericResponse<List<Transaction>>($"Erreur GetAll: {ex}", 500);
+        }
+    }
 }

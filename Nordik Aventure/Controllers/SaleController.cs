@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Nordik_Aventure.Objects.Models;
 using Nordik_Aventure.Objects.Models.Finance;
+using Nordik_Aventure.Objects.ViewModels;
 using Nordik_Aventure.Services;
 
 namespace Nordik_Aventure.Controllers;
@@ -18,6 +19,8 @@ public class SaleController : Controller
     private readonly SaleService _saleService;
     private readonly TransactionService _transactionService;
     private readonly TaxesService _taxesService;
+    private readonly PaymentService _paymentService;
+    private readonly SaleReceiptService _saleReceiptService;
     private readonly IMapper _mapper;
 
     public SaleController(
@@ -27,6 +30,8 @@ public class SaleController : Controller
         SaleService saleService,
         TransactionService transactionService,
         TaxesService taxesService,
+        PaymentService paymentService,
+        SaleReceiptService saleReceiptService,
         IMapper mapper)
     {
         _context = context;
@@ -35,6 +40,8 @@ public class SaleController : Controller
         _saleService = saleService;
         _transactionService = transactionService;
         _taxesService = taxesService;
+        _paymentService = paymentService;
+        _saleReceiptService = saleReceiptService;
         _mapper = mapper;
     }
 
@@ -85,11 +92,49 @@ public class SaleController : Controller
 
         var sale = resultSale.Data;
 
+        var payResult = AddSalePayment(resultTransaction.Data.TransactionId, sale.TotalPrice);
+        if (!payResult.Success)
+        {
+            SetError(payResult.Message);
+            return RedirectToAction("MakeSale");
+        }
+
+        var receipt = new SaleReceipt
+        {
+            SaleId = sale.Id,
+            PaymentId = payResult.Data.PaymentId,
+            Status = "completed"
+        };
+
+        var receiptResult = _saleReceiptService.AddSaleReceipt(receipt);
+
+        if (!receiptResult.Success)
+        {
+            SetError("Erreur lors de la création du reçu.");
+            return RedirectToAction("Index", "Client");
+        }
+
         AddLeavingMovementHistory(sale.Id);
 
-        TempData["ErrorMessage"] = "Commande faites avec succès!";
+        TempData["ErrorMessage"] = "Commande faite avec succès!";
         TempData["ErrorType"] = "success";
-        return RedirectToAction("Index", "Client");
+
+        TempData["FromFinance"] = false;
+
+        return RedirectToAction("Index", "SaleReceipt", new { transactionId = resultTransaction.Data.TransactionId });
+    }
+
+    private GenericResponse<Payment> AddSalePayment(int transactionId, double totalAmount)
+    {
+        var payment = new Payment
+        {
+            TransactionId = transactionId,
+            Amount = totalAmount,
+            Status = "pending",
+            Type = "sale"
+        };
+
+        return _paymentService.AddPayment(payment);
     }
 
     [HttpPost("cancel")]
@@ -98,7 +143,7 @@ public class SaleController : Controller
         return RedirectToAction("Index", "Client");
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("details/{id}")]
     public IActionResult GetSaleById(int id)
     {
         var result = _saleService.GetSaleById(id);
@@ -135,8 +180,7 @@ public class SaleController : Controller
 
             if (item.Quantity > stockItem.QuantityInStock)
             {
-                SetError(
-                    $"Impossible de vendre {item.Quantity} unités. Stock disponible: {stockItem.QuantityInStock}.");
+                SetError($"Impossible de vendre {item.Quantity} unités. Stock disponible: {stockItem.QuantityInStock}.");
                 hasError = true;
                 break;
             }
@@ -152,12 +196,7 @@ public class SaleController : Controller
             }
         }
 
-        if (hasError)
-        {
-            return true;
-        }
-
-        return false;
+        return hasError;
     }
 
     private void AddLeavingMovementHistory(int saleId)
@@ -196,6 +235,7 @@ public class SaleController : Controller
         var tvq = totalSale * (_taxesService.GetTaxes().Data.ValueTvq / 100);
         var tps = totalSale * (_taxesService.GetTaxes().Data.ValueTps / 100);
         var totalPriceWithTaxes = totalSale + tvq + tps;
+
         var sale = new Sale
         {
             ClientId = model.ClientId,
