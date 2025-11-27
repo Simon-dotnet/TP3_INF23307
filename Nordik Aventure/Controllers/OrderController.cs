@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Nordik_Aventure.Objects.Models;
 using Nordik_Aventure.Objects.Models.Finance;
+using Nordik_Aventure.Objects.ViewModels;
 using Nordik_Aventure.Services;
 
 namespace Nordik_Aventure.Controllers;
@@ -19,11 +20,13 @@ public class OrderController : Controller
     private readonly PurchaseService _purchaseService;
     private readonly TransactionService _transactionService;
     private readonly TaxesService _taxesService;
+    private readonly PaymentService _paymentService;
+    private readonly SupplierReceiptService  _supplierReceiptService;
     private readonly IMapper _mapper;
 
     public OrderController(NordikAventureContext context, OrderService orderService,
         StockService stockService, StockMovementController stockMovementController, PurchaseService purchaseService,
-        TransactionService transactionService, TaxesService taxesService, IMapper mapper)
+        TransactionService transactionService, TaxesService taxesService, PaymentService paymentService, SupplierReceiptService supplierReceiptService, IMapper mapper)
     {
         _context = context;
         _orderService = orderService;
@@ -32,6 +35,8 @@ public class OrderController : Controller
         _purchaseService = purchaseService;
         _taxesService = taxesService;
         _transactionService = transactionService;
+        _paymentService = paymentService;
+        _supplierReceiptService = supplierReceiptService;
         _mapper = mapper;
     }
 
@@ -77,7 +82,7 @@ public class OrderController : Controller
 
         return View("../ModuleFinance/OrderHistory", orderHistory);
     }
-
+    
     [HttpPost("SubmitOrder")]
     public IActionResult SubmitOrder([FromForm] OrderCreateViewModel model)
     {
@@ -87,7 +92,6 @@ public class OrderController : Controller
             TempData["ErrorType"] = "error";
             return RedirectToAction("MakeOrder");
         }
-
         var resultTransaction = AddEnteringTransaction(model);
         if (!resultTransaction.Success)
         {
@@ -95,7 +99,23 @@ public class OrderController : Controller
             TempData["ErrorType"] = "error";
             return RedirectToAction("MakeOrder");
         }
+        var tx = resultTransaction.Data;
+        var newPayment = new Payment
+        {
+            TransactionId = tx.TransactionId,
+            Amount = tx.AmountTotal,
+            Status = "pending",
+            Type = "purchase"
+        };
 
+        var paymentResult = _paymentService.AddPayment(newPayment);
+        if (!paymentResult.Success)
+        {
+            TempData["ErrorMessage"] = paymentResult.Message;
+            TempData["ErrorType"] = "error";
+            return RedirectToAction("MakeOrder");
+        }
+        
         var resultPurchase = AddEnteringPurchase(model, resultTransaction.Data.TransactionId);
         if (!resultPurchase.Success)
         {
@@ -110,19 +130,25 @@ public class OrderController : Controller
             var resultSuccess = CheckProductInStock(result.Data);
             if (!resultSuccess.isError)
             {
-                if (resultSuccess.hasNewObject)
+                var receipt = new SupplierReceipt
                 {
-                    TempData["ErrorMessage"] =
-                        "Commande créé. \n Vous avez ajouté un nouveau produit, veuillez allez changer ces valeurs dans le stock pour le rendre actif";
-                }
-                else
+                    PurchaseId = resultPurchase.Data.PurchaseId,
+                    PaymentId = paymentResult.Data.PaymentId,
+                    Status = "created"
+                };
+
+                var receiptResult = _supplierReceiptService.AddSupplierReceipt(receipt);
+                if (!receiptResult.Success)
                 {
-                    TempData["ErrorMessage"] = "Commande créée.";
+                    TempData["ErrorMessage"] = "Commande créée, mais erreur lors de la création du reçu: " + receiptResult.Message;
+                    TempData["ErrorType"] = "warning";
+                    return RedirectToAction("OrderHistory");
                 }
 
                 TempData["ErrorType"] = "success";
                 AddEnteringMovementHistory(result.Data.OrderId);
-                return RedirectToAction("Index", "Finance");
+                
+                return RedirectToAction("Receipt", new { id = receiptResult.Data.SupplierReceiptId });
             }
 
             return View("../ModuleFinance/OrderHistory", new List<OrderHistoryViewModel>());
@@ -131,6 +157,33 @@ public class OrderController : Controller
         TempData["ErrorMessage"] = "Erreur: " + result.Message;
         TempData["ErrorType"] = "error";
         return RedirectToAction("MakeOrder");
+    }
+    
+    [HttpGet("Receipt/{id}")]
+    public IActionResult Receipt(int id)
+    {
+        var receiptResult = _supplierReceiptService.GetById(id);
+        if (!receiptResult.Success || receiptResult.Data == null)
+        {
+            TempData["ErrorMessage"] = receiptResult.Message ?? "Reçu introuvable.";
+            TempData["ErrorType"] = "error";
+            return RedirectToAction("OrderHistory");
+        }
+        
+        var receipt = receiptResult.Data;
+        var taxes = _taxesService.GetTaxes().Data;
+
+        var vm = new SupplierReceiptViewModel
+        {
+            SupplierReceiptId = receipt.SupplierReceiptId,
+            Purchase = receipt.Purchase,
+            Payment = receipt.Payment,
+            Transaction = receipt.Payment?.Transaction,
+            Status = receipt.Status,
+            Taxes = taxes
+        };
+
+        return View("../ModuleFinance/SupplierReceipt", vm);
     }
 
     [HttpPost("cancel")]

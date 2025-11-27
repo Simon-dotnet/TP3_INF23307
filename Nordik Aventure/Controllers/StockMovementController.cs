@@ -42,14 +42,17 @@ public class StockMovementController : Controller
     public GenericResponse<MovementHistory> CreateEnteringStockMovement(int id)
     {
         var userId = _userSession.UserId;
+
+        if (userId == null)
+            return new GenericResponse<MovementHistory>("Aucun utilisateur connecté.", 401);
+
         var order = _orderService.GetOrderById(id);
         if (!order.Success)
-        {
             return new GenericResponse<MovementHistory>("Order not found", 404);
-        }
-        
+    
         var orderData = order.Data;
         var currentEmployee = _userService.GetEmployeeById(userId.Value);
+
         var motifBuilder =
             $"{currentEmployee.Data.Name} {currentEmployee.Data.Surname} a acheté(e) le {orderData.DateOfOrdering:dd/MM/yyyy}: " +
             $"{string.Join("", orderData.OrderSupplierProducts.Select(osp => $"\n • {osp.Quantity} - {osp.Product.Name}"))} " +
@@ -64,21 +67,24 @@ public class StockMovementController : Controller
             SaleId = null,
             EmployeeId = currentEmployee.Data.Id
         };
-        var result = _movementHistoryService.AddEnteringMovementHistory(movementHistory);
-        return result;
+
+        return _movementHistoryService.AddEnteringMovementHistory(movementHistory);
     }
     
     public GenericResponse<MovementHistory> CreateLeavingStockMovement(int id)
     {
         var userId = _userSession.UserId;
+
+        if (userId == null)
+            return new GenericResponse<MovementHistory>("Aucun utilisateur connecté.", 401);
+
         var sale = _saleService.GetSaleById(id);
         if (!sale.Success)
-        {
             return new GenericResponse<MovementHistory>("Sale not found", 404);
-        }
-        
+
         var saleData = sale.Data;
         var currentEmployee = _userService.GetEmployeeById(userId.Value);
+
         var motifBuilder =
             $"{currentEmployee.Data.Name} {currentEmployee.Data.Surname} a vendu(e) le {saleData.DateOfSale:dd/MM/yyyy}: " +
             $"{string.Join("", saleData.SaleDetails.Select(osp => $"\n • {osp.Quantity} - {osp.ProductInStock.Product.Name}"))} " +
@@ -93,7 +99,7 @@ public class StockMovementController : Controller
             SaleId = saleData.Id,
             EmployeeId = currentEmployee.Data.Id
         };
-        var result = _movementHistoryService.AddLeavingMovementHistory(movementHistory);
-        return result;
+
+        return _movementHistoryService.AddLeavingMovementHistory(movementHistory);
     }
 }
