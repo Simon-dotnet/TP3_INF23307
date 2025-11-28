@@ -12,7 +12,7 @@ using Nordik_Aventure;
 namespace Nordik_Aventure.Migrations
 {
     [DbContext(typeof(NordikAventureContext))]
-    [Migration("20251127211132_bd-init")]
+    [Migration("20251128200820_bd-init")]
     partial class bdinit
     {
         /// <inheritdoc />

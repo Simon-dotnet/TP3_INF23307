@@ -438,7 +438,156 @@ public static class DbInitializer
                     ValueTvq = 9.975
                 });
         }
+        
+        // Init de order et sales. Pour tester
+        if (!context.Transactions.Any() && !context.Purchases.Any() && !context.Sales.Any())
+        {
+            var client1 = context.Clients.First(c => c.Id == 1);
+            var client2 = context.Clients.First(c => c.Id == 2);
+            
+            var ps1 = context.ProductInStock.First(p => p.Id == 1);
+            var ps2 = context.ProductInStock.First(p => p.Id == 7);
+            var ps3 = context.ProductInStock.First(p => p.Id == 13);
+            var ps4 = context.ProductInStock.First(p => p.Id == 20);
+
+            var p1 = context.Products.First(p => p.Id == 1);
+            var p2 = context.Products.First(p => p.Id == 2);
+            var p3 = context.Products.First(p => p.Id == 3);
+            var p4 = context.Products.First(p => p.Id == 4);
+
+            var orderData = new[]
+            {
+                new { Date = new DateTime(2025, 12, 25), Amount = 900.0, P1 = 3, P3 = 2 },
+                new { Date = new DateTime(2025, 11, 29), Amount = 1200.0, P1 = 4, P3 = 3 },
+                new { Date = new DateTime(2025, 11, 15), Amount = 850.0, P1 = 2, P3 = 3 },
+                new { Date = new DateTime(2025, 11, 20), Amount = 950.0, P1 = 3, P3 = 3 }
+            };
+
+            foreach (var od in orderData)
+            {
+                var t = new Transaction
+                {
+                    Type = "purchase",
+                    Date = od.Date,
+                    Amount = od.Amount,
+                    AmountTps = 5,
+                    AmountTvq = 9.975,
+                    AmountTotal = od.Amount * 1.14975
+                };
+                context.Transactions.Add(t);
+
+                var purchase = new Purchase
+                {
+                    Transaction = t,
+                    PurchaseDetails = new List<PurchaseDetails>
+                    {
+                        new PurchaseDetails { Product = p1, Quantity = od.P1 },
+                        new PurchaseDetails { Product = p3, Quantity = od.P3 }
+                    }
+                };
+                context.Purchases.Add(purchase);
+
+                var order = new Order
+                {
+                    DateOfOrdering = od.Date.AddDays(-2),
+                    DateOfDelivery = od.Date,
+                    TotalPrice = t.AmountTotal,
+                    Purchase = purchase,
+                    OrderSupplierProducts = new List<OrderSupplierProduct>
+                    {
+                        new OrderSupplierProduct { Product = p1, Supplier = p1.Supplier, Quantity = od.P1, TotalPrice = od.P1 * p1.PriceToBuy },
+                        new OrderSupplierProduct { Product = p3, Supplier = p3.Supplier, Quantity = od.P3, TotalPrice = od.P3 * p3.PriceToBuy }
+                    }
+                };
+                context.Orders.Add(order);
+
+                var payment = new Payment
+                {
+                    Transaction = t,
+                    Amount = t.AmountTotal,
+                    Type = "purchase",
+                    Status = "completed"
+                };
+                context.Payments.Add(payment);
+
+                var sr = new SupplierReceipt
+                {
+                    Purchase = purchase,
+                    Payment = payment,
+                    Status = "created"
+                };
+                context.SupplierReceipts.Add(sr);
+            }
+
+            var saleData = new[]
+            {
+                new { Date = new DateTime(2025, 11, 3), Items = new[]{ (ps1,299),(ps2,139),(ps3,169) } },
+                new { Date = new DateTime(2025, 11, 6), Items = new[]{ (ps1,299),(ps4,59) } },
+                new { Date = new DateTime(2025, 11, 9), Items = new[]{ (ps2,139),(ps3,169),(ps4,79) } },
+                new { Date = new DateTime(2025, 11,10), Items = new[]{ (ps1,299),(ps2,139) } },
+                new { Date = new DateTime(2025, 11,12), Items = new[]{ (ps3,169),(ps4,79),(ps1,299) } },
+                new { Date = new DateTime(2025, 11,15), Items = new[]{ (ps2,139),(ps1,299),(ps3,169),(ps4,79) } },
+                new { Date = new DateTime(2025, 11,18), Items = new[]{ (ps1,299),(ps3,169) } },
+                new { Date = new DateTime(2025, 11,20), Items = new[]{ (ps2,139),(ps3,169),(ps4,59) } },
+                new { Date = new DateTime(2025, 11,22), Items = new[]{ (ps1,299),(ps1,299),(ps2,139) } },
+                new { Date = new DateTime(2025, 11,23), Items = new[]{ (ps3,169),(ps4,79),(ps4,59) } },
+                new { Date = new DateTime(2025, 11,24), Items = new[]{ (ps1,299),(ps2,139),(ps3,169) } },
+                new { Date = new DateTime(2025, 11,25), Items = new[]{ (ps1,299),(ps4,79) } },
+                new { Date = new DateTime(2025, 11,26), Items = new[]{ (ps2,139),(ps3,169),(ps1,299) } },
+                new { Date = new DateTime(2025, 11,27), Items = new[]{ (ps1,299),(ps1,299),(ps3,169),(ps4,79) } },
+                new { Date = new DateTime(2025, 11,28), Items = new[]{ (ps2,139),(ps4,59),(ps3,169),(ps1,299),(ps1,299) } }
+            };
+
+            foreach (var sd in saleData)
+            {
+                var amount = sd.Items.Sum(x => x.Item2);
+
+                var t = new Transaction
+                {
+                    Type = "sale",
+                    Date = sd.Date,
+                    Amount = amount,
+                    AmountTps = 5,
+                    AmountTvq = 9.975,
+                    AmountTotal = amount * 1.14975
+                };
+                context.Transactions.Add(t);
+
+                var sale = new Sale
+                {
+                    Client = sd.Date.Day % 2 == 0 ? client1 : client2,
+                    Transaction = t,
+                    DateOfSale = sd.Date,
+                    TotalPrice = t.AmountTotal,
+                    SaleDetails = sd.Items.Select(i => new SaleDetails
+                    {
+                        ProductInStock = i.Item1,
+                        Quantity = 1,
+                        TotalPrice = i.Item2
+                    }).ToList()
+                };
+                context.Sales.Add(sale);
+
+                var payment = new Payment
+                {
+                    Transaction = t,
+                    Amount = t.AmountTotal,
+                    Status = "completed",
+                    Type = "sale"
+                };
+                context.Payments.Add(payment);
+
+                var r = new SaleReceipt
+                {
+                    Sale = sale,
+                    Payment = payment,
+                    Status = "generated"
+                };
+                context.SaleReceipts.Add(r);
+            }
+        }
 
         context.SaveChanges();
+
     }
 }
