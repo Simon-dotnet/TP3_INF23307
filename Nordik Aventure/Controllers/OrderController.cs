@@ -65,22 +65,41 @@ public class OrderController : Controller
             .Take(50)
             .ToList();
 
-        var orderHistory = orders.Select(order => new OrderHistoryViewModel
+        var today = DateTime.Today;
+
+        var history = orders.Select(order =>
         {
-            OrderId = order.OrderId,
-            DateOfOrdering = order.DateOfOrdering,
-            DateOfDelivery = order.DateOfDelivery,
-            TotalPrice = order.TotalPrice,
-            Items = order.OrderSupplierProducts.Select(osp => new OrderItemViewModel
+            string status;
+
+            if (order.DateOfDelivery.Date < today)
+                status = "En retard";
+            else if (order.DateOfDelivery.Date == today)
+                status = "Aujourd’hui";
+            else
+                status = "À venir";
+
+            var supplierName = order.OrderSupplierProducts
+                .FirstOrDefault()?.Supplier?.Name ?? "N/A";
+
+            return new OrderHistoryViewModel
             {
-                ProductName = osp.Product?.Name ?? "Non disponible",
-                SupplierName = osp.Supplier?.Name ?? "Non disponible",
-                Quantity = osp.Quantity,
-                TotalPrice = osp.TotalPrice
-            }).ToList()
+                OrderId = order.OrderId,
+                DateOfOrdering = order.DateOfOrdering,
+                DateOfDelivery = order.DateOfDelivery,
+                TotalPrice = order.TotalPrice,
+                SupplierName = supplierName,
+                Status = status,
+                Items = order.OrderSupplierProducts.Select(osp => new OrderItemViewModel
+                {
+                    ProductName = osp.Product?.Name ?? "Non disponible",
+                    SupplierName = osp.Supplier?.Name ?? "Non disponible",
+                    Quantity = osp.Quantity,
+                    TotalPrice = osp.TotalPrice
+                }).ToList()
+            };
         }).ToList();
 
-        return View("../ModuleFinance/OrderHistory", orderHistory);
+        return View("../ModuleFinance/OrderHistory", history);
     }
     
     [HttpPost("SubmitOrder")]

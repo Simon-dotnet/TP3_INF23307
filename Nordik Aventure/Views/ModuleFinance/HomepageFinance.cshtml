@@ -1,95 +1,242 @@
-@model List<Nordik_Aventure.Objects.Models.Finance.Transaction>
+@model Nordik_Aventure.Objects.ViewModels.FinanceDashboardViewModel
 @{
-    Layout = "_FinanceLayout";
+Layout = "_FinanceLayout";
 }
 
 <div class="container mt-4">
     <h1 class="mb-4">Tableau de bord financier</h1>
 
-    <section class="mb-5">
-        <h3>Résumé du mois</h3>
-        <table class="table table-striped table-bordered mt-3">
-            <thead>
-                <tr>
-                    <th>Type</th>
-                    <th>Montant ($)</th>
-                    <th>Tendance</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Dépenses</td>
-                    <td>0.00</td>
-                    <td>0%</td>
-                </tr>
-                <tr>
-                    <td>Revenus</td>
-                    <td>0.00</td>
-                    <td>0%</td>
-                </tr>
-                <tr>
-                    <td>Profit net</td>
-                    <td>0.00</td>
-                    <td>0%</td>
-                </tr>
-            </tbody>
-        </table>
-    </section>
+    <div class="row mb-4 cards-container">
+
+        <div class="col-md-4">
+            <div class="p-3 border rounded shadow-sm bg-light h-100">
+                <h5 class="text-muted">Profit de la semaine</h5>
+                <h2 class="fw-bold @(Model.WeekProfit >= 0 ? "text-success" : "text-danger")">
+                    @Model.WeekProfit.ToString("N2") $
+                </h2>
+                <p class="small text-muted">
+                    Ventes: @Model.WeekSales.ToString("N2") $ • Achats: @Model.WeekPurchases.ToString("N2") $
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="p-3 border rounded shadow-sm bg-light h-100">
+                <h5 class="text-muted">Profit du mois</h5>
+                <h2 class="fw-bold @(Model.MonthProfit >= 0 ? "text-success" : "text-danger")">
+                    @Model.MonthProfit.ToString("N2") $
+                </h2>
+                <p class="small text-muted">
+                    Ventes: @Model.MonthSales.ToString("N2") $ • Achats: @Model.MonthPurchases.ToString("N2") $
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="p-3 border rounded shadow-sm bg-light h-100">
+                <h5 class="text-muted">Profit annuel</h5>
+                <h2 class="fw-bold @(Model.YearProfit >= 0 ? "text-success" : "text-danger")">
+                    @Model.YearProfit.ToString("N2") $
+                </h2>
+                <p class="small text-muted">
+                    Ventes: @Model.YearSales.ToString("N2") $ • Achats: @Model.YearPurchases.ToString("N2") $
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="row mb-5">
+
+        <div class="col-md-6 ">
+            <h3>Résumé du mois</h3>
+            <div class="d-flex">
+                <div class="flex-fill">
+                    <table class="table table-striped table-bordered mt-3">
+                        <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Montant ($)</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>Dépenses</td>
+                            <td>@Model.MonthPurchases.ToString("N2") $</td>
+                        </tr>
+                        <tr>
+                            <td>Revenus</td>
+                            <td>@Model.MonthSales.ToString("N2") $</td>
+                        </tr>
+                        <tr>
+                            <td>Profit net</td>
+                            <td class="@(Model.MonthProfit >= 0 ? "text-success" : "text-danger")">
+                                @Model.MonthProfit.ToString("N2") $
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="text-center" style="width:200px;">
+                    <canvas id="monthDonut" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-6 cards-container">
+            <div class="p-3 border rounded shadow-sm bg-light h-100">
+                <h3 class="h5 mb-3">Statut des commandes</h3>
+
+                <div class="d-flex justify-content-between mb-3">
+                    <div>
+                        <div class="text-muted small">Total</div>
+                        <div class="fw-bold">@Model.TotalOrders</div>
+                    </div>
+                    <div>
+                        <div class="text-muted small">En retard</div>
+                        <span class="badge bg-danger">@Model.LateOrders</span>
+                    </div>
+                    <div>
+                        <div class="text-muted small">Aujourd'hui</div>
+                        <span class="badge bg-warning text-dark">@Model.TodayOrders</span>
+                    </div>
+                    <div>
+                        <div class="text-muted small">À venir</div>
+                        <span class="badge bg-info text-dark">@Model.UpcomingOrders</span>
+                    </div>
+                </div>
+
+                <table class="table table-sm table-bordered mb-0">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Fournisseur</th>
+                        <th>Livraison</th>
+                        <th>Statut</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @if (Model.RecentOrders == null || !Model.RecentOrders.Any())
+                    {
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">Aucune commande disponible</td>
+                    </tr>
+                    }
+                    else
+                    {
+                    foreach (var o in Model.RecentOrders)
+                    {
+                    <tr>
+                        <td>@o.OrderId</td>
+                        <td>@o.SupplierName</td>
+                        <td>@o.DateOfDelivery.ToString("dd/MM/yyyy")</td>
+                        <td>
+                            @if (o.Status == "En retard")
+                            {
+                            <span class="badge bg-danger">@o.Status</span>
+                            }
+                            else if (o.Status == "Aujourd'hui")
+                            {
+                            <span class="badge bg-warning text-dark">@o.Status</span>
+                            }
+                            else
+                            {
+                            <span class="badge bg-info text-dark">@o.Status</span>
+                            }
+                        </td>
+                    </tr>
+                    }
+                    }
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+    </div>
+
 
     <section class="mb-5">
         <h3>5 dernières transactions</h3>
 
         <table class="table table-hover table-bordered mt-3">
             <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Description</th>
-                    <th>Montant ($)</th>
-                    <th>Type</th>
-                    <th>Reçu</th>
-                </tr>
+            <tr>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Montant ($)</th>
+                <th>Reçu</th>
+            </tr>
             </thead>
             <tbody>
-                @if (!Model.Any())
-                {
-                    <tr>
-                        <td colspan="5" class="text-center text-muted">Aucune transaction pour l'instant</td>
-                    </tr>
-                }
-                else
-                {
-                    foreach (var tx in Model)
-                    {
-                        <tr>
-                            <td>@tx.Date.ToString("dd/MM/yyyy HH:mm")</td>
-                            <td>
-                                @(tx.Type == "sale" ? "Vente client" : "Commande fournisseur")
-                            </td>
-                            <td>@tx.AmountTotal.ToString("N2") $</td>
-                            <td>@tx.Type</td>
-                            <td>
-                                <a class="btn btn-sm btn-primary"
-                                   href="/finance/receipt/@tx.TransactionId" style="background-color: var(--background-button); color: var(--text-white);">
-                                    Voir reçu
-                                </a>
-                            </td>
-                        </tr>
-                    }
-                }
+            @if (Model.LastTransactions == null || !Model.LastTransactions.Any())
+            {
+            <tr>
+                <td colspan="5" class="text-center text-muted">Aucune transaction pour l'instant</td>
+            </tr>
+            }
+            else
+            {
+            foreach (var tx in Model.LastTransactions)
+            {
+            <tr>
+                <td>@tx.Date.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@(tx.Type == "sale" ? "Vente client" : "Commande fournisseur")</td>
+                <td>@tx.AmountTotal.ToString("N2") $</td>
+                <td>
+                    <a class="btn btn-sm btn-primary"
+                       href="/finance/receipt/@tx.TransactionId"
+                       style="background-color: var(--background-button); color: var(--text-white);">
+                        Voir reçu
+                    </a>
+                </td>
+            </tr>
+            }
+            }
             </tbody>
         </table>
 
         <a class="btn btn-secondary mt-2" href="/finance/transactions">Voir tout l'historique</a>
     </section>
 
-    <section class="mb-5">
-        <h3>Dépenses vs Revenus</h3>
-        <canvas id="financeChart" height="120"></canvas>
-    </section>
 
     <section class="mt-4 mb-5">
         <form asp-action="GenerateReport" method="post">
-            <button type="submit" class="btn btn-primary" style="background-color: var(--background-button); color: var(--text-white);">Générer un rapport</button>
+            <button type="submit" class="btn btn-primary"
+                    style="background-color: var(--background-button); color: var(--text-white);">
+                Générer un rapport
+            </button>
         </form>
     </section>
+
 </div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    new Chart(document.getElementById('monthDonut'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Revenus', 'Dépenses'],
+            datasets: [{
+                data: [
+                    @Model.MonthDonutSales,
+                    @Model.MonthDonutPurchases
+                ],
+                backgroundColor: [
+                    'rgba(54,162,235,0.7)',
+                    'rgba(255,99,132,0.7)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            cutout: '60%',
+            plugins: { legend: { position: 'bottom' } }
+        }
+    });
+</script>

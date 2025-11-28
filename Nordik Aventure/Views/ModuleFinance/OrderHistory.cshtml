@@ -1,3 +1,4 @@
+@model List<GestBibli.Objects.ViewModels.OrderHistoryViewModel>
 @{
     Layout = "_FinanceLayout";
 }
@@ -5,7 +6,35 @@
 <div class="container mt-4">
     <h1 class="mb-4">Historique des commandes</h1>
 
-    @model List<GestBibli.Objects.ViewModels.OrderHistoryViewModel>
+    <div class="mb-4 p-3 border rounded bg-light">
+        <div class="d-flex justify-content-between">
+            <div>
+                <div class="text-muted small">Total</div>
+                <div class="fw-bold">@Model.Count</div>
+            </div>
+
+            <div>
+                <div class="text-muted small">En retard</div>
+                <span class="badge bg-danger">
+                    @Model.Count(o => o.Status == "En retard")
+                </span>
+            </div>
+
+            <div>
+                <div class="text-muted small">Aujourd’hui</div>
+                <span class="badge bg-warning text-dark">
+                    @Model.Count(o => o.Status == "Aujourd’hui")
+                </span>
+            </div>
+
+            <div>
+                <div class="text-muted small">À venir</div>
+                <span class="badge bg-info text-dark">
+                    @Model.Count(o => o.Status == "À venir")
+                </span>
+            </div>
+        </div>
+    </div>
 
     <section class="mb-5 cards-container">
         @if (!Model.Any())
@@ -16,11 +45,34 @@
         {
             @foreach (var order in Model)
             {
-                <div class="mb-3 border p-2 rounded bg-white">
-                    <h5>
-                        Commande #@order.OrderId - @order.DateOfOrdering.ToShortDateString() -
-                        Total: @($"{order.TotalPrice:N2}".Replace('.', ','))$
-                    </h5>
+                <div class="mb-3 border p-3 rounded bg-white">
+                    <div class="d-flex justify-content-between">
+                        <h5 class="m-0">
+                            Commande #@order.OrderId  
+                            • @order.DateOfOrdering.ToString("dd/MM/yyyy")  
+                            • @($"{order.TotalPrice:N2}".Replace('.', ','))$
+                        </h5>
+
+                        <div>
+                            @if (order.Status == "En retard")
+                            {
+                                <span class="badge bg-danger">@order.Status</span>
+                            }
+                            else if (order.Status == "Aujourd’hui")
+                            {
+                                <span class="badge bg-warning text-dark">@order.Status</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-info text-dark">@order.Status</span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="text-muted small mb-2">
+                        Livraison prévue: @order.DateOfDelivery.ToString("dd/MM/yyyy")
+                    </div>
+
                     <table class="table table-sm table-bordered mt-2">
                         <thead>
                         <tr>
@@ -46,5 +98,4 @@
             }
         }
     </section>
-    
 </div>
