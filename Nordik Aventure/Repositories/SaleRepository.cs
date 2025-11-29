@@ -57,4 +57,10 @@ public class SaleRepository
             .ToList();
         return new GenericResponse<List<Sale>>(result);
     }
+    
+    public bool ClientHasSales(int clientId)
+    {
+        return _context.Sales.Any(s => s.ClientId == clientId);
+    }
+
 }

@@ -29,4 +29,10 @@ public class SaleService
     {
         return _saleRepository.GetSalesOfTheWeek();
     }
+    
+    public bool ClientHasSales(int clientId)
+    {
+        return _saleRepository.ClientHasSales(clientId);
+    }
+
 }

@@ -3,7 +3,7 @@
 @using Nordik_Aventure.Objects.Models.User
 
 @{
-    Layout = "_ClientLayout";
+Layout = "_ClientLayout";
 }
 
 <h1>Créer une vente client</h1>
@@ -17,57 +17,60 @@
                 <option value="">-- Sélectionner un client --</option>
                 @foreach (var client in Model.AvailableClients)
                 {
-                    <option value="@client.Id"
-                            data-address="@client.Address"
-                            data-phone="@client.Phone"
-                            data-name="@client.Name">
-                        @client.Name - @client.Email - @client.Phone
-                    </option>
+                <option value="@client.Id"
+                        data-address="@client.Address"
+                        data-phone="@client.Phone"
+                        data-name="@client.Name">
+                    @client.Name - @client.Email - @client.Phone
+                </option>
                 }
             </select>
         </div>
-    </div> 
-</div><br/>  
+    </div>
+</div>
+<br/>
 
 <div class="mb-3">
     <button id="toggleAddProduct" type="button" class="btn"
             style="background-color: var(--background-button); color: var(--text-white);">
         Ajouter un produit
     </button>
-</div><br/>
+</div>
+<br/>
 
 <div class="mb-4 border p-3 rounded cards-container">
     <div id="addProductSection" class="border p-3 rounded bg-white" style="display:none;">
         <h5>Ajouter un produit</h5>
+
         <div class="mb-2">
             <label>Produit</label>
             <select id="productSelect" class="form-control">
                 <option value="">-- Sélectionner un produit --</option>
                 @foreach (var product in Model.AvailableProducts)
                 {
-                    bool disabled = product.Status == "Inactif"
-                                    || product.Status == "Non disponible"
-                                    || product.Status == "Indisponible";
+                bool disabled = product.Status == "Inactif"
+                || product.Status == "Non disponible"
+                || product.Status == "Indisponible";
 
-                    if (disabled)
-                    {
-                        <option value="@product.Id"
-                                disabled="disabled"
-                                data-price="@product.Product.PriceToSell"
-                                data-supplierid="@product.Product.SupplierId"
-                                data-supplier="@product.Product.Supplier?.Name">
-                            @product.Product.Name - @($"{product.Product.PriceToSell:N2}".Replace('.', ','))$
-                        </option>
-                    }
-                    else
-                    {
-                        <option value="@product.Id"
-                                data-price="@product.Product.PriceToSell"
-                                data-supplierid="@product.Product.SupplierId"
-                                data-supplier="@product.Product.Supplier?.Name">
-                            @product.Product.Name - @($"{product.Product.PriceToSell:N2}".Replace('.', ','))$
-                        </option>
-                    }
+                if (disabled)
+                {
+                <option value="@product.Id"
+                        disabled="disabled"
+                        data-price="@product.Product.PriceToSell"
+                        data-supplierid="@product.Product.SupplierId"
+                        data-supplier="@product.Product.Supplier?.Name">
+                    @product.Product.Name - @($"{product.Product.PriceToSell:N2}".Replace('.', ','))$
+                </option>
+                }
+                else
+                {
+                <option value="@product.Id"
+                        data-price="@product.Product.PriceToSell"
+                        data-supplierid="@product.Product.SupplierId"
+                        data-supplier="@product.Product.Supplier?.Name">
+                    @product.Product.Name - @($"{product.Product.PriceToSell:N2}".Replace('.', ','))$
+                </option>
+                }
                 }
             </select>
         </div>
@@ -121,8 +124,7 @@
             <th>Actions</th>
         </tr>
         </thead>
-        <tbody>
-        </tbody>
+        <tbody></tbody>
     </table>
 
     <p>Total: <span id="totalPrice">0,00$</span></p>
@@ -139,10 +141,8 @@
 
 <script>
     let cart = [];
-
     const TPS_RATE = (@Model.Taxes?.ValueTps ?? 5) / 100;
     const TVQ_RATE = (@Model.Taxes?.ValueTvq ?? 9.975) / 100;
-
     const format = v => v.toFixed(2).replace('.', ',') + '$';
 
     const updateTotals = () => {
@@ -163,11 +163,62 @@
     document.getElementById("clientSelect").onchange = e => {
         document.getElementById("ClientIdField").value = e.target.value;
     };
-    
-    let buttonAjout = document.getElementById('addToCart');
-    buttonAjout.addEventListener('click', ()=>{
-        document.getElementById("clientSelect").disabled = true;
-    });
+
+    document.getElementById('toggleAddProduct').onclick = () => {
+        document.getElementById('addProductSection').style.display = 'block';
+    };
+    document.getElementById('cancelAddProduct').onclick = () => {
+        document.getElementById('addProductSection').style.display = 'none';
+    };
+
+    const productSelect = document.getElementById('productSelect');
+    const quantitySelect = document.getElementById('quantitySelect');
+    const supplierField = document.getElementById('supplierField');
+    const priceField = document.getElementById('priceField');
+    const totalProductField = document.getElementById('totalProductField');
+
+    const updateAddProductFields = () => {
+        const selected = productSelect.selectedOptions[0];
+        if (!selected || !selected.value) {
+            supplierField.value = '';
+            priceField.value = '';
+            totalProductField.value = '';
+            return;
+        }
+
+        const quantity = parseInt(quantitySelect.value);
+        const price = parseFloat(selected.dataset.price);
+        const supplier = selected.dataset.supplier;
+
+        supplierField.value = supplier || '';
+        priceField.value = price.toFixed(2).replace('.', ',') + '$';
+        totalProductField.value = (price * quantity).toFixed(2).replace('.', ',') + '$';
+    };
+
+    productSelect.onchange = updateAddProductFields;
+    quantitySelect.onchange = updateAddProductFields;
+
+    document.getElementById('addToCart').onclick = () => {
+        const selected = productSelect.selectedOptions[0];
+        if (!selected || !selected.value) return alert('Sélectionnez un produit');
+
+        const productStockId = parseInt(selected.value);
+        const name = selected.text.split('-')[0].trim();
+        const supplier = selected.dataset.supplier || '';
+        const unitPrice = parseFloat(selected.dataset.price);
+        const quantity = parseInt(quantitySelect.value);
+        const totalPrice = unitPrice * quantity;
+
+        cart.push({ productStockId, name, supplierName: supplier, quantity, unitPrice, totalPrice });
+
+        renderCart();
+        document.getElementById('addProductSection').style.display = 'none';
+        productSelect.selectedIndex = 0;
+        quantitySelect.value = 1;
+        supplierField.value = '';
+        priceField.value = '';
+        totalProductField.value = '';
+    };
 
     const renderCart = () => {
         const tbody = document.querySelector('#saleTable tbody');
@@ -194,8 +245,7 @@
 
         document.querySelectorAll('#saleTable button.btn-danger').forEach(btn => {
             btn.onclick = (e) => {
-                const idx = parseInt(e.currentTarget.dataset.index, 10);
-                cart.splice(idx, 1);
+                cart.splice(parseInt(e.currentTarget.dataset.index, 10), 1);
                 renderCart();
                 updateTotals();
             };
@@ -204,71 +254,11 @@
         updateTotals();
     };
 
-    document.getElementById('toggleAddProduct').onclick = () => {
-        document.getElementById('addProductSection').style.display = 'block';
-    };
-    document.getElementById('cancelAddProduct').onclick = () => {
-        document.getElementById('addProductSection').style.display = 'none';
-    };
-
-    const productSelect = document.getElementById('productSelect');
-    const quantitySelect = document.getElementById('quantitySelect');
-    const supplierField = document.getElementById('supplierField');
-    const priceField = document.getElementById('priceField');
-    const totalProductField = document.getElementById('totalProductField');
-
-    const updateAddProductFields = () => {
-        const selected = productSelect.selectedOptions[0];
-        if (!selected || !selected.value) {
-            supplierField.value = '';
-            priceField.value = '';
-            totalProductField.value = '';
-            return;
-        }
-
-        const data = parseInt(quantitySelect.value);
-        if (data > 9999){
-            quantitySelect.value = 9999
-        }
-        
-        const price = parseFloat(selected.dataset.price);
-        const supplier = selected.dataset.supplier;
-        const quantity = parseInt(quantitySelect.value);
-        supplierField.value = supplier || '';
-        priceField.value = price.toFixed(2).replace('.', ',') + '$';
-        totalProductField.value = (price * quantity).toFixed(2).replace('.', ',') + '$';
-    };
-
-    productSelect.onchange = updateAddProductFields;
-    quantitySelect.onchange = updateAddProductFields;
-
-    document.getElementById('addToCart').onclick = () => {
-        const selected = productSelect.selectedOptions[0];
-        if (!selected || !selected.value) return alert('Sélectionnez un produit');
-
-        const productStockId = parseInt(selected.value);
-        const productName = selected.text.split('-')[0].trim();
-        const supplierName = selected.dataset.supplier || '';
-        const unitPrice = parseFloat(selected.dataset.price);
-        const quantity = parseInt(quantitySelect.value);
-        const totalPrice = unitPrice * quantity;
-
-        cart.push({ productStockId, name: productName, supplierName, quantity, unitPrice, totalPrice });
-
-        renderCart();
-        document.getElementById('addProductSection').style.display = 'none';
-        productSelect.selectedIndex = 0;
-        quantitySelect.value = 1;
-        supplierField.value = '';
-        priceField.value = '';
-        totalProductField.value = '';
-    };
-
     document.getElementById('cancelSale').onclick = () => {
         window.location.href = '/finance';
     };
 
-    document.getElementById('saleForm').onsubmit = (e) => {
+    document.getElementById('saleForm').onsubmit = e => {
         if (cart.length === 0) {
             e.preventDefault();
             alert('Aucun produit dans la commande');
@@ -276,5 +266,4 @@
         }
         return true;
     };
- 
 </script>
