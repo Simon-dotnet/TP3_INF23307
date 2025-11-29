@@ -1,9 +1,23 @@
 @model Nordik_Aventure.Objects.ViewModels.ClientSaleReceiptViewModel
 
 @{
-    var fromFinance = ViewBag.FromFinance as bool?;
-    Layout = (fromFinance ?? false) ? "_FinanceLayout" : "_ClientLayout";
+var fromFinance = ViewBag.FromFinance as bool?;
+Layout = (fromFinance ?? false) ? "_FinanceLayout" : "_ClientLayout";
 }
+
+<div class="modal fade" id="welcomeModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Bienvenue parmi nos clients!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p id="welcomeText"></p>
+            </div>
+        </div>
+    </div>
+</div>
 
 <style>
     @@media print {
@@ -17,23 +31,19 @@
             visibility: hidden !important;
             height: 0 !important;
         }
-
         body {
             margin: 0;
             padding: 0;
             background: white;
         }
-
         #receipt {
             width: 100%;
             padding: 0;
         }
-
         table {
             width: 100%;
             border-collapse: collapse;
         }
-
         h2, h4 {
             margin-top: 0;
         }
@@ -41,7 +51,6 @@
 </style>
 
 <div id="receipt">
-
     <h2>Reçu de vente #@Model.SaleReceiptId</h2>
 
     <div class="mb-3">
@@ -66,24 +75,24 @@
         <tbody>
         @foreach (var sd in Model.Sale.SaleDetails)
         {
-            var p = sd.ProductInStock.Product;
-            var lineTotal = sd.Quantity * p.PriceToSell;
-            <tr>
-                <td>@p.Name</td>
-                <td>@p.Sku</td>
-                <td>@sd.Quantity</td>
-                <td>@p.PriceToSell.ToString("N2") $</td>
-                <td>@lineTotal.ToString("N2") $</td>
-            </tr>
+        var p = sd.ProductInStock.Product;
+        var lineTotal = sd.Quantity * p.PriceToSell;
+        <tr>
+            <td>@p.Name</td>
+            <td>@p.Sku</td>
+            <td>@sd.Quantity</td>
+            <td>@p.PriceToSell.ToString("N2") $</td>
+            <td>@lineTotal.ToString("N2") $</td>
+        </tr>
         }
         </tbody>
     </table>
 
     @{
-        var subtotal = Model.Sale.SaleDetails.Sum(sd => sd.Quantity * sd.ProductInStock.Product.PriceToSell);
-        var tps = subtotal * ((Model.Taxes?.ValueTps ?? 0) / 100.0);
-        var tvq = subtotal * ((Model.Taxes?.ValueTvq ?? 0) / 100.0);
-        var total = subtotal + tps + tvq;
+    var subtotal = Model.Sale.SaleDetails.Sum(sd => sd.Quantity * sd.ProductInStock.Product.PriceToSell);
+    var tps = subtotal * ((Model.Taxes?.ValueTps ?? 0) / 100.0);
+    var tvq = subtotal * ((Model.Taxes?.ValueTvq ?? 0) / 100.0);
+    var total = subtotal + tps + tvq;
     }
 
     <div class="text-end">
@@ -98,3 +107,15 @@
     <a class="btn btn-secondary" href="/Client">Retour</a>
     <button class="btn btn-primary" style="background-color: var(--background-button); color: var(--text-white);" onclick="window.print()">Imprimer/Exporter</button>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        if ("@TempData["WelcomeClient"]" === "true") {
+            const name = "@TempData["WelcomeClientName"]";
+            document.getElementById("welcomeText").innerText =
+                `Merci ${name}, pour votre première commande! Nous sommes heureux de vous compter parmi nos clients.`;
+            const modal = new bootstrap.Modal(document.getElementById("welcomeModal"));
+            modal.show();
+        }
+    });
+</script>

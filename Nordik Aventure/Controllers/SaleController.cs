@@ -70,11 +70,12 @@ public class SaleController : Controller
             return RedirectToAction("MakeSale");
         }
 
+        var client = _context.Client.FirstOrDefault(c => c.Id == model.ClientId);
+        bool isFirstSale = !_saleService.ClientHasSales(model.ClientId);
+
         var isError = CheckProductInStock(model);
         if (isError)
-        {
             return RedirectToAction("MakeSale");
-        }
 
         var resultTransaction = AddLeavingTransaction(model);
         if (!resultTransaction.Success)
@@ -107,7 +108,6 @@ public class SaleController : Controller
         };
 
         var receiptResult = _saleReceiptService.AddSaleReceipt(receipt);
-
         if (!receiptResult.Success)
         {
             SetError("Erreur lors de la création du reçu.");
@@ -118,6 +118,12 @@ public class SaleController : Controller
 
         TempData["ErrorMessage"] = "Commande faite avec succès!";
         TempData["ErrorType"] = "success";
+
+        if (isFirstSale && client != null)
+        {
+            TempData["WelcomeClient"] = "true";
+            TempData["WelcomeClientName"] = client.Name;
+        }
 
         TempData["FromFinance"] = false;
 
@@ -165,15 +171,13 @@ public class SaleController : Controller
 
     private bool CheckProductInStock(SaleCreateViewModel sale)
     {
-        var hasError = false;
         foreach (var item in sale.Items)
         {
             var stockResponse = _stockService.GetProductInStock(item.ProductStockId);
             if (!stockResponse.Success)
             {
                 SetError($"Le produit ID {item.ProductStockId} n'existe pas en stock.");
-                hasError = true;
-                break;
+                return true;
             }
 
             var stockItem = stockResponse.Data;
@@ -181,22 +185,19 @@ public class SaleController : Controller
             if (item.Quantity > stockItem.QuantityInStock)
             {
                 SetError($"Impossible de vendre {item.Quantity} unités. Stock disponible: {stockItem.QuantityInStock}.");
-                hasError = true;
-                break;
+                return true;
             }
 
             stockItem.QuantityInStock -= item.Quantity;
-
             var resultSave = _stockService.UpdateProductStockFromForm(stockItem);
             if (!resultSave.Success)
             {
                 SetError(resultSave.Message);
-                hasError = true;
-                break;
+                return true;
             }
         }
 
-        return hasError;
+        return false;
     }
 
     private void AddLeavingMovementHistory(int saleId)
