@@ -1,0 +1,195 @@
+@model Tuple<List<Nordik_Aventure.Objects.ViewModels.OrderManageViewModel>,
+    List<Nordik_Aventure.Objects.ViewModels.OrderManageViewModel>>
+
+@{
+    Layout = "_FinanceLayout";
+
+    var active = Model.Item1;
+    var completed = Model.Item2;
+}
+
+<div class="container mt-4">
+
+    <h1 class="mb-4">Gérer les commandes en cours</h1>
+
+    @if (!active.Any())
+    {
+        <p class="text-muted">Aucune commande en cours.</p>
+    }
+    else
+    {
+        <div class="border rounded p-2 mb-4 cards-container"
+             style="max-height: 450px; overflow-y: auto;">
+            <table class="table table-bordered table-hover bg-white">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Fournisseur</th>
+                    <th>Commande</th>
+                    <th>Livraison</th>
+                    <th>Statut actuel</th>
+                    <th>Changer statut</th>
+                    <th class="text-center">Contenu</th>
+                    <th class="text-center">Supprimer</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                @foreach (var o in active)
+                {
+                    <tr>
+                        <td>@o.OrderId</td>
+                        <td>@o.SupplierName</td>
+                        <td>@o.DateOfOrdering.ToString("dd/MM/yyyy")</td>
+                        <td>@o.DateOfDelivery.ToString("dd/MM/yyyy")</td>
+                        <td>@o.Status</td>
+
+                        <td>
+                            <form method="post" action="/order/UpdateStatus" class="d-flex gap-2">
+                                <input type="hidden" name="orderId" value="@o.OrderId"/>
+
+                                <select name="status" class="form-select form-select-sm">
+                                    <option value="réception" selected="@(o.Status == "réception")">réception</option>
+                                    <option value="préparation" selected="@(o.Status == "préparation")">préparation
+                                    </option>
+                                    <option value="expédiée" selected="@(o.Status == "expédiée")">expédiée</option>
+                                    <option value="facturée" selected="@(o.Status == "facturée")">facturée</option>
+                                    <option value="payée/fermée" selected="@(o.Status == "payée/fermée")">payée/fermée
+                                    </option>
+                                </select>
+
+                                <button type="submit" class="btn btn-primary btn-sm"
+                                        style="background-color: var(--background-button); color: var(--text-white);">
+                                    OK
+                                </button>
+                            </form>
+                        </td>
+
+                        <td class="text-center">
+                            <button class="btn btn-outline-dark btn-sm"
+                                    onclick="loadItems(@o.OrderId)"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#itemsModal">
+                                +
+                            </button>
+                        </td>
+
+                        <td class="text-center">
+                            <form method="post" action="/order/Delete"
+                                  onsubmit="return confirm('Supprimer cette commande ?');">
+                                <input type="hidden" name="orderId" value="@o.OrderId"/>
+                                <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <h2 class="mt-5 mb-3">Commandes payées / fermées</h2>
+
+    @if (!completed.Any())
+    {
+        <p class="text-muted">Aucune commande complétée.</p>
+    }
+    else
+    {
+        <div class="border rounded p-2 mb-4 cards-container"
+             style="max-height: 450px; overflow-y: auto;">
+            <table class="table table-bordered table-hover bg-white">
+                <thead class="table-success">
+                <tr>
+                    <th>#</th>
+                    <th>Fournisseur</th>
+                    <th>Commande</th>
+                    <th>Livraison</th>
+                    <th>Total</th>
+                    <th class="text-center">Contenu</th>
+                    <th class="text-center">Supprimer</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                @foreach (var o in completed)
+                {
+                    <tr>
+                        <td>@o.OrderId</td>
+                        <td>@o.SupplierName</td>
+                        <td>@o.DateOfOrdering.ToString("dd/MM/yyyy")</td>
+                        <td>@o.DateOfDelivery.ToString("dd/MM/yyyy")</td>
+                        <td>@($"{o.TotalPrice:N2}".Replace('.', ','))$</td>
+
+                        <td class="text-center">
+                            <button class="btn btn-outline-dark btn-sm"
+                                    onclick="loadItems(@o.OrderId)"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#itemsModal">
+                                +
+                            </button>
+                        </td>
+
+                        <td class="text-center">
+                            <form method="post" action="/order/Delete"
+                                  onsubmit="return confirm('Supprimer cette commande définitivement ?');">
+                                <input type="hidden" name="orderId" value="@o.OrderId"/>
+                                <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+
+</div>
+
+<div class="modal fade" id="itemsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Contenu de la commande</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Produit</th>
+                        <th>Fournisseur</th>
+                        <th>Quantité</th>
+                        <th>Total</th>
+                    </tr>
+                    </thead>
+                    <tbody id="itemsTableBody"></tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    function loadItems(orderId) {
+        fetch(`/order/GetItems/${orderId}`)
+            .then(r => r.json())
+            .then(items => {
+                let body = document.getElementById("itemsTableBody");
+                body.innerHTML = "";
+
+                items.forEach(i => {
+                    body.innerHTML += `
+                        <tr>
+                            <td>${i.product}</td>
+                            <td>${i.supplier}</td>
+                            <td>${i.quantity}</td>
+                            <td>${i.total.toFixed(2)}$</td>
+                        </tr>`;
+                });
+            });
+    }
+</script>

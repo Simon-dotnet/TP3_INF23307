@@ -88,6 +88,9 @@ namespace Nordik_Aventure.Migrations
                     b.Property<double>("Amount")
                         .HasColumnType("double");
 
+                    b.Property<double?>("RemainingBalance")
+                        .HasColumnType("double");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -385,6 +388,9 @@ namespace Nordik_Aventure.Migrations
 
                     b.Property<int>("PurchaseId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("longtext");
 
                     b.Property<double>("TotalPrice")
                         .HasColumnType("double");

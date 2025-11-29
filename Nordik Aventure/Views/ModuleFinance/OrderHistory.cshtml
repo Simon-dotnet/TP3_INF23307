@@ -8,31 +8,47 @@
 
     <div class="mb-4 p-3 border rounded bg-light">
         <div class="d-flex justify-content-between">
+
             <div>
                 <div class="text-muted small">Total</div>
                 <div class="fw-bold">@Model.Count</div>
             </div>
 
             <div>
-                <div class="text-muted small">En retard</div>
-                <span class="badge bg-danger">
-                    @Model.Count(o => o.Status == "En retard")
+                <div class="text-muted small">Réception</div>
+                <span class="badge bg-secondary">
+                    @Model.Count(o => o.Status == "réception")
                 </span>
             </div>
 
             <div>
-                <div class="text-muted small">Aujourd’hui</div>
-                <span class="badge bg-warning text-dark">
-                    @Model.Count(o => o.Status == "Aujourd’hui")
-                </span>
-            </div>
-
-            <div>
-                <div class="text-muted small">À venir</div>
+                <div class="text-muted small">Préparation</div>
                 <span class="badge bg-info text-dark">
-                    @Model.Count(o => o.Status == "À venir")
+                    @Model.Count(o => o.Status == "préparation")
                 </span>
             </div>
+
+            <div>
+                <div class="text-muted small">Expédiée</div>
+                <span class="badge bg-primary">
+                    @Model.Count(o => o.Status == "expédiée")
+                </span>
+            </div>
+
+            <div>
+                <div class="text-muted small">Facturée</div>
+                <span class="badge bg-warning text-dark">
+                    @Model.Count(o => o.Status == "facturée")
+                </span>
+            </div>
+
+            <div>
+                <div class="text-muted small">Payée/Fermée</div>
+                <span class="badge bg-success">
+                    @Model.Count(o => o.Status == "payée/fermée")
+                </span>
+            </div>
+
         </div>
     </div>
 
@@ -54,17 +70,20 @@
                         </h5>
 
                         <div>
-                            @if (order.Status == "En retard")
+                            @switch(order.Status)
                             {
-                                <span class="badge bg-danger">@order.Status</span>
-                            }
-                            else if (order.Status == "Aujourd’hui")
-                            {
-                                <span class="badge bg-warning text-dark">@order.Status</span>
-                            }
-                            else
-                            {
-                                <span class="badge bg-info text-dark">@order.Status</span>
+                                case "réception":
+                                    <span class="badge bg-secondary">@order.Status</span>; break;
+                                case "préparation":
+                                    <span class="badge bg-info text-dark">@order.Status</span>; break;
+                                case "expédiée":
+                                    <span class="badge bg-primary">@order.Status</span>; break;
+                                case "facturée":
+                                    <span class="badge bg-warning text-dark">@order.Status</span>; break;
+                                case "payée/fermée":
+                                    <span class="badge bg-success">@order.Status</span>; break;
+                                default:
+                                    <span class="badge bg-dark">@order.Status</span>; break;
                             }
                         </div>
                     </div>

@@ -230,6 +230,7 @@ namespace Nordik_Aventure.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     TransactionId = table.Column<int>(type: "int", nullable: false),
                     Amount = table.Column<double>(type: "double", nullable: false),
+                    RemainingBalance = table.Column<double>(type: "double", nullable: true),
                     Status = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Type = table.Column<string>(type: "longtext", nullable: false)
@@ -360,6 +361,8 @@ namespace Nordik_Aventure.Migrations
                     DateOfOrdering = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     TotalPrice = table.Column<double>(type: "double", nullable: false),
                     DateOfDelivery = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Status = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     PurchaseId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
