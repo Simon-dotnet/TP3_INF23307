@@ -7,20 +7,22 @@ public class Payment
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int PaymentId { get; init; }
+    public int PaymentId { get; set; }
     
     [Required]
-    public int TransactionId { get; init; }
+    public int TransactionId { get; set; }
     
     [ForeignKey(nameof(TransactionId))]
-    public Transaction Transaction { get; init; }
+    public Transaction Transaction { get; set; }
     
     [Required]
-    public double Amount { get; init; }
+    public double Amount { get; set; }
+    
+    public double? RemainingBalance { get; set; }
     
     [Required]
-    public string? Status { get; init; }
+    public string? Status { get; set; }
     
     [Required]
-    public string? Type { get; init; }
+    public string? Type { get; set; }
 }

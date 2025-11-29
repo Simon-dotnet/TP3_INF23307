@@ -49,7 +49,21 @@
                     <li>
                         <a style="cursor: pointer;" onclick="location.href='@Url.Action("OrderHistory", "Order")'" class="dropdown-item" href="#">Consulter l'historique des commandes</a>
                     </li>
+                    <li>
+                        <a style="cursor: pointer;" 
+                           class="dropdown-item" 
+                           onclick="location.href='@Url.Action("Manage", "Order")'">
+                            Gérer les commandes en cours
+                        </a>
+                    </li>
                 </ul>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link fs-5 fw-bold"
+                   href="/payment/manage"
+                   style="color: var(--text-white); margin-left: 40px;">
+                    Gérer paiements
+                </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link fs-5 fw-bold"

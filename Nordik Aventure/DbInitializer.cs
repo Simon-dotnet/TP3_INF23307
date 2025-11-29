@@ -28,7 +28,8 @@ public static class DbInitializer
                 new Client
                 {
                     Id = 1, Name = "Paul", Password = "Paul123", Address = "144 rue de paul, Lévis, Qc, Canada",
-                    Email = "paul@paul.ca", Phone = "418-878-4090", Type = "particulier", Status = "Actif", SatisfactionLevel = 1
+                    Email = "paul@paul.ca", Phone = "418-878-4090", Type = "particulier", Status = "Actif",
+                    SatisfactionLevel = 1
                 },
                 new Client
                 {
@@ -428,23 +429,22 @@ public static class DbInitializer
             );
             context.SaveChanges();
         }
-        
+
         if (!context.Taxes.Any())
         {
             context.Taxes.AddRange(new Taxes
-                {
-                    TaxesId = 1,
-                    ValueTps = 5,
-                    ValueTvq = 9.975
-                });
+            {
+                TaxesId = 1,
+                ValueTps = 5,
+                ValueTvq = 9.975
+            });
         }
         
-        // Init de order et sales. Pour tester
         if (!context.Transactions.Any() && !context.Purchases.Any() && !context.Sales.Any())
         {
             var client1 = context.Clients.First(c => c.Id == 1);
             var client2 = context.Clients.First(c => c.Id == 2);
-            
+
             var ps1 = context.ProductInStock.First(p => p.Id == 1);
             var ps2 = context.ProductInStock.First(p => p.Id == 7);
             var ps3 = context.ProductInStock.First(p => p.Id == 13);
@@ -454,14 +454,20 @@ public static class DbInitializer
             var p2 = context.Products.First(p => p.Id == 2);
             var p3 = context.Products.First(p => p.Id == 3);
             var p4 = context.Products.First(p => p.Id == 4);
-
+            
             var orderData = new[]
             {
-                new { Date = new DateTime(2025, 12, 25), Amount = 900.0, P1 = 3, P3 = 2 },
-                new { Date = new DateTime(2025, 11, 29), Amount = 1200.0, P1 = 4, P3 = 3 },
-                new { Date = new DateTime(2025, 11, 15), Amount = 850.0, P1 = 2, P3 = 3 },
-                new { Date = new DateTime(2025, 11, 20), Amount = 950.0, P1 = 3, P3 = 3 }
+                new { Date = new DateTime(2025, 12, 25), Amount = 900.0, P1 = 3, P3 = 2, Status = "réception" },
+                new { Date = new DateTime(2025, 12, 20), Amount = 1400.0, P1 = 5, P3 = 2, Status = "préparation" },
+                new { Date = new DateTime(2025, 11, 29), Amount = 1200.0, P1 = 4, P3 = 3, Status = "expédiée" },
+                new { Date = new DateTime(2025, 11, 25), Amount = 1100.0, P1 = 3, P3 = 4, Status = "facturée" },
+                new { Date = new DateTime(2025, 11, 15), Amount = 850.0, P1 = 2, P3 = 3, Status = "payée/fermée" },
+                new { Date = new DateTime(2025, 11, 20), Amount = 950.0, P1 = 3, P3 = 3, Status = "réception" },
+                new { Date = new DateTime(2025, 11, 10), Amount = 780.0, P1 = 1, P3 = 5, Status = "préparation" },
+                new { Date = new DateTime(2025, 11, 5), Amount = 630.0, P1 = 2, P3 = 1, Status = "payée/fermée" }
             };
+
+            int orderIndex = 0;
 
             foreach (var od in orderData)
             {
@@ -472,7 +478,7 @@ public static class DbInitializer
                     Amount = od.Amount,
                     AmountTps = 5,
                     AmountTvq = 9.975,
-                    AmountTotal = od.Amount * 1.14975
+                    AmountTotal = Math.Round(od.Amount * 1.14975, 2)
                 };
                 context.Transactions.Add(t);
 
@@ -489,25 +495,76 @@ public static class DbInitializer
 
                 var order = new Order
                 {
-                    DateOfOrdering = od.Date.AddDays(-2),
+                    DateOfOrdering = od.Date.AddDays(-3),
                     DateOfDelivery = od.Date,
                     TotalPrice = t.AmountTotal,
+                    Status = od.Status,
                     Purchase = purchase,
                     OrderSupplierProducts = new List<OrderSupplierProduct>
                     {
-                        new OrderSupplierProduct { Product = p1, Supplier = p1.Supplier, Quantity = od.P1, TotalPrice = od.P1 * p1.PriceToBuy },
-                        new OrderSupplierProduct { Product = p3, Supplier = p3.Supplier, Quantity = od.P3, TotalPrice = od.P3 * p3.PriceToBuy }
+                        new OrderSupplierProduct
+                        {
+                            Product = p1, Supplier = p1.Supplier, Quantity = od.P1, TotalPrice = od.P1 * p1.PriceToBuy
+                        },
+                        new OrderSupplierProduct
+                        {
+                            Product = p3, Supplier = p3.Supplier, Quantity = od.P3, TotalPrice = od.P3 * p3.PriceToBuy
+                        }
                     }
                 };
                 context.Orders.Add(order);
+                
+                Payment payment;
 
-                var payment = new Payment
+                switch (orderIndex % 4)
                 {
-                    Transaction = t,
-                    Amount = t.AmountTotal,
-                    Type = "purchase",
-                    Status = "completed"
-                };
+                    case 0:
+                        payment = new Payment
+                        {
+                            Transaction = t,
+                            Amount = t.AmountTotal,
+                            Type = "purchase",
+                            Status = "payée",
+                            RemainingBalance = t.AmountTotal
+                        };
+                        break;
+
+                    case 1:
+                        double part = Math.Round(t.AmountTotal * 0.45, 2);
+                        payment = new Payment
+                        {
+                            Transaction = t,
+                            Amount = t.AmountTotal,
+                            Type = "purchase",
+                            Status = "partielle",
+                            RemainingBalance = part
+                        };
+                        break;
+
+                    case 2:
+                        payment = new Payment
+                        {
+                            Transaction = t,
+                            Amount = t.AmountTotal,
+                            Type = "purchase",
+                            Status = "en attente",
+                            RemainingBalance = 0
+                        };
+                        break;
+
+                    default:
+                        double near = Math.Round(t.AmountTotal * 0.9, 2);
+                        payment = new Payment
+                        {
+                            Transaction = t,
+                            Amount = t.AmountTotal,
+                            Type = "purchase",
+                            Status = "partielle",
+                            RemainingBalance = near
+                        };
+                        break;
+                }
+
                 context.Payments.Add(payment);
 
                 var sr = new SupplierReceipt
@@ -517,26 +574,25 @@ public static class DbInitializer
                     Status = "created"
                 };
                 context.SupplierReceipts.Add(sr);
+
+                orderIndex++;
             }
 
             var saleData = new[]
             {
-                new { Date = new DateTime(2025, 11, 3), Items = new[]{ (ps1,299),(ps2,139),(ps3,169) } },
-                new { Date = new DateTime(2025, 11, 6), Items = new[]{ (ps1,299),(ps4,59) } },
-                new { Date = new DateTime(2025, 11, 9), Items = new[]{ (ps2,139),(ps3,169),(ps4,79) } },
-                new { Date = new DateTime(2025, 11,10), Items = new[]{ (ps1,299),(ps2,139) } },
-                new { Date = new DateTime(2025, 11,12), Items = new[]{ (ps3,169),(ps4,79),(ps1,299) } },
-                new { Date = new DateTime(2025, 11,15), Items = new[]{ (ps2,139),(ps1,299),(ps3,169),(ps4,79) } },
-                new { Date = new DateTime(2025, 11,18), Items = new[]{ (ps1,299),(ps3,169) } },
-                new { Date = new DateTime(2025, 11,20), Items = new[]{ (ps2,139),(ps3,169),(ps4,59) } },
-                new { Date = new DateTime(2025, 11,22), Items = new[]{ (ps1,299),(ps1,299),(ps2,139) } },
-                new { Date = new DateTime(2025, 11,23), Items = new[]{ (ps3,169),(ps4,79),(ps4,59) } },
-                new { Date = new DateTime(2025, 11,24), Items = new[]{ (ps1,299),(ps2,139),(ps3,169) } },
-                new { Date = new DateTime(2025, 11,25), Items = new[]{ (ps1,299),(ps4,79) } },
-                new { Date = new DateTime(2025, 11,26), Items = new[]{ (ps2,139),(ps3,169),(ps1,299) } },
-                new { Date = new DateTime(2025, 11,27), Items = new[]{ (ps1,299),(ps1,299),(ps3,169),(ps4,79) } },
-                new { Date = new DateTime(2025, 11,28), Items = new[]{ (ps2,139),(ps4,59),(ps3,169),(ps1,299),(ps1,299) } }
+                new { Date = new DateTime(2025, 11, 3), Items = new[] { (ps1, 299), (ps2, 139), (ps3, 169) } },
+                new { Date = new DateTime(2025, 11, 6), Items = new[] { (ps1, 299), (ps4, 59) } },
+                new { Date = new DateTime(2025, 11, 9), Items = new[] { (ps2, 139), (ps3, 169), (ps4, 79) } },
+                new { Date = new DateTime(2025, 11, 10), Items = new[] { (ps1, 299), (ps2, 139) } },
+                new { Date = new DateTime(2025, 11, 12), Items = new[] { (ps3, 169), (ps4, 79), (ps1, 299) } },
+                new { Date = new DateTime(2025, 11, 14), Items = new[] { (ps3, 169), (ps2, 139) } },
+                new { Date = new DateTime(2025, 11, 18), Items = new[] { (ps1, 299), (ps3, 169) } },
+                new { Date = new DateTime(2025, 11, 20), Items = new[] { (ps2, 139), (ps3, 169), (ps4, 59) } },
+                new { Date = new DateTime(2025, 11, 22), Items = new[] { (ps1, 299), (ps1, 299), (ps2, 139) } },
+                new { Date = new DateTime(2025, 11, 24), Items = new[] { (ps1, 299), (ps2, 139), (ps3, 169) } }
             };
+
+            int saleIndex = 0;
 
             foreach (var sd in saleData)
             {
@@ -549,7 +605,7 @@ public static class DbInitializer
                     Amount = amount,
                     AmountTps = 5,
                     AmountTvq = 9.975,
-                    AmountTotal = amount * 1.14975
+                    AmountTotal = Math.Round(amount * 1.14975, 2)
                 };
                 context.Transactions.Add(t);
 
@@ -568,13 +624,45 @@ public static class DbInitializer
                 };
                 context.Sales.Add(sale);
 
-                var payment = new Payment
+                Payment payment;
+
+                switch (saleIndex % 3)
                 {
-                    Transaction = t,
-                    Amount = t.AmountTotal,
-                    Status = "completed",
-                    Type = "sale"
-                };
+                    case 0:
+                        payment = new Payment
+                        {
+                            Transaction = t,
+                            Amount = t.AmountTotal,
+                            Status = "payée",
+                            RemainingBalance = t.AmountTotal,
+                            Type = "sale"
+                        };
+                        break;
+
+                    case 1:
+                        double partial = Math.Round(t.AmountTotal * 0.4, 2);
+                        payment = new Payment
+                        {
+                            Transaction = t,
+                            Amount = t.AmountTotal,
+                            Status = "partielle",
+                            RemainingBalance = partial,
+                            Type = "sale"
+                        };
+                        break;
+
+                    default:
+                        payment = new Payment
+                        {
+                            Transaction = t,
+                            Amount = t.AmountTotal,
+                            Status = "en attente",
+                            RemainingBalance = 0,
+                            Type = "sale"
+                        };
+                        break;
+                }
+
                 context.Payments.Add(payment);
 
                 var r = new SaleReceipt
@@ -584,10 +672,11 @@ public static class DbInitializer
                     Status = "generated"
                 };
                 context.SaleReceipts.Add(r);
+
+                saleIndex++;
             }
+
+            context.SaveChanges();
         }
-
-        context.SaveChanges();
-
     }
 }

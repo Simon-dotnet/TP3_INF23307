@@ -12,7 +12,7 @@ using Nordik_Aventure;
 namespace Nordik_Aventure.Migrations
 {
     [DbContext(typeof(NordikAventureContext))]
-    [Migration("20251128200820_bd-init")]
+    [Migration("20251129220943_bd-init")]
     partial class bdinit
     {
         /// <inheritdoc />
@@ -89,6 +89,9 @@ namespace Nordik_Aventure.Migrations
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("PaymentId"));
 
                     b.Property<double>("Amount")
+                        .HasColumnType("double");
+
+                    b.Property<double?>("RemainingBalance")
                         .HasColumnType("double");
 
                     b.Property<string>("Status")
@@ -388,6 +391,9 @@ namespace Nordik_Aventure.Migrations
 
                     b.Property<int>("PurchaseId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("longtext");
 
                     b.Property<double>("TotalPrice")
                         .HasColumnType("double");

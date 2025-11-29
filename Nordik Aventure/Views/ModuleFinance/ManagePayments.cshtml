@@ -1,0 +1,233 @@
+@model List<Nordik_Aventure.Objects.ViewModels.PaymentManageViewModel>
+@{
+Layout = "_FinanceLayout";
+
+var active = Model.Where(p => p.Status != "payée").ToList();
+var completed = Model.Where(p => p.Status == "payée").ToList();
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4">Gérer les paiements</h1>
+
+    @if (!Model.Any())
+    {
+    <p class="text-muted">Aucun paiement trouvé.</p>
+    return;
+    }
+
+    <h3>Paiements en attente / partiels</h3>
+
+    <div class="border rounded p-2 mb-4 cards-container"
+         style="max-height: 450px; overflow-y: auto;">
+
+        <table class="table table-bordered table-hover mb-0">
+            <thead class="table-light">
+            <tr>
+                <th>#Paiement</th>
+                <th>#Transaction</th>
+                <th>Type</th>
+                <th>Date</th>
+                <th>Total ($)</th>
+                <th>Statut</th>
+                <th>Solde restant</th>
+                <th class="text-center">Contenu</th>
+                <th>Changer statut</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            @foreach (var p in active)
+            {
+            <tr>
+                <td>@p.PaymentId</td>
+                <td>@p.TransactionId</td>
+                <td>@p.Type</td>
+                <td>@p.Date.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@($"{p.AmountTotal:N2}".Replace('.', ','))$</td>
+
+                <td>
+                    @switch (p.Status)
+                    {
+                    case "payée":
+                    <span class="badge bg-success">payée</span>; break;
+                    case "en attente":
+                    <span class="badge bg-warning text-dark">en attente</span>; break;
+                    case "partielle":
+                    <span class="badge bg-info text-dark">partielle</span>; break;
+                    default:
+                    <span class="badge bg-secondary">@p.Status</span>; break;
+                    }
+                </td>
+
+                <td>@($"{p.RemainingAmountLeft:N2}".Replace('.', ','))$</td>
+
+                <td class="text-center">
+                    <button class="btn btn-outline-dark btn-sm"
+                            onclick="loadItems(@p.PaymentId)"
+                            data-bs-toggle="modal"
+                            data-bs-target="#itemsModal">
+                        +
+                    </button>
+                </td>
+
+                <td>
+                    <form method="post" action="/payment/update-status" class="d-flex gap-2">
+
+                        <input type="hidden" name="paymentId" value="@p.PaymentId" />
+
+                        <select name="status" class="form-select form-select-sm"
+                                onchange="toggleRemaining(this, @p.PaymentId)">
+                            <option value="payée">payée</option>
+                            <option value="en attente">en attente</option>
+                            <option value="partielle">partielle</option>
+                        </select>
+
+                        <input type="number"
+                               step="0.01"
+                               min="0"
+                               name="remaining"
+                               id="remaining-@p.PaymentId"
+                               class="form-control form-control-sm"
+                               placeholder="Solde"
+                               style="width:90px; display:none;" />
+
+                        <button type="submit" class="btn btn-primary btn-sm"
+                                style="background-color: var(--background-button); color: var(--text-white);">
+                            OK
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            }
+            </tbody>
+        </table>
+
+    </div>
+
+
+    <!-- COMPLETED PAYMENTS -->
+    <h3 class="mt-5">Paiements payés</h3>
+
+    <div class="border rounded p-2 cards-container"
+         style="max-height: 350px; overflow-y: auto;">
+
+        <table class="table table-bordered table-hover mb-0">
+            <thead class="table-success">
+            <tr>
+                <th>#Paiement</th>
+                <th>#Transaction</th>
+                <th>Type</th>
+                <th>Date</th>
+                <th>Total ($)</th>
+                <th>Statut</th>
+                <th>Solde restant</th>
+                <th class="text-center">Contenu</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            @foreach (var p in completed)
+            {
+            <tr>
+                <td>@p.PaymentId</td>
+                <td>@p.TransactionId</td>
+                <td>@p.Type</td>
+                <td>@p.Date.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@($"{p.AmountTotal:N2}".Replace('.', ','))$</td>
+                <td><span class="badge bg-success">payée</span></td>
+                <td>@($"{p.RemainingAmountLeft:N2}".Replace('.', ','))$</td>
+
+                <td class="text-center">
+                    <button class="btn btn-outline-dark btn-sm"
+                            onclick="loadItems(@p.PaymentId)"
+                            data-bs-toggle="modal"
+                            data-bs-target="#itemsModal">
+                        +
+                    </button>
+                </td>
+            </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+
+<!-- MODAL: TRANSACTION CONTENT -->
+<div class="modal fade" id="itemsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Contenu de la transaction</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Produit</th>
+                        <th>Fournisseur</th>
+                        <th>Quantité</th>
+                        <th>Total</th>
+                    </tr>
+                    </thead>
+                    <tbody id="itemsTableBody"></tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function toggleRemaining(select, id) {
+        const input = document.getElementById("remaining-" + id);
+        input.style.display = select.value === "partielle" ? "block" : "none";
+    }
+
+    function loadItems(paymentId) {
+        fetch(`/payment/items/${paymentId}`)
+            .then(r => {
+                if (!r.ok) throw new Error("Erreur de chargement des items");
+                return r.json();
+            })
+            .then(items => {
+                const body = document.getElementById("itemsTableBody");
+                body.innerHTML = "";
+
+                if (!items || items.length === 0) {
+                    body.innerHTML = `
+                        <tr>
+                            <td colspan="4" class="text-center text-muted">
+                                Aucun item trouvé pour ce paiement.
+                            </td>
+                        </tr>`;
+                    return;
+                }
+
+                items.forEach(i => {
+                    body.innerHTML += `
+                        <tr>
+                            <td>${i.product}</td>
+                            <td>${i.supplier}</td>
+                            <td>${i.quantity}</td>
+                            <td>${i.total.toFixed(2)}$</td>
+                        </tr>`;
+                });
+            })
+            .catch(err => {
+                const body = document.getElementById("itemsTableBody");
+                body.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="text-center text-danger">
+                            Erreur lors du chargement du contenu.
+                        </td>
+                    </tr>`;
+                console.error(err);
+            });
+    }
+</script>

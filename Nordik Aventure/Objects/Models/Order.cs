@@ -21,6 +21,8 @@ public class Order
     
     public DateTime DateOfDelivery { get; set; }
     
+    public string? Status { get; set; } = "réception";
+    
     public int PurchaseId { get; init; }
     
     [ForeignKey("PurchaseId")]

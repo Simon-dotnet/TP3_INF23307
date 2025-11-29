@@ -59,12 +59,8 @@ namespace Nordik_Aventure.Controllers
                                   .Sum(t => t.AmountTotal))
                 .ToList();
 
-            var lateOrders = orders.Where(o => o.DateOfDelivery.Date < today).ToList();
-            var todayOrders = orders.Where(o => o.DateOfDelivery.Date == today).ToList();
-            var upcomingOrders = orders.Where(o => o.DateOfDelivery.Date > today).ToList();
-
             var recentOrders = orders
-                .OrderBy(o => o.DateOfDelivery)
+                .OrderByDescending(o => o.DateOfOrdering)
                 .Take(5)
                 .Select(o => new OrderStatusItemViewModel
                 {
@@ -72,12 +68,13 @@ namespace Nordik_Aventure.Controllers
                     DateOfOrdering = o.DateOfOrdering,
                     DateOfDelivery = o.DateOfDelivery,
                     TotalPrice = o.TotalPrice,
-                    SupplierName = o.OrderSupplierProducts.FirstOrDefault()?.Supplier?.Name ?? "-",
-                    Status = o.DateOfDelivery.Date < today
-                        ? "En retard"
-                        : o.DateOfDelivery.Date == today
-                            ? "Aujourd'hui"
-                            : "À venir"
+                    SupplierName = string.Join(", ",
+                        o.OrderSupplierProducts
+                            .Select(osp => osp.Supplier?.Name)
+                            .Where(n => !string.IsNullOrWhiteSpace(n))
+                            .Distinct()
+                    ),
+                    Status = o.Status
                 })
                 .ToList();
 
@@ -96,9 +93,6 @@ namespace Nordik_Aventure.Controllers
                 MonthlyExpenses = monthlyExpenses,
                 LastTransactions = lastTx.OrderByDescending(t => t.Date).ToList(),
                 TotalOrders = orders.Count,
-                LateOrders = lateOrders.Count,
-                TodayOrders = todayOrders.Count,
-                UpcomingOrders = upcomingOrders.Count,
                 RecentOrders = recentOrders
             };
 

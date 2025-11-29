@@ -71,4 +71,29 @@ public class OrderService
 
         return _orderRepository.CreateOrder(order);
     }
+    
+    public GenericResponse<Order> ChangeOrderStatus(int orderId, string newStatus)
+    {
+        var allowed = new[] { "réception", "préparation", "expédiée", "facturée", "payée/fermée" };
+
+        if (!allowed.Contains(newStatus))
+            return new GenericResponse<Order>("Statut invalide", 400);
+
+        return _orderRepository.UpdateOrderStatus(orderId, newStatus);
+    }
+    
+    public GenericResponse<bool> DeleteOrder(int id)
+    {
+        return _orderRepository.DeleteOrder(id);
+    }
+
+    public GenericResponse<List<OrderSupplierProduct>> GetOrderItems(int orderId)
+    {
+        var result = _orderRepository.GetOrderById(orderId);
+        if (!result.Success || result.Data == null)
+            return new GenericResponse<List<OrderSupplierProduct>>("Commande introuvable", 404);
+
+        return new GenericResponse<List<OrderSupplierProduct>>(result.Data.OrderSupplierProducts.ToList());
+    }
+
 }

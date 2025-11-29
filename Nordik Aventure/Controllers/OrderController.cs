@@ -65,19 +65,8 @@ public class OrderController : Controller
             .Take(50)
             .ToList();
 
-        var today = DateTime.Today;
-
         var history = orders.Select(order =>
         {
-            string status;
-
-            if (order.DateOfDelivery.Date < today)
-                status = "En retard";
-            else if (order.DateOfDelivery.Date == today)
-                status = "Aujourd’hui";
-            else
-                status = "À venir";
-
             var supplierName = order.OrderSupplierProducts
                 .FirstOrDefault()?.Supplier?.Name ?? "N/A";
 
@@ -88,7 +77,7 @@ public class OrderController : Controller
                 DateOfDelivery = order.DateOfDelivery,
                 TotalPrice = order.TotalPrice,
                 SupplierName = supplierName,
-                Status = status,
+                Status = order.Status ?? "réception",
                 Items = order.OrderSupplierProducts.Select(osp => new OrderItemViewModel
                 {
                     ProductName = osp.Product?.Name ?? "Non disponible",
@@ -123,7 +112,7 @@ public class OrderController : Controller
         {
             TransactionId = tx.TransactionId,
             Amount = tx.AmountTotal,
-            Status = "pending",
+            Status = "en attente",
             Type = "purchase"
         };
 
@@ -203,6 +192,106 @@ public class OrderController : Controller
         };
 
         return View("../ModuleFinance/SupplierReceipt", vm);
+    }
+    
+    [HttpGet("Manage")]
+    public IActionResult Manage()
+    {
+        var result = _orderService.GetAllOrders();
+        if (!result.Success || result.Data == null)
+            return View("../ModuleFinance/ManageOrders", new Tuple<List<OrderManageViewModel>, List<OrderManageViewModel>>(
+                new List<OrderManageViewModel>(), new List<OrderManageViewModel>()
+            ));
+
+        var active = result.Data
+            .Where(o => o.Status != "payée/fermée")
+            .OrderBy(o => o.DateOfDelivery)
+            .Select(o => new OrderManageViewModel
+            {
+                OrderId = o.OrderId,
+                SupplierName = string.Join(", ",
+                    o.OrderSupplierProducts
+                        .Select(osp => osp.Supplier?.Name)
+                        .Where(n => !string.IsNullOrWhiteSpace(n))
+                        .Distinct()
+                ),
+                Status = o.Status ?? "réception",
+                DateOfOrdering = o.DateOfOrdering,
+                DateOfDelivery = o.DateOfDelivery,
+                TotalPrice = o.TotalPrice
+            })
+            .ToList();
+
+        var completed = result.Data
+            .Where(o => o.Status == "payée/fermée")
+            .OrderByDescending(o => o.DateOfDelivery)
+            .Select(o => new OrderManageViewModel
+            {
+                OrderId = o.OrderId,
+                SupplierName = o.OrderSupplierProducts.FirstOrDefault()?.Supplier?.Name ?? "-",
+                Status = o.Status ?? "réception",
+                DateOfOrdering = o.DateOfOrdering,
+                DateOfDelivery = o.DateOfDelivery,
+                TotalPrice = o.TotalPrice
+            })
+            .ToList();
+
+        return View("../ModuleFinance/ManageOrders", Tuple.Create(active, completed));
+    }
+    
+    [HttpGet("GetItems/{orderId}")]
+    public IActionResult GetItems(int orderId)
+    {
+        var result = _orderService.GetOrderItems(orderId);
+        if (!result.Success) return NotFound();
+
+        var items = result.Data.Select(i => new
+        {
+            product = i.Product?.Name ?? "N/A",
+            supplier = i.Supplier?.Name ?? "N/A",
+            quantity = i.Quantity,
+            total = i.TotalPrice
+        });
+
+        return Json(items);
+    }
+    
+    [HttpPost("Delete")]
+    public IActionResult Delete(int orderId)
+    {
+        var result = _orderService.DeleteOrder(orderId);
+
+        if (!result.Success)
+        {
+            TempData["ErrorMessage"] = result.Message;
+            TempData["ErrorType"] = "error";
+        }
+        else
+        {
+            TempData["ErrorMessage"] = "Commande supprimée.";
+            TempData["ErrorType"] = "success";
+        }
+    
+        return RedirectToAction("Manage");
+    }
+
+    [HttpPost("UpdateStatus")]
+    public IActionResult UpdateStatus(int orderId, string status)
+    {
+        var result = _orderService.ChangeOrderStatus(orderId, status);
+
+        if (!result.Success)
+        {
+            TempData["ErrorMessage"] = result.Message;
+            TempData["ErrorType"] = "error";
+        }
+        else
+        {
+            TempData["ErrorMessage"] = "Statut mis à jour.";
+            TempData["ErrorType"] = "success";
+        }
+
+        return RedirectToAction("Manage");
     }
 
     [HttpPost("cancel")]

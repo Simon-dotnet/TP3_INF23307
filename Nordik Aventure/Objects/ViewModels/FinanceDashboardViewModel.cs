@@ -31,9 +31,11 @@ namespace Nordik_Aventure.Objects.ViewModels
         public List<Transaction> LastTransactions { get; set; } = new();
 
         public int TotalOrders { get; set; }
-        public int LateOrders { get; set; }
-        public int TodayOrders { get; set; }
-        public int UpcomingOrders { get; set; }
+        public int ReceptionCount { get; set; }
+        public int PreparationCount { get; set; }
+        public int ExpedieeCount { get; set; }
+        public int FactureeCount { get; set; }
+        public int PayeeFermeeCount { get; set; }
 
         public List<OrderStatusItemViewModel> RecentOrders { get; set; } = new();
     }
