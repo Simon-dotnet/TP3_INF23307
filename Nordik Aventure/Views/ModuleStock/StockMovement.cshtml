@@ -149,7 +149,7 @@
     function GetSaleModal(id) {
         clearModal();
 
-        axios.get(`/finance/sale/${id}`)
+        axios.get(`/finance/sale/details/${id}`)
             .then(r => {
                 const data = r.data;
                 if (!data || data.length === 0) {

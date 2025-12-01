@@ -130,19 +130,6 @@ public class SaleController : Controller
         return RedirectToAction("Index", "SaleReceipt", new { transactionId = resultTransaction.Data.TransactionId });
     }
 
-    private GenericResponse<Payment> AddSalePayment(int transactionId, double totalAmount)
-    {
-        var payment = new Payment
-        {
-            TransactionId = transactionId,
-            Amount = totalAmount,
-            Status = "pending",
-            Type = "sale"
-        };
-
-        return _paymentService.AddPayment(payment);
-    }
-
     [HttpPost("cancel")]
     public IActionResult Cancel()
     {
@@ -165,6 +152,7 @@ public class SaleController : Controller
             Sku = sd.ProductInStock.Product.Sku,
             ClientName = sd.Sale.Client.Name,
             Quantity = sd.Quantity,
+            UnitPrice = sd.ProductInStock.Product.PriceToSell,
         }).ToList();
         return Ok(listSaleDto);
     }
@@ -184,7 +172,8 @@ public class SaleController : Controller
 
             if (item.Quantity > stockItem.QuantityInStock)
             {
-                SetError($"Impossible de vendre {item.Quantity} unités. Stock disponible: {stockItem.QuantityInStock}.");
+                SetError(
+                    $"Impossible de vendre {item.Quantity} unités. Stock disponible: {stockItem.QuantityInStock}.");
                 return true;
             }
 
@@ -248,6 +237,20 @@ public class SaleController : Controller
 
         return _saleService.AddSale(sale);
     }
+    
+    private GenericResponse<Payment> AddSalePayment(int transactionId, double totalAmount)
+    {
+        var payment = new Payment
+        {
+            TransactionId = transactionId,
+            Amount = totalAmount,
+            Status = "pending",
+            Type = "sale"
+        };
+
+        return _paymentService.AddPayment(payment);
+    }
+    
 
     private void SetError(string message)
     {
