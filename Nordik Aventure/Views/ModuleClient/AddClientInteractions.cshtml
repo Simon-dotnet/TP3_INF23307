@@ -1,3 +1,70 @@
+@model Nordik_Aventure.Objects.ViewModels.ClientInteractionViewModal
 @{
-    
+    Layout = "_ClientLayout";
 }
+
+<div class="container-fluid">
+    <form id="form-edit" method="post" asp-action="AddClientInteractionFromForm" asp-controller="ClientInteractions">
+        <div class="row align-items-center mb-4">
+            <div class="col">
+                <h3 class="h3 mb-0 ms-2">Création d'une interaction client pour @Model.ClientName</h3>
+            </div>
+        </div>
+        <hr/>
+        <div class="cards-container">
+            <div class="mb-3">
+                <label asp-for="Date" class="form-label">Date</label>
+                <input type="datetime-local"
+                       asp-for="Date"
+                       class="form-control"
+                       value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" />
+                <span asp-validation-for="Date" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Type" class="form-label">Type</label>
+                <input required="required" type="text" asp-for="Type" class="form-control"/>
+                <span asp-validation-for="Type" class="text-danger"></span>
+            </div>
+            <div class="mb-3" style="display: none">
+                <label asp-for="ClientId" class="form-label">ClientId</label>
+                <input required="required" type="text" asp-for="ClientId" class="form-control"/>
+                <span asp-validation-for="ClientId" class="text-danger"></span>
+            </div>
+            <div class="mb-3" style="display: none">
+                <label asp-for="EmployeeId" class="form-label">EmployeeId</label>
+                <input required="required" type="text" asp-for="EmployeeId" class="form-control"/>
+                <span asp-validation-for="EmployeeId" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label">Description</label>
+                <textarea required="required" asp-for="Description" class="form-control" id="myTextarea"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="text-center mt-3">
+            <button type="submit" style="background-color: var(--background-button); color: var(--text-white)" class="btn w-25">Confirmer</button>
+        </div>
+    </form>
+</div>
+
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote.min.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $('#myTextarea').summernote({
+            height: 200,
+            toolbar: [
+                ['style', ['bold', 'italic', 'underline', 'clear']],
+                ['font', ['fontsize','color']],
+                ['para', ['ul','ol','paragraph']],
+                ['insert', ['link','picture']]
+            ]
+        });
+    });
+</script>
+
+

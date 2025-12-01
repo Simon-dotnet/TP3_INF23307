@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Nordik_Aventure.Objects.Models;
 using Nordik_Aventure.Objects.Models.Finance;
+using Nordik_Aventure.Objects.Models.User;
 using Nordik_Aventure.Objects.ViewModels;
 using Nordik_Aventure.Services;
 
@@ -21,6 +22,9 @@ public class SaleController : Controller
     private readonly TaxesService _taxesService;
     private readonly PaymentService _paymentService;
     private readonly SaleReceiptService _saleReceiptService;
+    private readonly ClientInteractionsService _clientInterractionService;
+    private readonly UserSession _userSession;
+    private readonly ClientService _clientService;
     private readonly IMapper _mapper;
 
     public SaleController(
@@ -32,6 +36,9 @@ public class SaleController : Controller
         TaxesService taxesService,
         PaymentService paymentService,
         SaleReceiptService saleReceiptService,
+        ClientInteractionsService clientInterractionService,
+        UserSession userSession,
+        ClientService clientService,
         IMapper mapper)
     {
         _context = context;
@@ -42,6 +49,9 @@ public class SaleController : Controller
         _taxesService = taxesService;
         _paymentService = paymentService;
         _saleReceiptService = saleReceiptService;
+        _clientInterractionService = clientInterractionService;
+        _userSession = userSession;
+        _clientService = clientService;
         _mapper = mapper;
     }
 
@@ -115,6 +125,12 @@ public class SaleController : Controller
         }
 
         AddLeavingMovementHistory(sale.Id);
+
+        var clientInteractionResult = AddClientInteraction(model);
+        if (!clientInteractionResult.Success)
+        {
+            return RedirectToAction("Index", "Client");
+        }
 
         TempData["ErrorMessage"] = "Commande faite avec succès!";
         TempData["ErrorType"] = "success";
@@ -236,6 +252,39 @@ public class SaleController : Controller
         };
 
         return _saleService.AddSale(sale);
+    }
+
+    private GenericResponse<ClientInterraction> AddClientInteraction(SaleCreateViewModel model)
+    {
+        var client = _clientService.GetClientById(model.ClientId);
+        
+        var newClientInteraction = new ClientInterraction()
+        {
+            ClientId = model.ClientId,
+            Date = DateTime.Now,
+            EmployeeId = _userSession.UserId.Value,
+            Type = "Vente",
+            Description = $"<p>{client.Data.Name} a acheté pour:</p>"
+        };
+
+        var itemsHtml = "<ul>";
+        foreach (var item in model.Items)
+        {
+            itemsHtml += $"<li>{item.Quantity} x {_stockService.GetProductInStock(item.ProductStockId).Data.Product.Name} à {item.UnitPrice:C}</li>";
+        }
+        itemsHtml += "</ul>" +
+                     $"<p>pour un total de {model.Items.Sum(i => i.TotalPrice):F2} $</p>";
+
+        newClientInteraction.Description += itemsHtml;
+        
+        var result = _clientInterractionService.AddClientInteraction(newClientInteraction);
+        if (!result.Success)
+        {
+            SetError(result.Message);
+            return new GenericResponse<ClientInterraction>(result.Message, 404);
+        }
+
+        return new GenericResponse<ClientInterraction>(newClientInteraction);
     }
     
     private GenericResponse<Payment> AddSalePayment(int transactionId, double totalAmount)

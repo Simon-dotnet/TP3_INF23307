@@ -1,7 +1,7 @@
 @{
-var type = TempData["ErrorType"]?.ToString()?.Trim().ToLower();
-var errorType = (type == "error" ? "danger" : (type == "success" ? "success" : null));
-var errorText = TempData["ErrorMessage"] as string;
+    var type = TempData["ErrorType"]?.ToString()?.Trim().ToLower();
+    var errorType = (type == "error" ? "danger" : (type == "success" ? "success" : null));
+    var errorText = TempData["ErrorMessage"] as string;
 }
 
 <link rel="stylesheet" href="~/css/colors.css"/>
@@ -73,9 +73,9 @@ var errorText = TempData["ErrorMessage"] as string;
 <main class="p-3" style="flex: 1; background-color: var(--text-white)">
     @if (!string.IsNullOrEmpty(errorText))
     {
-    <div style="z-index: 100; position: relative" class="alert alert-@errorType alert-dismissible fade show" role="alert">
-        <p style="text-align: center" class="m-0">@errorText</p>
-    </div>
+        <div style="z-index: 100; position: relative" class="alert alert-@errorType alert-dismissible fade show" role="alert">
+            <p style="text-align: center" class="m-0">@errorText</p>
+        </div>
     }
     @RenderBody()
 </main>
