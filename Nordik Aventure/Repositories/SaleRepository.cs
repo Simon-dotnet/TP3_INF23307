@@ -6,11 +6,7 @@ namespace Nordik_Aventure.Repositories;
 
 public class SaleRepository
 {
-    NordikAventureContext _context = new NordikAventureContext();
-
-    public SaleRepository()
-    {
-    }
+    private readonly NordikAventureContext _context = new();
 
     public GenericResponse<Sale> GetSaleById(int saleId)
     {
@@ -54,10 +50,11 @@ public class SaleRepository
             .Include(s => s.SaleDetails)
             .ThenInclude(sd => sd.ProductInStock)
             .ThenInclude(ps => ps.Product)
+            .OrderByDescending(s => s.DateOfSale)
             .ToList();
         return new GenericResponse<List<Sale>>(result);
     }
-    
+
     public bool ClientHasSales(int clientId)
     {
         return _context.Sales.Any(s => s.ClientId == clientId);
@@ -74,14 +71,13 @@ public class SaleRepository
                 .ThenInclude(sd => sd.ProductInStock)
                 .ThenInclude(pis => pis.Product)
                 .ThenInclude(p => p.Supplier)
+                .OrderByDescending(p => p.DateOfSale)
                 .ToList();
             return new GenericResponse<List<Sale>>(result);
         }
         catch (Exception ex)
         {
-            return new GenericResponse<List<Sale>>("Erreur lors du get des ventes d'un client", 500);
+            return new GenericResponse<List<Sale>>($"Erreur lors du get des ventes d'un client: {ex.Message}", 500);
         }
-     
-        
     }
 }

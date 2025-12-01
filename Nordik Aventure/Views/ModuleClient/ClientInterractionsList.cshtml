@@ -1,0 +1,102 @@
+@model List<Nordik_Aventure.Objects.Models.ClientInterraction>
+@{
+    Layout = "_ClientLayout";
+    var clientName = ViewBag.ClientName;
+    var clientId = ViewBag.ClientId;
+}
+
+<div class="container-fluid">
+    <div class="row align-items-center mb-4">
+        <div class="col">
+            <h3 class="h3 mb-0 ms-2">Liste des interactions avec le client @clientName</h3>
+        </div>
+    </div>
+    <hr/>
+    @if (Model.Count != 0)
+    {
+        <div class="row mb-4 cards-container py-4 px-2">
+            <table class="table table-striped table-hover">
+                <thead>
+                <tr>
+                    <th scope="col" class="text-start ms-3">Date</th>
+                    <th scope="col" class="text-center">Type</th>
+                    <th scope="col" class="text-center">Employé (ID)</th>
+                    <th scope="col" class="text-center">Consulter Commentaires</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var ci in Model)
+                {
+                    <tr>
+                        <td class="text-start ms-3">@ci.Date.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td class="text-center">@ci.Type</td>
+                        <td class="text-center">@ci.Employee.Name (@ci.Employee.Id)</td>
+
+                        <td class="text-center">
+                            <i class="fa-solid fa-plus"
+                               style="cursor:pointer;"
+                               data-bs-toggle="modal"
+                               data-bs-target="#transactionModal"
+                               data-description='@Html.Raw(ci.Description.Replace("'", "\\'"))'
+                               onclick="GetCommentModalFromAttr(this)">
+                            </i>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <h2 class="h2">Il n'y a pas encore d'interactions de faites avec le client.</h2>
+    }
+</div>
+
+<div class="text-center mt-2">
+    <a href=@Url.Action("GetAddClientInteractionForm", "ClientInteractions", new { clientId = clientId }) class="btn w-25" style="background-color: var(--background-button); color: var(--text-white);">
+        Ajouter une interaction manuelle
+    </a>
+</div>
+
+<div class="modal fade" id="transactionModal" tabindex="-1" aria-labelledby="transactionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="transactionModalLabel">Détails de l'interaction</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div id="modal-body" class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <span id="transactionTotal" class="fw-bold"></span>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function clearModal() {
+        const textZone = document.getElementById("modal-body");
+        textZone.innerHTML = "";
+    }
+
+    function GetCommentModalFromAttr(el) {
+        clearModal();
+        const text = el.getAttribute('data-description');
+        const textZone = document.getElementById('modal-body');
+        textZone.innerHTML = text;
+    }
+
+</script>
+<style>
+    #transactionModal .modal-body img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+    }
+</style>
+

@@ -54,6 +54,9 @@ builder.Services.AddScoped<SupplierReceiptService>();
 builder.Services.AddScoped<SaleReceiptRepository>();
 builder.Services.AddScoped<SaleReceiptService>();
 
+builder.Services.AddScoped<ClientInteractionsService>();
+builder.Services.AddScoped<ClientInteractionsRepository>();
+
 builder.Services.AddScoped<UserSession>();
 
 builder.Services.AddHttpContextAccessor();

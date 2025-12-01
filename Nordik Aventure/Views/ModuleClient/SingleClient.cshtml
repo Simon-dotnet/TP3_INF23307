@@ -50,7 +50,7 @@
                 Consulter Factures
             </a>
 
-            <a href="@Url.Action("ModifyProductForm", "Product")"
+            <a href="@Url.Action("GetClientInteractionsByClientId", "ClientInteractions", new { clientId = Model.Id })"
                class="btn w-75 mb-3"
                style="background-color: var(--background-button); color: var(--text-white);">
                 Consulter Interactions
