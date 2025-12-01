@@ -11,4 +11,6 @@ public class SaleProductHistoricModalModel
     public double TotalPrice { get; set; }
     
     public string ClientName { get; set; }
+    
+    public double? UnitPrice { get; set; }
 }

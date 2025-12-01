@@ -63,4 +63,25 @@ public class SaleRepository
         return _context.Sales.Any(s => s.ClientId == clientId);
     }
 
+    public GenericResponse<List<Sale>> GetSaleByClient(int id)
+    {
+        try
+        {
+            var result = _context.Sales
+                .Where(s => s.ClientId == id)
+                .Include(sale => sale.Client)
+                .Include(sale => sale.SaleDetails)
+                .ThenInclude(sd => sd.ProductInStock)
+                .ThenInclude(pis => pis.Product)
+                .ThenInclude(p => p.Supplier)
+                .ToList();
+            return new GenericResponse<List<Sale>>(result);
+        }
+        catch (Exception ex)
+        {
+            return new GenericResponse<List<Sale>>("Erreur lors du get des ventes d'un client", 500);
+        }
+     
+        
+    }
 }

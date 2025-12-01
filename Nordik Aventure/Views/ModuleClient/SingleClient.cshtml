@@ -38,13 +38,13 @@
         </div>
 
         <div class="col-4 d-flex flex-column justify-content-evenly my-5 align-items-center">
-            <a href="@Url.Action("EditClientForm", "Client", new { id = @Model.Id })"
+            <a href="@Url.Action("EditClientForm", "Client", new { id = Model.Id })"
                class="btn w-75 mb-3"
                style="background-color: var(--background-button); color: var(--text-white);">
                 Modifier
             </a>
 
-            <a href="@Url.Action("ModifyProductForm", "Product")"
+            <a href="@Url.Action("GetAllSaleForClientById", "Client", new { clientId = Model.Id })"
                class="btn w-75 mb-3"
                style="background-color: var(--background-button); color: var(--text-white);">
                 Consulter Factures

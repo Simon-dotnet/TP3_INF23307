@@ -56,7 +56,7 @@ public class StockMovementController : Controller
         var motifBuilder =
             $"{currentEmployee.Data.Name} {currentEmployee.Data.Surname} a acheté(e) le {orderData.DateOfOrdering:dd/MM/yyyy}: " +
             $"{string.Join("", orderData.OrderSupplierProducts.Select(osp => $"\n • {osp.Quantity} - {osp.Product.Name}"))} " +
-            $"\npour une quantité totale de {orderData.TotalPrice} $";
+            $"\npour un coût totale de {orderData.TotalPrice} $ (avec taxes)";
 
         var movementHistory = new MovementHistory()
         {
@@ -88,7 +88,7 @@ public class StockMovementController : Controller
         var motifBuilder =
             $"{currentEmployee.Data.Name} {currentEmployee.Data.Surname} a vendu(e) le {saleData.DateOfSale:dd/MM/yyyy}: " +
             $"{string.Join("", saleData.SaleDetails.Select(osp => $"\n • {osp.Quantity} - {osp.ProductInStock.Product.Name}"))} " +
-            $"\npour une quantité totale de {saleData.TotalPrice} $";
+            $"\npour un coût de {saleData.TotalPrice} $ (avec taxes)";
 
         var movementHistory = new MovementHistory()
         {

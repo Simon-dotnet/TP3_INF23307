@@ -10,10 +10,12 @@ namespace Nordik_Aventure.Controllers;
 public class ClientController : Controller
 {
     private readonly ClientService _clientService;
+    private readonly SaleService _saleService;
 
-    public ClientController(ClientService clientService)
+    public ClientController(ClientService clientService, SaleService saleService)
     {
         _clientService = clientService;
+        _saleService = saleService;
     }
 
     public ActionResult Index()
@@ -108,6 +110,26 @@ public class ClientController : Controller
         TempData["ErrorMessage"] = "Client modifié avec succès!";
         TempData["ErrorType"] = "success";
         return RedirectToAction("GetSingleClient", new { id = clientResult.Data.Id });
+    }
 
+    [HttpGet("sale-historic/{clientId:int}")]
+    public IActionResult GetAllSaleForClientById(int clientId)
+    {
+        var sales = _saleService.GetSalesByClient(clientId);
+        var client = _clientService.GetClientById(clientId);
+        if (!client.Success)
+        {
+            TempData["ErrorMessage"] = client.Message;
+            TempData["ErrorType"] = "error";
+            return RedirectToAction("Index");
+        }
+        ViewBag.ClientName = client.Data.Name;
+        if (!sales.Success)
+        {
+            TempData["ErrorMessage"] = sales.Message;
+            TempData["ErrorType"] = "error";
+            return RedirectToAction("Index");
+        }
+        return View("../ModuleClient/ClientSaleHistoric", sales.Data);
     }
 }

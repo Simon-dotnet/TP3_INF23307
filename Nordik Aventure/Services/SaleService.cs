@@ -35,4 +35,8 @@ public class SaleService
         return _saleRepository.ClientHasSales(clientId);
     }
 
+    public GenericResponse<List<Sale>> GetSalesByClient(int id)
+    {
+        return _saleRepository.GetSaleByClient(id);
+    }
 }

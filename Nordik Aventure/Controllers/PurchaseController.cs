@@ -4,7 +4,7 @@ using Nordik_Aventure.Objects.Models.Finance;
 using Nordik_Aventure.Services;
 
 namespace Nordik_Aventure.Controllers;
-
+[ApiController]
 [Route("finance/purchase")]
 public class PurchaseController : Controller
 {
