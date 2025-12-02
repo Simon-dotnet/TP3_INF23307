@@ -15,7 +15,8 @@ public class PurchaseReceiptController : Controller
         _supplierReceiptService = supplierReceiptService;
         _taxesService = taxesService;
     }
-
+    
+    //Page affiché pour les factures de commandes
     [HttpGet("{transactionId}")]
     public IActionResult Index(int transactionId)
     {

@@ -40,11 +40,14 @@ public class OrderController : Controller
         _mapper = mapper;
     }
 
+    //Page de création de commande
     [HttpGet("MakeOrder")]
     public IActionResult MakeOrder()
     {
+        //Initialise les données nécessaire pour le view model utilisé
         var viewModel = new MakeOrderViewModel
         {
+            //Récupère la liste des produits et les valeurs TPS et TVQ
             AvailableProducts = _context.Products.Include(p => p.Supplier).ToList(),
             Taxes = _context.Taxes.FirstOrDefault()
         };
@@ -60,6 +63,7 @@ public class OrderController : Controller
         if (!result.Success || result.Data == null)
             return View("../ModuleFinance/OrderHistory", new List<OrderHistoryViewModel>());
 
+        //Prends les 50 dernières commandes
         var orders = result.Data
             .OrderByDescending(o => o.DateOfOrdering)
             .Take(50)
@@ -70,6 +74,7 @@ public class OrderController : Controller
             var supplierName = order.OrderSupplierProducts
                 .FirstOrDefault()?.Supplier?.Name ?? "N/A";
 
+            //Initialisation du view model utilisé pour les données de l'historique de commande
             return new OrderHistoryViewModel
             {
                 OrderId = order.OrderId,
@@ -172,6 +177,7 @@ public class OrderController : Controller
         return RedirectToAction("MakeOrder");
     }
     
+    //Pour afficher la facture après la commande
     [HttpGet("Receipt/{id}")]
     public IActionResult Receipt(int id)
     {
@@ -186,6 +192,7 @@ public class OrderController : Controller
         var receipt = receiptResult.Data;
         var taxes = _taxesService.GetTaxes().Data;
 
+        //Initialise le view model utilisé pour les données de la facture de la commande
         var vm = new SupplierReceiptViewModel
         {
             SupplierReceiptId = receipt.SupplierReceiptId,
@@ -199,6 +206,7 @@ public class OrderController : Controller
         return View("../ModuleFinance/SupplierReceipt", vm);
     }
     
+    //Page de gestion des commandes
     [HttpGet("Manage")]
     public IActionResult Manage()
     {
@@ -208,6 +216,7 @@ public class OrderController : Controller
                 new List<OrderManageViewModel>(), new List<OrderManageViewModel>()
             ));
 
+        //Initialise les commandes actives pour le premier tableau
         var active = result.Data
             .Where(o => o.Status != "payée/fermée")
             .OrderBy(o => o.DateOfDelivery)
@@ -226,7 +235,8 @@ public class OrderController : Controller
                 TotalPrice = o.TotalPrice
             })
             .ToList();
-
+        
+        //Initialise les commandes payées / fermées pour le second tableau
         var completed = result.Data
             .Where(o => o.Status == "payée/fermée")
             .OrderByDescending(o => o.DateOfDelivery)
@@ -244,6 +254,7 @@ public class OrderController : Controller
         return View("../ModuleFinance/ManageOrders", Tuple.Create(active, completed));
     }
     
+    //Fonction pour récuperer les items d'une commandes
     [HttpGet("GetItems/{orderId}")]
     public IActionResult GetItems(int orderId)
     {
@@ -261,6 +272,7 @@ public class OrderController : Controller
         return Json(items);
     }
     
+    //Fonction pour supprimer une commande à partir de la page de gestion des commandes
     [HttpPost("Delete")]
     public IActionResult Delete(int orderId)
     {
@@ -280,6 +292,7 @@ public class OrderController : Controller
         return RedirectToAction("Manage");
     }
 
+    //Fonction pour changer le statut d'une commande depuis la page de gestion de commandes
     [HttpPost("UpdateStatus")]
     public IActionResult UpdateStatus(int orderId, string status)
     {
@@ -299,12 +312,14 @@ public class OrderController : Controller
         return RedirectToAction("Manage");
     }
 
+    //Utilisé par les boutons "Annuler", redirige vers le tableau de bord
     [HttpPost("cancel")]
     public IActionResult Cancel()
     {
         return RedirectToAction("Index", "Finance");
     }
 
+    //Fonction utilisé pour verifier si un produit est en stock (utilisé lorsqu'on passe une commande)
     private (bool isError, bool hasNewObject) CheckProductInStock(Order listItems)
     {
         bool isError = false;
@@ -364,12 +379,15 @@ public class OrderController : Controller
         }
     }
 
+    //Ajout d'une transaction entrante
     private GenericResponse<Transaction> AddEnteringTransaction(OrderCreateViewModel model)
     {
+        //Récupère les valeurs TPS TVP et calcul les montants
         var taxValues = _taxesService.GetTaxes();
         var sumPrice = model.Items.Sum(oicm => oicm.TotalPrice);
         var totalPrice = sumPrice + sumPrice * (taxValues.Data.ValueTvq / 100) +
                          sumPrice * (taxValues.Data.ValueTps / 100);
+        //Ajoute la transaction
         var newTransaction = new Transaction
         {
             Amount = sumPrice,

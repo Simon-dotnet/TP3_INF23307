@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Nordik_Aventure.Migrations
 {
     /// <inheritdoc />
-    public partial class initialmigration : Migration
+    public partial class bdinit : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

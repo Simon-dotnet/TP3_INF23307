@@ -12,7 +12,8 @@ public class TaxesController : Controller
     {
         _taxesService = taxesService;
     }
-
+    
+    //Affiche la page pour modifier les valeurs TPS TVQ
     [HttpGet("")]
     public IActionResult Index()
     {
@@ -28,6 +29,7 @@ public class TaxesController : Controller
         return View("../ModuleFinance/EditTaxes", response.Data);
     }
 
+    //Fonction utilisé pour mettre à jour les valeurs TPS TVQ
     [HttpPost("edit")]
     public IActionResult Edit(Taxes model)
     {
