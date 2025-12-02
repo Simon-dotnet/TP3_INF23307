@@ -72,6 +72,7 @@ public class SaleController : Controller
     }
 
     [HttpPost("SubmitSale")]
+    // Soumettre une vente (client qui achète un de nos produits)
     public IActionResult SubmitSale([FromForm] SaleCreateViewModel model)
     {
         if (model == null || model.Items == null || !model.Items.Any())
@@ -83,10 +84,12 @@ public class SaleController : Controller
         var client = _context.Client.FirstOrDefault(c => c.Id == model.ClientId);
         bool isFirstSale = !_saleService.ClientHasSales(model.ClientId);
 
+        // Regarde si nous avons le produit en inventaire
         var isError = CheckProductInStock(model);
         if (isError)
             return RedirectToAction("MakeSale");
 
+        // Création d'une transaction de type "Sortante"
         var resultTransaction = AddLeavingTransaction(model);
         if (!resultTransaction.Success)
         {
@@ -94,6 +97,7 @@ public class SaleController : Controller
             return RedirectToAction("MakeSale");
         }
 
+        // Création de la vente
         var resultSale = AddLeavingSale(model, resultTransaction.Data.TransactionId);
         if (!resultSale.Success)
         {
@@ -124,8 +128,10 @@ public class SaleController : Controller
             return RedirectToAction("Index", "Client");
         }
 
+        // Création du mouvement dans le stock de type sortante
         AddLeavingMovementHistory(sale.Id);
 
+        // Ajout de l'interaction avec le client quand il achete quelque chose
         var clientInteractionResult = AddClientInteraction(model);
         if (!clientInteractionResult.Success)
         {
@@ -153,6 +159,7 @@ public class SaleController : Controller
     }
 
     [HttpGet("details/{id}")]
+    // Avoir une vente par son Id
     public IActionResult GetSaleById(int id)
     {
         var result = _saleService.GetSaleById(id);
@@ -253,9 +260,10 @@ public class SaleController : Controller
 
         return _saleService.AddSale(sale);
     }
-
+    
     private GenericResponse<ClientInterraction> AddClientInteraction(SaleCreateViewModel model)
     {
+        // Va chercher les infos du client (pour avoir son nom)
         var client = _clientService.GetClientById(model.ClientId);
         
         var newClientInteraction = new ClientInterraction()
@@ -267,6 +275,7 @@ public class SaleController : Controller
             Description = $"<p>{client.Data.Name} a acheté pour:</p>"
         };
 
+        // Création dynamique de la liste des produits qu'on affiche dans la modal des interaction clients dans la description
         var itemsHtml = "<ul>";
         foreach (var item in model.Items)
         {
@@ -277,6 +286,7 @@ public class SaleController : Controller
 
         newClientInteraction.Description += itemsHtml;
         
+        // Sauvegarder l'interaction client
         var result = _clientInterractionService.AddClientInteraction(newClientInteraction);
         if (!result.Success)
         {

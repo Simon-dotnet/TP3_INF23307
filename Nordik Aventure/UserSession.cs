@@ -7,6 +7,7 @@ public class UserSession
         _httpContextAccessor = httpContextAccessor;
     }
 
+    // Garde en mémoire l'id du user connecté
     public int? UserId
     {
         get
@@ -21,6 +22,7 @@ public class UserSession
         }
     }
 
+    // Vide la session
     public void ClearSession()
     {
         _httpContextAccessor.HttpContext?.Session.Clear();

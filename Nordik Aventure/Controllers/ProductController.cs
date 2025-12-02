@@ -18,6 +18,7 @@ public class ProductController : Controller
     }
 
     [HttpGet]
+    // Accéder a la page de tout les produits
     public IActionResult Index()
     {
         var result = _productService.GetAllProducts();
@@ -26,6 +27,7 @@ public class ProductController : Controller
 
     [HttpGet]
     [Route("add")]
+    // Demande le formulaire d'ajout de produit
     public IActionResult AddProductForm()
     {
         var categories = _productService.GetAllCategories();
@@ -39,6 +41,7 @@ public class ProductController : Controller
     }
 
     [HttpPost]
+    // Ajoute le produit
     public IActionResult AddProduct([FromForm] ProductViewModel productVM)
     {
         var product = new Product()
@@ -71,6 +74,7 @@ public class ProductController : Controller
 
     [HttpGet]
     [Route("edit/{productId}")]
+    // Demande le formulaire de modification d'un produit
     public IActionResult ModifyProductForm(int productId)
     {
         var categories = _productService.GetAllCategories();
@@ -97,6 +101,7 @@ public class ProductController : Controller
 
     [HttpPost]
     [Route("edit")]
+    // Modifie le produit
     public IActionResult ModifyProduct([FromForm] ProductViewModel productVM)
     {
         var existingProduct = _productService.GetProductById(productVM.Id).Data;

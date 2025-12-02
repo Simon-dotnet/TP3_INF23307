@@ -14,11 +14,6 @@ public class ClientInteractionsService
         _clientInteractionsRepository = clientInteractionsRepository;
     }
 
-    public GenericResponse<ClientInterraction> GetClientInteractions(int id)
-    {
-        return _clientInteractionsRepository.GetClientInterractionById(id);
-    }
-
     public GenericResponse<List<ClientInterraction>> GetClientInterractionsByClient(int clientId)
     {
         return _clientInteractionsRepository.GetClientInterractionByClientId(clientId);

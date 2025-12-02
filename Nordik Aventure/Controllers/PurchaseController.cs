@@ -16,6 +16,8 @@ public class PurchaseController : Controller
     }
 
     [HttpGet("{id}")]
+    // Permet d'avoir un achat (acheté un produit d'un fournisseur)
+    // Ceci est utilisé avec axios pour faire la modal dynamiquement
     public IActionResult GetPurchaseById(int id)
     {
         var result = _purchaseService.GetPurchaseById(id);

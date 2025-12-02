@@ -91,6 +91,7 @@ public class NordikAventureContext : DbContext
         return base.SaveChanges();
     }
     
+    // Automatiser le processus que quand un produit in stock atteint 0 de quantité, son statut deviens automatiquement Inactif
     private void UpdateProductInStockStatus()
     {
         var entries = ChangeTracker.Entries<ProductInStock>()

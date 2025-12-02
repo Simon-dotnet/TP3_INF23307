@@ -20,16 +20,19 @@ public class ClientInteractionsController : Controller
         _userSession = userSession;
     }
 
+    // Méthode inutile
     public IActionResult Index()
     {
         return View();
     }
 
+    // Permet d'Avoir les interactions client avec l'id du client
     [HttpGet("{clientId:int}")]
     public IActionResult GetClientInteractionsByClientId(int clientId)
     {
         var clientInteractions = _clientInteractionsService.GetClientInterractionsByClient(clientId);
         var clientResult = _clientService.GetClientById(clientId);
+        // Si le client n'existe pas, renvoie un message d'erreur
         if (!clientResult.Success)
         {
             TempData["ErrorMessage"] = clientInteractions.Message;
@@ -37,10 +40,13 @@ public class ClientInteractionsController : Controller
             return RedirectToAction("Index", "Client");
         }
 
+        // Passe en meta data le nom du client et l'id du client
         ViewBag.ClientName = clientResult.Data.Name;
         ViewBag.ClientId = clientResult.Data.Id;
+        
         if (!clientInteractions.Success)
         {
+            // Si un erreur survient lors du get des interactions clients, envoie un message d'erreur
             TempData["ErrorMessage"] = clientInteractions.Message;
             TempData["ErrorType"] = "error";
             return RedirectToAction("Index", "Client");
@@ -49,6 +55,7 @@ public class ClientInteractionsController : Controller
         return View("../ModuleClient/ClientInterractionsList", clientInteractions.Data);
     }
 
+    // Permet d'avoir le formulaire d'ajout d'interaction client
     [HttpGet("getaddform/{clientId:int}")]
     public IActionResult GetAddClientInteractionForm(int clientId)
     {
@@ -56,6 +63,7 @@ public class ClientInteractionsController : Controller
         var employeeId = _userSession.UserId;
         if (!clientResult.Success)
         {
+            // Renvoie message erreur si client existe pas
             TempData["ErrorMessage"] = clientResult.Message;
             TempData["ErrorType"] = "error";
             return RedirectToAction("Index", "Client");
@@ -71,6 +79,7 @@ public class ClientInteractionsController : Controller
         return View("../ModuleClient/AddClientInteractions", clientInteractionModel);
     }
 
+    // Permet d'ajouter une interaction client
     [HttpPost("add")]
     public IActionResult AddClientInteractionFromForm([FromForm] ClientInteractionViewModal clientInterractionModal)
     {
@@ -86,11 +95,13 @@ public class ClientInteractionsController : Controller
         var result = _clientInteractionsService.AddClientInteraction(clientInteraction);
         if (!result.Success)
         {
+            // Renvoie message erreur si l'ajout a pas fonctionné
             TempData["ErrorMessage"] = result.Message;
             TempData["ErrorType"] = "error";
             return RedirectToAction("Index", "Client");
         }
         
+        // Renvoie message de succès
         TempData["ErrorMessage"] = "Interraction avec client ajouté avec succès!";
         TempData["ErrorType"] = "success";
         return RedirectToAction("GetClientInteractionsByClientId", "ClientInteractions", new { clientId = result.Data.ClientId });

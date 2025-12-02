@@ -20,10 +20,15 @@ public class StockController : Controller
     }
 
     [HttpGet]
+    // Le stock comprend tout les produits in stock
+    // Ceci est la page d'accueil du module stock
     public IActionResult Index()
     {
+        // Va chercher les produits dans le stock que leur quantité est plus petite que leur seuil
         var stockToRefill = _stockService.GetProductInStockToRefill();
+        // Va chercher les profits de la semaine (Vente - Achat)
         var profit = _transactionService.GetProfitFromWeek();
+        // Va chercher la liste des ventes faites durant la semaine
         var salesOfTheWeek = _saleService.GetSalesOfTheWeek();
         if (!stockToRefill.Success || !profit.Success || !salesOfTheWeek.Success)
         {
@@ -44,6 +49,7 @@ public class StockController : Controller
 
     [HttpGet]
     [Route("stock")]
+    // Avoir tout les produits dans le stock
     public IActionResult GetStock()
     {
         var result = _stockService.GetStock();
@@ -59,6 +65,7 @@ public class StockController : Controller
 
     [HttpGet]
     [Route("stock/{id}")]
+    // Avoir un produit spécifique dans le stock
     public IActionResult DisplayProductStock(int id)
     {
         var result = _stockService.GetProductInStock(id);
@@ -74,6 +81,7 @@ public class StockController : Controller
 
     [HttpGet]
     [Route("stock/update/{id}")]
+    // Avoir le formulaire de modification d'un produit dans le stock
     public IActionResult UpdateProductStockForm(int id)
     {
         var result = _stockService.GetProductInStock(id);
@@ -89,8 +97,10 @@ public class StockController : Controller
 
     [HttpPost]
     [Route("stock/update")]
+    // Modifier un produit dans le stock
     public IActionResult UpdateProductStock([FromForm] ProductInStock productInStock)
     {
+        // Regarde si le produit dans le stock existe
         var result = _stockService.GetProductInStock(productInStock.Id);
         if (!result.Success)
         {
@@ -106,6 +116,7 @@ public class StockController : Controller
         result.Data.QuantityInStock = productInStock.QuantityInStock;
         result.Data.MinimalQuantity = productInStock.MinimalQuantity;
         
+        // modifier
         var resultUpdate = _stockService.UpdateProductStockFromForm(result.Data);
 
         if (!resultUpdate.Success)
