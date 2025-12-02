@@ -14,6 +14,7 @@ public class PaymentController : Controller
         _paymentService = paymentService;
     }
     
+    //Page de gestion des paiements
     [HttpGet("manage")]
     public IActionResult Manage()
     {
@@ -22,6 +23,7 @@ public class PaymentController : Controller
         if (!result.Success || result.Data == null)
             return View("../ModuleFinance/ManagePayments", new List<PaymentManageViewModel>());
 
+        //Initialise les données pour le view model utilisé
         var vm = result.Data.Select(p => new PaymentManageViewModel
         {
             PaymentId = p.PaymentId,
@@ -36,6 +38,7 @@ public class PaymentController : Controller
         return View("../ModuleFinance/ManagePayments", vm);
     }
     
+    //Fonction utilisé pour mettre à jour le statut d'un paiement
     [HttpPost("update-status")]
     public IActionResult UpdateStatus(int paymentId, string status, double? remaining)
     {
@@ -55,6 +58,7 @@ public class PaymentController : Controller
         return RedirectToAction("Manage");
     }
     
+    //Récupère les items lié à un paiement
     [HttpGet("items/{paymentId}")]
     public IActionResult GetItems(int paymentId)
     {

@@ -24,6 +24,7 @@ namespace Nordik_Aventure.Controllers
         [Route("")]
         public IActionResult Index()
         {
+            //Vas chercher toutes les données nécessaire au tableau de bord financier.
             var lastTxResponse = _transactionService.GetLastTransactions(5);
             var allTxResponse = _transactionService.GetAllTransactions();
             var allOrdersResponse = _orderService.GetAllOrders();
@@ -77,7 +78,8 @@ namespace Nordik_Aventure.Controllers
                     Status = o.Status
                 })
                 .ToList();
-
+            
+            //Initialise le view model avec les données récupérées.
             var vm = new FinanceDashboardViewModel
             {
                 WeekSales = weekSales,
@@ -98,7 +100,8 @@ namespace Nordik_Aventure.Controllers
 
             return View("../ModuleFinance/HomepageFinance", vm);
         }
-
+        
+        //Récupération de toutes les transactions pour l'historique des transactions
         [HttpGet("transactions")]
         public IActionResult TransactionHistory()
         {
@@ -106,6 +109,7 @@ namespace Nordik_Aventure.Controllers
             return View("../ModuleFinance/TransactionHistory", all.Data ?? new List<Transaction>());
         }
 
+        //Redirige vers la facture lié à une transaction
         [HttpGet("receipt/{transactionId}")]
         public IActionResult RedirectToReceipt(int transactionId)
         {

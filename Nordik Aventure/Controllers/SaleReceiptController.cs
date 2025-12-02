@@ -15,7 +15,8 @@ public class SaleReceiptController : Controller
         _saleReceiptService = saleReceiptService;
         _taxesService = taxesService;
     }
-
+    
+    //Page affiché pour les factures de ventes client
     [HttpGet("{transactionId}")]
     public IActionResult Index(int transactionId)
     {

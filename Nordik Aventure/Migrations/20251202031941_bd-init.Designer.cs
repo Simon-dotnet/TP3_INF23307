@@ -12,8 +12,8 @@ using Nordik_Aventure;
 namespace Nordik_Aventure.Migrations
 {
     [DbContext(typeof(NordikAventureContext))]
-    [Migration("20251202002548_initial-migration")]
-    partial class initialmigration
+    [Migration("20251202031941_bd-init")]
+    partial class bdinit
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
