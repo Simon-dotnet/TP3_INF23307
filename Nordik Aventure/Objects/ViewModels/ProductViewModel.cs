@@ -27,4 +27,6 @@ public class ProductViewModel
     public int SelectedCategoryId { get; init; }
     
     public int SelectedSupplierId { get; init; }
+    
+    public string Description { get; init; }
 }

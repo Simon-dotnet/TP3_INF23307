@@ -447,6 +447,10 @@ namespace Nordik_Aventure.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<double>("GrossMargin")
                         .HasColumnType("double");
 

@@ -53,6 +53,7 @@ public class ProductController : Controller
             SupplierId = productVM.SelectedSupplierId,
             CategoryId = productVM.SelectedCategoryId,
             GrossMargin = Math.Round((productVM.PriceToSell - productVM.PriceToBuy) / productVM.PriceToSell * 100, 2),
+            Description = productVM.Description,
         };
         var result = _productService.CreateProduct(product);
         if (!result.Success)
@@ -89,6 +90,7 @@ public class ProductController : Controller
             SelectedSupplierId = product.SupplierId,
             Categories = categories.Data,
             Suppliers = suppliers.Data,
+            Description = product.Description,
         };
         return View("../ModuleStock/ModifyProduct", productVM);
     }
@@ -108,6 +110,7 @@ public class ProductController : Controller
         existingProduct.PaybackToSupplier = productVM.PaybackToSupplier;
         existingProduct.GrossMargin =
             Math.Round((productVM.PriceToSell - productVM.PriceToBuy) / productVM.PriceToSell * 100, 2);
+        existingProduct.Description = productVM.Description;
         var result = _productService.UpdateProduct(existingProduct);
         if (!result.Success)
         {

@@ -12,7 +12,7 @@ using Nordik_Aventure;
 namespace Nordik_Aventure.Migrations
 {
     [DbContext(typeof(NordikAventureContext))]
-    [Migration("20251201182508_initial-migration")]
+    [Migration("20251202002548_initial-migration")]
     partial class initialmigration
     {
         /// <inheritdoc />
@@ -449,6 +449,10 @@ namespace Nordik_Aventure.Migrations
 
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<double>("GrossMargin")
                         .HasColumnType("double");
