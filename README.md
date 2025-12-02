@@ -34,7 +34,10 @@ Les identifiants sont les suivants:
 <img width="1026" height="130" alt="image" src="https://github.com/user-attachments/assets/6793bf86-2ef4-47d5-8354-ce207be1f5f4" />
 
 Permissions :
+
 Manager - Tous les modules
+
 Accountant - Module finance seulement
+
 Employee - Module stock seulement
 
