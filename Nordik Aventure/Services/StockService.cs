@@ -21,7 +21,9 @@ public class StockService
     public GenericResponse<Stock> GetStock()
     {
         var stock = _stockRepository.GetStock();
+        // Avoir le produit qui a été refill le récemment pour savoir quand est-ce que le stock a été modifié
         stock.Data.LastUpdate = stock.Data.Products.Max(p => p.LastRefill);
+        // Avoir la quantité total de produit dans le stock
         stock.Data.TotalProducts = stock.Data.Products.Sum(p => p.QuantityInStock);
         return stock;
     }
@@ -50,10 +52,4 @@ public class StockService
     {
         return _stockRepository.GetProductInStockToRefill();
     }
-
-    // public GenericResponse<double> CalculateProfitOfTheWeek()
-    // {
-    //     var saleOfTheWeek = _saleRepository.GetSaleOfTheWeek();
-    //     var purchaseOfTheWeek = 
-    // }
 }

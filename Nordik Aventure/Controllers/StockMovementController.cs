@@ -26,8 +26,10 @@ public class StockMovementController : Controller
     }
 
     [HttpGet]
+    // Page d'accueil des mouvements dans le stock
     public IActionResult Index()
     {
+        // Va chercher les 30 dernier movement historique
         var result = _movementHistoryService.GetLast30MovementHistory();
         if (!result.Success)
         {
@@ -39,20 +41,25 @@ public class StockMovementController : Controller
         return View("../ModuleStock/StockMovement", result.Data);
     }
 
+    // Permet de créer un mouvement de stock de type entrant
     public GenericResponse<MovementHistory> CreateEnteringStockMovement(int id)
     {
+        // Va chercher l'id de l'employé présentement connecté
         var userId = _userSession.UserId;
 
         if (userId == null)
             return new GenericResponse<MovementHistory>("Aucun utilisateur connecté.", 401);
 
+        // Va chercher la commande selon son Id
         var order = _orderService.GetOrderById(id);
         if (!order.Success)
             return new GenericResponse<MovementHistory>("Order not found", 404);
     
         var orderData = order.Data;
+        // Va chercher les infos de l'employé connecté
         var currentEmployee = _userService.GetEmployeeById(userId.Value);
 
+        // Construit le motif de la transaction automatiquement selon les produits qui ont été acheté
         var motifBuilder =
             $"{currentEmployee.Data.Name} {currentEmployee.Data.Surname} a acheté(e) le {orderData.DateOfOrdering:dd/MM/yyyy}: " +
             $"{string.Join("", orderData.OrderSupplierProducts.Select(osp => $"\n • {osp.Quantity} - {osp.Product.Name}"))} " +
@@ -71,6 +78,7 @@ public class StockMovementController : Controller
         return _movementHistoryService.AddEnteringMovementHistory(movementHistory);
     }
     
+    // Même chose que plus haut, mais pour les mouvements sortants (ventes)
     public GenericResponse<MovementHistory> CreateLeavingStockMovement(int id)
     {
         var userId = _userSession.UserId;

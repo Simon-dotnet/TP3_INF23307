@@ -19,6 +19,7 @@ public class HomeController : Controller
         return View("Login");
     }
 
+    // Connexion
     [HttpPost("/checklogin")]
     public IActionResult CheckLogin(string email, string password)
     {
@@ -34,13 +35,16 @@ public class HomeController : Controller
         return View("Index", result.Data);
     }
 
+    // Déconnexion
     [Route("/login")]
     public IActionResult Logout()
     {
+        // Enleve le UserId qui est dans la session
         _userSession.ClearSession();
         return View("Login");
     }
     
+    // Accès a la homepage
     [Route("homepage")]
     public IActionResult Index()
     {

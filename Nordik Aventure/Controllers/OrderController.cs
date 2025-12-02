@@ -91,6 +91,7 @@ public class OrderController : Controller
         return View("../ModuleFinance/OrderHistory", history);
     }
     
+    // Fait une commande
     [HttpPost("SubmitOrder")]
     public IActionResult SubmitOrder([FromForm] OrderCreateViewModel model)
     {
@@ -100,6 +101,7 @@ public class OrderController : Controller
             TempData["ErrorType"] = "error";
             return RedirectToAction("MakeOrder");
         }
+        // Ajoute une transaction de type Entering
         var resultTransaction = AddEnteringTransaction(model);
         if (!resultTransaction.Success)
         {
@@ -115,7 +117,6 @@ public class OrderController : Controller
             Status = "en attente",
             Type = "purchase"
         };
-
         var paymentResult = _paymentService.AddPayment(newPayment);
         if (!paymentResult.Success)
         {
@@ -123,7 +124,7 @@ public class OrderController : Controller
             TempData["ErrorType"] = "error";
             return RedirectToAction("MakeOrder");
         }
-        
+        // Ajoute un nouvel achat
         var resultPurchase = AddEnteringPurchase(model, resultTransaction.Data.TransactionId);
         if (!resultPurchase.Success)
         {
@@ -132,9 +133,11 @@ public class OrderController : Controller
             return RedirectToAction("MakeOrder");
         }
 
+        // Ajout d'une commande
         var result = _orderService.CreateOrder(model, resultPurchase.Data.PurchaseId);
         if (result.Success)
         {
+            // Regarde si le produit existe deja en sotck
             var resultSuccess = CheckProductInStock(result.Data);
             if (!resultSuccess.isError)
             {
@@ -145,6 +148,7 @@ public class OrderController : Controller
                     Status = "created"
                 };
 
+                // Ajout de la facture
                 var receiptResult = _supplierReceiptService.AddSupplierReceipt(receipt);
                 if (!receiptResult.Success)
                 {
@@ -154,6 +158,7 @@ public class OrderController : Controller
                 }
 
                 TempData["ErrorType"] = "success";
+                // Ajout du mouvement dans le stock de type entering
                 AddEnteringMovementHistory(result.Data.OrderId);
                 
                 return RedirectToAction("Receipt", new { id = receiptResult.Data.SupplierReceiptId });

@@ -23,11 +23,6 @@ public class SupplierReceiptService
         return _supplierReceiptRepository.GetById(id);
     }
 
-    public GenericResponse<SupplierReceipt> GetByPurchaseId(int purchaseId)
-    {
-        return _supplierReceiptRepository.GetByPurchaseId(purchaseId);
-    }
-    
     public GenericResponse<SupplierReceipt> GetByTransactionId(int transactionId)
     {
         return _supplierReceiptRepository.GetByTransactionId(transactionId);

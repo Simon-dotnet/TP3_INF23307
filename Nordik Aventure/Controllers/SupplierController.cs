@@ -14,6 +14,7 @@ public class SupplierController : Controller
     }
 
     [HttpGet]
+    // Avoir la liste des fournisseurs
     public IActionResult Index()
     {
         var result = _supplierService.GetAllSuppliers();
@@ -22,6 +23,7 @@ public class SupplierController : Controller
 
     [HttpGet]
     [Route("add")]
+    // Avoir le formulaire d'ajout d'un fournisseur
     public IActionResult AddSupplierForm()
     {
         return View("../ModuleStock/AddSupplier", new Supplier());
@@ -29,6 +31,7 @@ public class SupplierController : Controller
 
     [HttpPost]
     [Route("add")]
+    // Ajouter un fournisseur
     public IActionResult AddSupplier([FromForm] Supplier supplier)
     {
         var result = _supplierService.AddSupplier(supplier);
