@@ -17,7 +17,7 @@ services:
   web:
     build:
       context: .
-      dockerfile: "NordikAventure/Dockerfile"
+      dockerfile: "./NordikAventure/Dockerfile"
     container_name: nordikaventure-web
     depends_on:
       - db
