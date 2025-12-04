@@ -1,3 +1,106 @@
+# Nordik Aventure – Guide d’installation
+
+Ce projet utilise Docker pour simplifier l’installation.
+Aucune configuration manuelle de MySQL ou .NET n’est nécessaire.
+
+## 1. Prérequis
+
+Installer Docker Desktop :
+```console
+https://www.docker.com/products/docker-desktop/
+```
+Ouvrir Docker Desktop et le laisser fonctionner.
+
+## 2. Récupérer le projet
+
+Le projet se trouve sur GitHub :
+```console
+https://github.com/Simon-dotnet/TP3_INF23307.git
+```
+Il faut seulement clôner :
+```console
+git clone https://github.com/Simon-dotnet/TP3_INF23307.git
+```
+Ou en utilisant un outil tel que GitHub Desktop.
+
+## 3. Démarrer l’application
+
+1. Ouvrir un terminal dans le dossier du projet clôné:
+```console
+cd [path]/TP3_INF23307/
+```
+2. Lancer les commandes suivantes (toujours sur le même terminal):
+```console
+docker compose build
+docker compose up
+```
+
+## 4. Accéder au site
+
+Quand les conteneurs sont démarrés, ouvrir un navigateur :
+```console
+http://localhost:8080
+```
+Cela affiche l’écran de connexion.
+
+## 5. Comptes disponibles
+
+| Rôle        | Courriel              | Mot de passe |
+|-------------|------------------------|--------------|
+| Employé     | marc123@gmail.com      | marc123*     |
+| Gestionnaire| jean123@gmail.com      | jean123*     |
+| Comptable   | money@gmail.com        | money123*    |
+
+**Permissions**  
+Manager : accès complet  
+Accountant : module finance seulement  
+Employee : module stock seulement
+
+
+## 6. Informations sur MySQL (si Docker ne fonctionne pas)
+
+Pour se connecter manuellement à la base MySQL (si Docker ne fonctionne pas) :
+- Hôte : localhost
+- Port : 3307
+- Base : nordikaventure
+- Utilisateur : root
+- Mot de passe : admin123*
+
+## 7. Arrêter l’application
+
+Dans le terminal qui exécute Docker :
+```console
+Ctrl + C
+```
+Puis :
+```console
+docker compose down
+```
+Pour supprimer aussi les données :
+```console
+docker compose down -v
+```
+
+## 8. Problèmes fréquents
+
+### Le port 8080 est occupé
+
+Modifier docker-compose.yml :
+ports:
+
+- "8090:8080"
+Accéder ensuite via :
+[http://localhost:](http://localhost:)
+
+### Le port 3307 pose problème
+
+Changer la ligne :
+ports:
+
+- "3308:3306"
+
+----------------------------------------------------------------------
+## ANCIEN GUIDE (SI L'AUTRE N'EST PAS FONCTIONNEL) :
 Connexion à la BD:
 
 Il faut avoir un serveur SQL avec les infos suivantes:
