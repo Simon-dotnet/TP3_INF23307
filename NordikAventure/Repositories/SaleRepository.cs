@@ -6,7 +6,12 @@ namespace Nordik_Aventure.Repositories;
 
 public class SaleRepository
 {
-    private readonly NordikAventureContext _context = new();
+    private readonly NordikAventureContext _context;
+
+    public SaleRepository(NordikAventureContext context)
+    {
+        _context = context;
+    }
 
     public GenericResponse<Sale> GetSaleById(int saleId)
     {

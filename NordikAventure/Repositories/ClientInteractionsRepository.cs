@@ -6,10 +6,11 @@ namespace Nordik_Aventure.Repositories;
 
 public class ClientInteractionsRepository
 {
-    private readonly NordikAventureContext _context = new NordikAventureContext();
+    private readonly NordikAventureContext _context;
 
-    public ClientInteractionsRepository()
+    public ClientInteractionsRepository(NordikAventureContext context)
     {
+        _context = context;
     }
 
     public GenericResponse<ClientInterraction> GetClientInterractionById(int id)

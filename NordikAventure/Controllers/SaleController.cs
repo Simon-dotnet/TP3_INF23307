@@ -64,7 +64,7 @@ public class SaleController : Controller
         {
             AvailableProducts = _context.ProductInStock.Include(ps => ps.Product).ThenInclude(p => p.Supplier)
                 .Where(ps => ps.Status == "Actif").ToList(),
-            AvailableClients = _context.Client.Where(c => c.Status == "Actif").ToList(),
+            AvailableClients = _context.Clients.Where(c => c.Status == "Actif").ToList(),
             Taxes = taxes
         };
 
@@ -81,7 +81,7 @@ public class SaleController : Controller
             return RedirectToAction("MakeSale");
         }
 
-        var client = _context.Client.FirstOrDefault(c => c.Id == model.ClientId);
+        var client = _context.Clients.FirstOrDefault(c => c.Id == model.ClientId);
         bool isFirstSale = !_saleService.ClientHasSales(model.ClientId);
 
         // Regarde si nous avons le produit en inventaire

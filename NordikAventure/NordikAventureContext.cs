@@ -8,6 +8,11 @@ namespace Nordik_Aventure;
 
 public class NordikAventureContext : DbContext
 {
+    public NordikAventureContext(DbContextOptions<NordikAventureContext> options)
+        : base(options)
+    {
+    }
+
     public DbSet<Employee> Employees { get; set; }
     public DbSet<Client> Clients { get; set; }
     public DbSet<Category> Categories { get; set; }
@@ -15,14 +20,9 @@ public class NordikAventureContext : DbContext
     public DbSet<Supplier> Suppliers { get; set; }
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderSupplierProduct> OrderSupplierProducts { get; set; }
-    
     public DbSet<Stock> Stock { get; set; }
-    
     public DbSet<ProductInStock> ProductInStock { get; set; }
-    
     public DbSet<MovementHistory> MovementHistory { get; set; }
-    
-    //Modèles Finance
     public DbSet<Payment> Payments { get; set; }
     public DbSet<Purchase> Purchases { get; set; }
     public DbSet<PurchaseDetails> PurchaseDetails { get; set; }
@@ -33,24 +33,25 @@ public class NordikAventureContext : DbContext
     public DbSet<Taxes> Taxes { get; set; }
     public DbSet<Transaction> Transactions { get; set; }
     public DbSet<TransactionHistory> TransactionHistory { get; set; }
-    
-    //Modèles Client
-    public DbSet<Client> Client { get; set; }
     public DbSet<ClientInterraction> ClientInterractions { get; set; }
     public DbSet<ClientBuyingHistoric> ClientBuyingHistorics { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        const string server = "localhost";
-        const string database = "nordikaventure";
-        const string user = "root";
-        const string password = "admin123*";
-        const string connectionString = $"Server={server};Database={database};User={user};Password={password};";
-        optionsBuilder.UseMySql(
-            connectionString,
-            ServerVersion.AutoDetect(connectionString),
-            mySqlOptions => mySqlOptions.SchemaBehavior(MySqlSchemaBehavior.Ignore)
-        );
+        if (!optionsBuilder.IsConfigured)
+        {
+            const string server = "localhost";
+            const string database = "nordikaventure";
+            const string user = "root";
+            const string password = "admin123*";
+            var cs = $"Server={server};Database={database};User={user};Password={password};";
+
+            optionsBuilder.UseMySql(
+                cs,
+                ServerVersion.AutoDetect(cs),
+                opts => opts.SchemaBehavior(MySqlSchemaBehavior.Ignore)
+            );
+        }
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -65,8 +66,6 @@ public class NordikAventureContext : DbContext
         modelBuilder.Entity<Stock>();
         modelBuilder.Entity<ProductInStock>();
         modelBuilder.Entity<MovementHistory>();
-        
-        // Modèles Finance
         modelBuilder.Entity<Payment>();
         modelBuilder.Entity<Purchase>();
         modelBuilder.Entity<PurchaseDetails>();
@@ -77,12 +76,8 @@ public class NordikAventureContext : DbContext
         modelBuilder.Entity<Taxes>();
         modelBuilder.Entity<Transaction>();
         modelBuilder.Entity<TransactionHistory>();
-        
-        // Modèles Client
-        modelBuilder.Entity<Client>();
         modelBuilder.Entity<ClientInterraction>();
         modelBuilder.Entity<ClientBuyingHistoric>();
-
     }
     
     public override int SaveChanges()

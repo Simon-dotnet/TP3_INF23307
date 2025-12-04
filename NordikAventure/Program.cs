@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Nordik_Aventure;
 using Nordik_Aventure.Controllers;
 using Nordik_Aventure.Mapper;
@@ -6,8 +7,11 @@ using Nordik_Aventure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddDbContext<NordikAventureContext>();
+builder.Services.AddDbContext<NordikAventureContext>(options =>
+{
+    var cs = builder.Configuration.GetConnectionString("DefaultConnection");
+    options.UseMySql(cs, ServerVersion.AutoDetect(cs));
+});
 
 builder.Services.AddScoped<StockMovementController>();
 
@@ -75,6 +79,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<NordikAventureContext>();
+    db.Database.Migrate();
     DbInitializer.Seed(db);
 }
 

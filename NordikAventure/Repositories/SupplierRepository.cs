@@ -6,11 +6,11 @@ namespace Nordik_Aventure.Repositories;
 
 public class SupplierRepository
 {
-    NordikAventureContext _context = new NordikAventureContext();
+    private readonly NordikAventureContext _context;
 
-    public SupplierRepository()
+    public SupplierRepository(NordikAventureContext context)
     {
-        
+        _context = context;
     }
 
     public GenericResponse<List<Supplier>> GetAllSuppliersWithItsProducts()
