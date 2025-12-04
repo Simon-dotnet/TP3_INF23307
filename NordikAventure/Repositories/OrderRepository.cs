@@ -6,11 +6,11 @@ namespace Nordik_Aventure.Repositories;
 
 public class OrderRepository
 {
-    NordikAventureContext _context = new NordikAventureContext();
+    private readonly NordikAventureContext _context;
 
-    public OrderRepository()
+    public OrderRepository(NordikAventureContext context)
     {
-        
+        _context = context;
     }
 
     public GenericResponse<Order> GetOrderById(int id)

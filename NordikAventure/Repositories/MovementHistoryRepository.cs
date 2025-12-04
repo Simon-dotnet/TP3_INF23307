@@ -7,10 +7,11 @@ namespace Nordik_Aventure.Repositories;
 
 public class MovementHistoryRepository
 {
-    NordikAventureContext _context = new NordikAventureContext();
+    private readonly NordikAventureContext _context;
 
-    public MovementHistoryRepository()
+    public MovementHistoryRepository(NordikAventureContext context)
     {
+        _context = context;
     }
 
     public GenericResponse<List<MovementHistory>> GetLast30MovementHistory()

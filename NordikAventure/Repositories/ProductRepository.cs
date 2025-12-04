@@ -7,11 +7,11 @@ namespace Nordik_Aventure.Repositories;
 
 public class ProductRepository
 {
-    NordikAventureContext _context = new NordikAventureContext();
+    private readonly NordikAventureContext _context;
 
-    public ProductRepository()
+    public ProductRepository(NordikAventureContext context)
     {
-        
+        _context = context;
     }
 
 

@@ -5,11 +5,11 @@ namespace Nordik_Aventure.Repositories;
 
 public class UserRepository
 {
-    NordikAventureContext _context = new NordikAventureContext();
+    private readonly NordikAventureContext _context;
 
-    public UserRepository()
+    public UserRepository(NordikAventureContext context)
     {
-        
+        _context = context;
     }
 
     public GenericResponse<Employee> GetUserByEmailAndPassword(string email, string password)

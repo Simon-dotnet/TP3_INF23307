@@ -6,10 +6,11 @@ namespace Nordik_Aventure.Repositories;
 
 public class StockRepository
 {
-    NordikAventureContext _context = new NordikAventureContext();
+    private readonly NordikAventureContext _context;
 
-    public StockRepository()
+    public StockRepository(NordikAventureContext context)
     {
+        _context = context;
     }
 
     public GenericResponse<Stock> GetStock()
