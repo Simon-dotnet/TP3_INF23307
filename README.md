@@ -29,9 +29,12 @@ Ou en utilisant un outil tel que GitHub Desktop.
 ```console
 cd [path]/TP3_INF23307/
 ```
-2. Lancer les commandes suivantes (toujours sur le même terminal):
+2. Lancer la commande suivante (toujours sur le même terminal):
 ```console
 docker compose build
+```
+3. Lorsque le build est terminé, lancer la commande suivante (toujours sur le même terminal):
+```console
 docker compose up
 ```
 
