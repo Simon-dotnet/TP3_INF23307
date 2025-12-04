@@ -52,9 +52,9 @@ Cela affiche l’écran de connexion.
 | Comptable   | money@gmail.com        | money123*    |
 
 **Permissions**  
-Manager : accès complet  
-Accountant : module finance seulement  
-Employee : module stock seulement
+Gestionnaire/Manager : accès complet  
+Comptable/Accountant : module finance seulement  
+Employé/Employee : module stock seulement
 
 
 ## 6. Informations sur MySQL (si Docker ne fonctionne pas)
