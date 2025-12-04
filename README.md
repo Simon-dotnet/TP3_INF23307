@@ -86,18 +86,20 @@ docker compose down -v
 ### Le port 8080 est occupé
 
 Modifier docker-compose.yml :
-ports:
-
-- "8090:8080"
+```docker
+ports: - "8090:8080"
+```
 Accéder ensuite via :
-[http://localhost:](http://localhost:)
+```console
+http://localhost:8090
+```
 
 ### Le port 3307 pose problème
 
 Changer la ligne :
-ports:
-
-- "3308:3306"
+```console
+ports: - "3308:3306"
+```
 
 ----------------------------------------------------------------------
 ## ANCIEN GUIDE (SI L'AUTRE N'EST PAS FONCTIONNEL) :
